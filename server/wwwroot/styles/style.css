@@ -8942,31 +8942,31 @@ body.menu-active #Header .logo {
   height: 630px;
   position: relative;
 }
-#BannerSlider {
+#banner {
   padding-top: 120px;
   position: static;
 }
-#BannerSlider .banner-img {
+#banner .banner-img {
   padding-top: 30px;
 }
-#BannerSlider .banner-img img {
+#banner .banner-img img {
   width: auto;
 }
-#BannerSlider .banner-text {
+#banner .banner-text {
   padding-top: 40px;
 }
-#BannerSlider .banner-text h1 {
+#banner .banner-text h1 {
   font: 500 30px/135% "Open Sans", sans-serif;
   color: #fff;
   margin: 0 0 25px;
 }
-#BannerSlider .banner-text p {
+#banner .banner-text p {
   font: 400 18px/155% "Open Sans", sans-serif;
   color: #fff;
   margin: 0 0 25px;
   transform: translate();
 }
-#BannerSlider .bannet-cta a {
+#banner .bannet-cta a {
   display: inline-block;
   padding: 10px 30px;
   margin-bottom: 10px;
@@ -8976,24 +8976,24 @@ body.menu-active #Header .logo {
   transition: all 0.25s ease 0s;
   font: 400 16px/155% "Open Sans", sans-serif;
 }
-#BannerSlider .bannet-cta a:hover {
+#banner .bannet-cta a:hover {
   transition: all 0.25s ease 0s;
   background-color: #fff;
   color: #19af83;
 }
-#BannerSlider .bannet-cta .cta-1,
-#BannerSlider .bannet-cta .cta-2 {
+#banner .bannet-cta .cta-1,
+#banner .bannet-cta .cta-2 {
   display: inline-block;
   margin-right: 30px;
 }
-#BannerSlider .owl-dots {
+#banner .owl-dots {
   display: block;
   text-align: center;
   position: absolute;
   bottom: 20px;
   width: 100%;
 }
-#BannerSlider .owl-dots .owl-dot {
+#banner .owl-dots .owl-dot {
   width: 14px;
   height: 14px;
   margin: 0 7px;
@@ -9004,8 +9004,8 @@ body.menu-active #Header .logo {
   -webkit-transition: all 0.3s ease;
   -moz-transition: all 0.3s ease;
 }
-#BannerSlider .owl-dots .owl-dot.active,
-#BannerSlider .owl-dots .owl-dot:hover {
+#banner .owl-dots .owl-dot.active,
+#banner .owl-dots .owl-dot:hover {
   background: #19af83;
   transition: all 0.3s ease;
   -webkit-transition: all 0.3s ease;
@@ -9055,7 +9055,7 @@ body.menu-active #Header .logo {
 }
 #Gain {
   padding-top: 85px;
-  padding-bottom: 0;
+  padding-bottom: 30px;
   padding-left: 0;
   padding-right: 0;
 }
@@ -9450,7 +9450,6 @@ body.menu-active #Header .logo {
 /*Footer style begin*/
 #Footer {
   padding: 75px 0 50px;
-  margin-top: 25px;
   background-color: #000;
 }
 #Footer .footer-text p {
@@ -9543,18 +9542,33 @@ body.menu-active #Header .logo {
 /*Footer style end*/
 
 #Game{
-  background-color: gray;
+  background-color: rgb(10,20,20);
   height: 800px;
   width: 100%;
 }
 
-#GameTable{
-  background-color: brown;
+#GameBoard{
+  background-image: url(../images/board.png);
+  background-repeat: no-repeat;
+  background-size: contain;
+  height: 400px;
+  width: 400px;
   position: absolute;
-  size: 500px 500px;
+  padding: 35px;
+  margin: 150px 30%;
 }
 
-#GameArea{
-  background-image: url(../images/board.png);
-  size: 400px;
+#GameTable{
+  background-image: url(../images/table.png);
+  background-repeat: no-repeat;
+  background-size: contain;
+  height: 100%;
+  width: 100%;
+}
+
+.celda{
+  height: 100%;
+  width: 100%;
+  background-color: blue;
+  border: 10px #006f65 ;
 }
