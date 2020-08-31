@@ -8270,7 +8270,7 @@ a.text-dark:hover {
 .owl-carousel .owl-stage-outer {
   position: relative;
   overflow: hidden;
-  height: 400px
+  height: 400px;
   -webkit-transform: translate3d(0, 0, 0);
 }
 .owl-carousel .owl-item {
@@ -9303,9 +9303,7 @@ body.menu-active #Header .logo {
   transition: 0.2s all;
 }
 /*ContactUs style begin*/
- {
-  padding: 70px 0;
-}
+
 .contact-title {
   font: 400 26px/115% "Open Sans", sans-serif;
   color: #333;
@@ -9543,3 +9541,20 @@ body.menu-active #Header .logo {
   text-align: left;
 }
 /*Footer style end*/
+
+#Game{
+  background-color: gray;
+  height: 800px;
+  width: 100%;
+}
+
+#GameTable{
+  background-color: brown;
+  position: absolute;
+  size: 500px 500px;
+}
+
+#GameArea{
+  background-image: url(../images/board.png);
+  size: 400px;
+}

@@ -21,8 +21,6 @@ C:\Users\pablo\Documents\Proyectos\IPC2 - Proyecto 1\Proyecto-1_IPC2\server\obj\
 C:\Users\pablo\Documents\Proyectos\IPC2 - Proyecto 1\Proyecto-1_IPC2\server\obj\Debug\netcoreapp3.1\server.RazorCoreGenerate.cache
 C:\Users\pablo\Documents\Proyectos\IPC2 - Proyecto 1\Proyecto-1_IPC2\server\obj\Debug\netcoreapp3.1\Razor\Views\Home\Index.cshtml.g.cs
 C:\Users\pablo\Documents\Proyectos\IPC2 - Proyecto 1\Proyecto-1_IPC2\server\obj\Debug\netcoreapp3.1\Razor\Views\Shared\Error.cshtml.g.cs
-C:\Users\pablo\Documents\Proyectos\IPC2 - Proyecto 1\Proyecto-1_IPC2\server\obj\Debug\netcoreapp3.1\Razor\Views\Shared\_Layout.cshtml.g.cs
-C:\Users\pablo\Documents\Proyectos\IPC2 - Proyecto 1\Proyecto-1_IPC2\server\obj\Debug\netcoreapp3.1\Razor\Views\Shared\_ValidationScriptsPartial.cshtml.g.cs
 C:\Users\pablo\Documents\Proyectos\IPC2 - Proyecto 1\Proyecto-1_IPC2\server\obj\Debug\netcoreapp3.1\Razor\Views\_ViewImports.cshtml.g.cs
 C:\Users\pablo\Documents\Proyectos\IPC2 - Proyecto 1\Proyecto-1_IPC2\server\obj\Debug\netcoreapp3.1\Razor\Views\_ViewStart.cshtml.g.cs
 C:\Users\pablo\Documents\Proyectos\IPC2 - Proyecto 1\Proyecto-1_IPC2\server\obj\Debug\netcoreapp3.1\server.RazorTargetAssemblyInfo.cache
@@ -34,3 +32,5 @@ C:\Users\pablo\Documents\Proyectos\IPC2 - Proyecto 1\Proyecto-1_IPC2\server\obj\
 C:\Users\pablo\Documents\Proyectos\IPC2 - Proyecto 1\Proyecto-1_IPC2\server\obj\Debug\netcoreapp3.1\server.pdb
 C:\Users\pablo\Documents\Proyectos\IPC2 - Proyecto 1\Proyecto-1_IPC2\server\obj\Debug\netcoreapp3.1\server.genruntimeconfig.cache
 C:\Users\pablo\Documents\Proyectos\IPC2 - Proyecto 1\Proyecto-1_IPC2\server\obj\Debug\netcoreapp3.1\server.csproj.CopyComplete
+C:\Users\pablo\Documents\Proyectos\IPC2 - Proyecto 1\Proyecto-1_IPC2\server\obj\Debug\netcoreapp3.1\Razor\Views\Shared\_Layout.cshtml.g.cs
+C:\Users\pablo\Documents\Proyectos\IPC2 - Proyecto 1\Proyecto-1_IPC2\server\obj\Debug\netcoreapp3.1\Razor\Views\Game\Index.cshtml.g.cs
