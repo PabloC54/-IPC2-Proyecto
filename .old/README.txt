@@ -1,0 +1,1 @@
+Proyecto descartado debido a que fue iniciado con ASP .Net CORE, siendo ASP .Net FRAMEWORK el indicado para la elaboración de este
