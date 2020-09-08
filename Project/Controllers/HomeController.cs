@@ -10,15 +10,21 @@ namespace IPC2_P1.Controllers
     public class HomeController : Controller
     {
         [HttpGet]
-        public ActionResult Index()
+        public ActionResult Login()
         {
             return View(new Usuario { Nombres = "Leonardo Alejandro", Apellidos = "Jona Urque" });
         }
 
         [HttpPost]
-        public ActionResult Index(Usuario user)
+        public ActionResult Login(Usuario user)
         {
             return Content($"User {user.Nombres} updated!");
+        }
+
+
+        public ActionResult Menu()
+        {
+            return View();
         }
     }
 }

@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Othello Game - @ViewBag.Title</title>
+    <title>Othello - @ViewBag.Title</title>
 
     <!--Iconos-->
     <link
@@ -52,30 +52,33 @@
     <link rel="stylesheet" type="text/css" href="~/wwwroot/styles/custom-responsive-style.css"/>
   </head>
   <body>
-    <!-- HEADER -->
+    <!-- NAVEGACION -->
     <header id="Header">
       <nav class="main-navigation">
         <div class="container">
             <div class="row">
-                <div class="col-xs-12 col-sm-12 col-md-12 col-lg-6 col-xl-6">
+                <div class="col-xs-12 col-sm-12 col-md-12 col-lg-4 col-xl-4">
                     <div class="logo">
-                        <a href="#" class="logo">Othello</a>
+                        <a href="~/Home/Menu" class="logo">Othello</a>
                     </div>
-                </div>                
-                <div class="col-xs-4 col-sm-4 col-md-4 col-lg-2 col-xl-2 op">
-                    <a href="/">Inicio</a>
                 </div>
                 <div class="col-xs-4 col-sm-4 col-md-4 col-lg-2 col-xl-2 op">
-                    <a href="/Game/">Jugar</a>
+                    <a href="~/Game/Solo"><i class="fa fa-arrow-right" aria-hidden="true"></i>     Solo</a>
                 </div>
                 <div class="col-xs-4 col-sm-4 col-md-4 col-lg-2 col-xl-2 op">
-                    <a href="#">Torneo</a>
+                    <a href="~/Game/Versus"><i class="fa fa-arrow-right" aria-hidden="true"></i>     Versus</a>
+                </div>
+                <div class="col-xs-4 col-sm-4 col-md-4 col-lg-2 col-xl-2 op">
+                    <a href="~/Game/Torneos"><i class="fa fa-arrow-right" aria-hidden="true"></i>     Torneo</a>
+                </div>
+                <div class="col-xs-4 col-sm-4 col-md-4 col-lg-2 col-xl-2 op login_btn">
+                    <a href="~/Home/Login">Iniciar sesión</a>
                 </div>
             </div>
         </div>
       </nav>
     </header>
-    <!-- FIN DEL HEADER -->
+    <!-- FIN DE NAVEGACION -->
 
     @RenderBody()
 

@@ -14,11 +14,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\pablo\\Documents\\Proyectos\\IPC2 - Proyecto 1\\Proyecto-1_IPC2\\server\\server.csproj",
+      "projectUniqueName": "C:\\Users\\pablo\\Documents\\Proyectos\\Universidad\\IPC2 - Proyecto 1\\Proyecto-1_IPC2 (Repositorio)\\.old\\server.csproj",
       "projectName": "server",
-      "projectPath": "C:\\Users\\pablo\\Documents\\Proyectos\\IPC2 - Proyecto 1\\Proyecto-1_IPC2\\server\\server.csproj",
+      "projectPath": "C:\\Users\\pablo\\Documents\\Proyectos\\Universidad\\IPC2 - Proyecto 1\\Proyecto-1_IPC2 (Repositorio)\\.old\\server.csproj",
       "packagesPath": "C:\\Users\\pablo\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\pablo\\Documents\\Proyectos\\IPC2 - Proyecto 1\\Proyecto-1_IPC2\\server\\obj\\",
+      "outputPath": "C:\\Users\\pablo\\Documents\\Proyectos\\Universidad\\IPC2 - Proyecto 1\\Proyecto-1_IPC2 (Repositorio)\\.old\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder"
