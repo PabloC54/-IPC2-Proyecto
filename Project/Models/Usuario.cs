@@ -9,30 +9,32 @@ namespace IPC2_P1.Models
     public class Usuario
     {
         [Required]
-        [StringLength(50, MinimumLength = 3)]
+        [StringLength(20, MinimumLength = 3)]
         public string Nombres { get; set; }
 
         [Required]
-        [StringLength(50, MinimumLength = 3)]
+        [StringLength(30, MinimumLength = 3)]
         public string Apellidos { get; set; }
 
         [Required]
-        [StringLength(50, MinimumLength = 4)]
-        public string Nickname { get; set; }
-
-        [Required]
-        [StringLength(50, MinimumLength = 8)]
-        public string Contrasena { get; set; }
-
-        [Required]
-        public DateTime Nacimiento { get; set; }
-
-        [Required]
-        public string Pais { get; set; }
+        [StringLength(20, MinimumLength = 4)]
+        public string Username { get; set; }
 
         [Required]
         [EmailAddress]
-        public DateTime Email { get; set; } 
+        [StringLength(50)]
+        public string Email { get; set; }
+
+        [Required]
+        [StringLength(30, MinimumLength = 8)]
+        public string Contraseña { get; set; }
+
+        [Required]
+        public DateTime Fecha_Nacimiento { get; set; }
+
+        [Required]
+        [StringLength(30)]
+        public string Pais { get; set; }
 
     }
 }

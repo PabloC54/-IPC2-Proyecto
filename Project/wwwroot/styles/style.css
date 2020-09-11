@@ -10748,14 +10748,20 @@ body.menu-active #Header .logo {
                 color: #19af83;
             }
 
-#HeroBanner {
+#LoginBanner {
     background: url(../images/login-bg.jpg) no-repeat 0 0 / cover;
-    height: 630px;
+    height: 600px;
+    position: relative;
+}
+
+#RegistroBanner {
+    background: url(../images/registro-bg.jpg) no-repeat 0 0 / cover;
+    height: 850px;
     position: relative;
 }
 
 #banner {
-    padding-top: 120px;
+    padding-top: 100px;
     position: static;
 }
 
@@ -10784,18 +10790,19 @@ body.menu-active #Header .logo {
             transform: translate();
         }
 
-    #banner .bannet-cta a {
+    #banner .bannet-cta a, #banner .bannet-cta input {
         display: inline-block;
         padding: 10px 30px;
         margin-bottom: 10px;
         background-color: #19af83;
+        border: none;
         border-radius: 28px;
         color: #fff;
         transition: all 0.25s ease 0s;
         font: 400 16px/155% "Open Sans", sans-serif;
     }
 
-        #banner .bannet-cta a:hover {
+        #banner .bannet-cta a:hover, #banner .bannet-cta input:hover {
             transition: all 0.25s ease 0s;
             background-color: #fff;
             color: #19af83;
@@ -11274,7 +11281,7 @@ body.menu-active #Header .logo {
         position: relative;
         width: 47%;
         display: inline-block;
-        margin-bottom: 30px;
+        margin-bottom: 45px;
     }
 
     .form-wrap .fname,
@@ -11312,6 +11319,10 @@ body.menu-active #Header .logo {
     color: #999999;
     transition: top 0.2s ease-in-out;
     z-index: 1;
+}
+
+#label_fecha{
+    top:-15px;
 }
 
 .floating-input:focus ~ label,
@@ -11541,6 +11552,10 @@ body.menu-active #Header .logo {
     background-size: contain;
 }
 
+.celda input{
+    display:none;
+}
+
     .celda:hover {
         background-color: rgba(0, 0, 0, 0.2);
         cursor: pointer;
@@ -11569,3 +11584,10 @@ body.menu-active #Header .logo {
     .xmlbtn button:hover {
         cursor: pointer;
     }
+
+.succes-message {
+    color: #19af83;
+}
+.error-message {
+    color: #b51818;
+}
