@@ -13,25 +13,37 @@ namespace IPC2_P1.Controllers
     {
         public ActionResult Solo()
         {
-            return View();
+           
+            return View(new Tablero
+            {
+                archivo_cargado = false,
+
+                D4 = "blanco",
+                E4 = "negro",
+                D5 = "negro",
+                E5 = "blanco"
+
+            });
         }
 
         [HttpPost]
         public ActionResult Solo(Tablero tablero)
         {
-            WriteXML(ToArray(tablero));
+            if (tablero.archivo_cargado==true)
+            {
+                tablero.archivo_cargado = false;                
 
-            return View();
+                Tablero tablero_cargado = ReadXML(tablero);
+                return View(tablero_cargado);
+
+            }
+            else
+            {
+                WriteXML(ToArray(tablero));
+                return View(tablero);
+            }
         }
-
-        [HttpPost]
-        public ActionResult Solo_UploadFile(Archivo archivo)
-        {
-            Console.Write(archivo.archivo);
-            
-            return View("Solo");
-        }
-
+        
         public ActionResult Versus()
         {
             return View();
@@ -70,9 +82,37 @@ namespace IPC2_P1.Controllers
                 writer.WriteEndElement();
             }
 
+            writer.WriteStartElement("siguienteTiro");
+            writer.WriteStartElement("color");
+            writer.WriteString("blanco");
+            writer.WriteEndElement();
+            writer.WriteEndElement();
 
             writer.WriteEndDocument();
             writer.Close();
+        }
+
+        public Tablero ReadXML(Tablero tablero)
+        {
+            Tablero tablero_cargado = new Tablero
+            {
+
+            };
+
+            XmlDocument doc = new XmlDocument();
+            doc.LoadXml(tablero.archivo.ToString());
+            
+            if (doc.HasChildNodes)
+            {
+                for (int i = 0; i < doc.ChildNodes.Count; i++)
+                {
+                    System.Diagnostics.Debug.WriteLine(doc.ChildNodes[i].InnerText);
+                }
+            }
+
+            
+            return tablero_cargado;
+
         }
 
         public string[][] ToArray(Tablero tablero)

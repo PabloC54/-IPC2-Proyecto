@@ -1,12 +1,7 @@
-﻿@{
+﻿@model IPC2_P1.Models.Tablero
+@{
     ViewBag.Title = "Juego";
     Layout = "~/Views/Shared/_Layout_NoLogin.cshtml";
-
-    void fun()
-    {
-
-    }
-
 
     /* string[] RecogerColores(string[] colores)
         {
@@ -20,7 +15,7 @@
             return tablero;
         }
         */
-
+    string[] fichas_cargadas =new string[64];
 }
 
 <!DOCTYPE html>
@@ -31,38 +26,66 @@
     <meta http-equiv="“X-UA-Compatible”" content="'IE' ='edge'" />
 
     <script>
+        var ids = [ "A1", "B1", "C1", "D1", "E1", "F1", "G1", "H1",
+                    "A2", "B2", "C2", "D2", "E2", "F2", "G2", "H2",
+                    "A3", "B3", "C3", "D3", "E3", "F3", "G3", "H3",
+                    "A4", "B4", "C4", "D4", "E4", "F4", "G4", "H4",
+                    "A5", "B5", "C5", "D5", "E5", "F5", "G5", "H5",
+                    "A6", "B6", "C6", "D6", "E6", "F6", "G6", "H6",
+                    "A7", "B7", "C7", "D7", "E7", "F7", "G7", "H7",
+                    "A8", "B8", "C8", "D8", "E8", "F8", "G8", "H8"];
+        
+        function celdas() {
+            ids.forEach(celda)
+        }
+
 
         function celda(id) {
-            if (document.getElementById("I_" + id).value == "") {
+            if (document.getElementById("I_" + id).value == "blanco")
+                document.getElementById(id).style.backgroundImage = "url('../wwwroot/images/ficha_b.jpg')";
+            else
+                if (document.getElementById("I_" + id).value == "negro")
+                    document.getElementById(id).style.backgroundImage = "url('../wwwroot/images/ficha_n.jpg')"; 
+        }
+
+        function cambiar(id) {
+            if (document.getElementById("I_" + id).value == "") { //NOTA: VALIDAR DE QUIEN ES EL TURNO
                 document.getElementById(id).style.backgroundImage = "url('../wwwroot/images/ficha_b.jpg')";
                 document.getElementById("I_" + id).value = "blanco";
             }
         }
+
 
         function cargarColor(id, colores) {
             color = document.getElementById(id).style.backgroundImage;
             colores.push(color);
         }
 
+        function activar() {
+            @Model.archivo_cargado=true;
+        }
+
         //function cargarXML() { }
-        
+
 
     </script>
 </head>
 
-<body>
+<body onload="celdas()">
     <!-- AREA DE JUEGO -->
     <section id="Game">
 
-        <form action="Game/Solo_UploadFile" method="post">
-            <div class="col-xs-6 col-sm-6 col-md-6 col-lg-6 col-xl-6">
-                <input class="xmlbtn" type="file" accept=".xml" name="archivo" value="">
-                <button class="xmlbtn" type="submit">  Cargar archivo XML.. </button>
+        <form action="/Game/Solo" method="post">
+            <div class="row xml-load-row">
+                <div class="col-xs-6 col-sm-6 col-md-6 col-lg-6 col-xl-6">
+                    <input class="xmlbtn" type="file" accept=".xml" name="archivo" value="">
+                    <button class="xmlbtn" type="submit" onclick="activar()">  Cargar archivo XML.. </button>
+                </div>
             </div>
         </form>
 
         <form action="/Game/Solo" method="post">
-            <div class="row xml-row">
+            <div class="row xml-save-row">
                 <div class="col-xs-6 col-sm-6 col-md-6 col-lg-6 col-xl-6"><button class="xmlbtn" type="submit">  Guardar archivo XML.. </button></div>
             </div>
 
@@ -71,84 +94,84 @@
                     <div id="GameTable">
 
                         <div class="row fila">
-                            <div class="col-xs-1 col-sm-1 col-md-1 col-lg-1 col-xl-1 celda" id="A1" onclick="celda('A1')"><input type="text" id="I_A1" value="" name="A1" /></div>
-                            <div class="col-xs-1 col-sm-1 col-md-1 col-lg-1 col-xl-1 celda" id="B1" onclick="celda('B1')"><input type="text" id="I_B1" value="" name="B1" /></div>
-                            <div class="col-xs-1 col-sm-1 col-md-1 col-lg-1 col-xl-1 celda" id="C1" onclick="celda('C1')"><input type="text" id="I_C1" value="" name="C1" /></div>
-                            <div class="col-xs-1 col-sm-1 col-md-1 col-lg-1 col-xl-1 celda" id="D1" onclick="celda('D1')"><input type="text" id="I_D1" value="" name="D1" /></div>
-                            <div class="col-xs-1 col-sm-1 col-md-1 col-lg-1 col-xl-1 celda" id="E1" onclick="celda('E1')"><input type="text" id="I_E1" value="" name="E1" /></div>
-                            <div class="col-xs-1 col-sm-1 col-md-1 col-lg-1 col-xl-1 celda" id="F1" onclick="celda('F1')"><input type="text" id="I_F1" value="" name="F1" /></div>
-                            <div class="col-xs-1 col-sm-1 col-md-1 col-lg-1 col-xl-1 celda" id="G1" onclick="celda('G1')"><input type="text" id="I_G1" value="" name="G1" /></div>
-                            <div class="col-xs-1 col-sm-1 col-md-1 col-lg-1 col-xl-1 celda" id="H1" onclick="celda('H1')"><input type="text" id="I_H1" value="" name="H1" /></div>
+                            <div class="col-xs-1 col-sm-1 col-md-1 col-lg-1 col-xl-1 celda" id="A1" onclick="cambiar('A1')"><input type="text" id="I_A1" value="@Model.A1" name="A1" /></div>
+                            <div class="col-xs-1 col-sm-1 col-md-1 col-lg-1 col-xl-1 celda" id="B1" onclick="cambiar('B1')"><input type="text" id="I_B1" value="@Model.B1" name="B1" /></div>
+                            <div class="col-xs-1 col-sm-1 col-md-1 col-lg-1 col-xl-1 celda" id="C1" onclick="cambiar('C1')"><input type="text" id="I_C1" value="@Model.C1" name="C1" /></div>
+                            <div class="col-xs-1 col-sm-1 col-md-1 col-lg-1 col-xl-1 celda" id="D1" onclick="cambiar('D1')"><input type="text" id="I_D1" value="@Model.D1" name="D1" /></div>
+                            <div class="col-xs-1 col-sm-1 col-md-1 col-lg-1 col-xl-1 celda" id="E1" onclick="cambiar('E1')"><input type="text" id="I_E1" value="@Model.E1" name="E1" /></div>
+                            <div class="col-xs-1 col-sm-1 col-md-1 col-lg-1 col-xl-1 celda" id="F1" onclick="cambiar('F1')"><input type="text" id="I_F1" value="@Model.F1" name="F1" /></div>
+                            <div class="col-xs-1 col-sm-1 col-md-1 col-lg-1 col-xl-1 celda" id="G1" onclick="cambiar('G1')"><input type="text" id="I_G1" value="@Model.G1" name="G1" /></div>
+                            <div class="col-xs-1 col-sm-1 col-md-1 col-lg-1 col-xl-1 celda" id="H1" onclick="cambiar('H1')"><input type="text" id="I_H1" value="@Model.H1" name="H1" /></div>
                         </div>
                         <div class="row fila">
-                            <div class="col-xs-1 col-sm-1 col-md-1 col-lg-1 col-xl-1 celda" id="A2" onclick="celda('A2')"><input type="text" id="I_A2" value="" name="A2" /></div>
-                            <div class="col-xs-1 col-sm-1 col-md-1 col-lg-1 col-xl-1 celda" id="B2" onclick="celda('B2')"><input type="text" id="I_B2" value="" name="B2" /></div>
-                            <div class="col-xs-1 col-sm-1 col-md-1 col-lg-1 col-xl-1 celda" id="C2" onclick="celda('C2')"><input type="text" id="I_C2" value="" name="C2" /></div>
-                            <div class="col-xs-1 col-sm-1 col-md-1 col-lg-1 col-xl-1 celda" id="D2" onclick="celda('D2')"><input type="text" id="I_D2" value="" name="D2" /></div>
-                            <div class="col-xs-1 col-sm-1 col-md-1 col-lg-1 col-xl-1 celda" id="E2" onclick="celda('E2')"><input type="text" id="I_E2" value="" name="E2" /></div>
-                            <div class="col-xs-1 col-sm-1 col-md-1 col-lg-1 col-xl-1 celda" id="F2" onclick="celda('F2')"><input type="text" id="I_F2" value="" name="F2" /></div>
-                            <div class="col-xs-1 col-sm-1 col-md-1 col-lg-1 col-xl-1 celda" id="G2" onclick="celda('G2')"><input type="text" id="I_G2" value="" name="G2" /></div>
-                            <div class="col-xs-1 col-sm-1 col-md-1 col-lg-1 col-xl-1 celda" id="H2" onclick="celda('H2')"><input type="text" id="I_H2" value="" name="H2" /></div>
+                            <div class="col-xs-1 col-sm-1 col-md-1 col-lg-1 col-xl-1 celda" id="A2" onclick="cambiar('A2')"><input type="text" id="I_A2" value="@Model.A2" name="A2" /></div>
+                            <div class="col-xs-1 col-sm-1 col-md-1 col-lg-1 col-xl-1 celda" id="B2" onclick="cambiar('B2')"><input type="text" id="I_B2" value="@Model.B2" name="B2" /></div>
+                            <div class="col-xs-1 col-sm-1 col-md-1 col-lg-1 col-xl-1 celda" id="C2" onclick="cambiar('C2')"><input type="text" id="I_C2" value="@Model.C2" name="C2" /></div>
+                            <div class="col-xs-1 col-sm-1 col-md-1 col-lg-1 col-xl-1 celda" id="D2" onclick="cambiar('D2')"><input type="text" id="I_D2" value="@Model.D2" name="D2" /></div>
+                            <div class="col-xs-1 col-sm-1 col-md-1 col-lg-1 col-xl-1 celda" id="E2" onclick="cambiar('E2')"><input type="text" id="I_E2" value="@Model.E2" name="E2" /></div>
+                            <div class="col-xs-1 col-sm-1 col-md-1 col-lg-1 col-xl-1 celda" id="F2" onclick="cambiar('F2')"><input type="text" id="I_F2" value="@Model.F2" name="F2" /></div>
+                            <div class="col-xs-1 col-sm-1 col-md-1 col-lg-1 col-xl-1 celda" id="G2" onclick="cambiar('G2')"><input type="text" id="I_G2" value="@Model.G2" name="G2" /></div>
+                            <div class="col-xs-1 col-sm-1 col-md-1 col-lg-1 col-xl-1 celda" id="H2" onclick="cambiar('H2')"><input type="text" id="I_H2" value="@Model.H2" name="H2" /></div>
                         </div>
                         <div class="row fila">
-                            <div class="col-xs-1 col-sm-1 col-md-1 col-lg-1 col-xl-1 celda" id="A3" onclick="celda('A3')"><input type="text" id="I_A3" value="" name="A3" /></div>
-                            <div class="col-xs-1 col-sm-1 col-md-1 col-lg-1 col-xl-1 celda" id="B3" onclick="celda('B3')"><input type="text" id="I_B3" value="" name="B3" /></div>
-                            <div class="col-xs-1 col-sm-1 col-md-1 col-lg-1 col-xl-1 celda" id="C3" onclick="celda('C3')"><input type="text" id="I_C3" value="" name="C3" /></div>
-                            <div class="col-xs-1 col-sm-1 col-md-1 col-lg-1 col-xl-1 celda" id="D3" onclick="celda('D3')"><input type="text" id="I_D3" value="" name="D3" /></div>
-                            <div class="col-xs-1 col-sm-1 col-md-1 col-lg-1 col-xl-1 celda" id="E3" onclick="celda('E3')"><input type="text" id="I_E3" value="" name="E3" /></div>
-                            <div class="col-xs-1 col-sm-1 col-md-1 col-lg-1 col-xl-1 celda" id="F3" onclick="celda('F3')"><input type="text" id="I_F3" value="" name="F3" /></div>
-                            <div class="col-xs-1 col-sm-1 col-md-1 col-lg-1 col-xl-1 celda" id="G3" onclick="celda('G3')"><input type="text" id="I_G3" value="" name="G3" /></div>
-                            <div class="col-xs-1 col-sm-1 col-md-1 col-lg-1 col-xl-1 celda" id="H3" onclick="celda('H3')"><input type="text" id="I_H3" value="" name="H3" /></div>
+                            <div class="col-xs-1 col-sm-1 col-md-1 col-lg-1 col-xl-1 celda" id="A3" onclick="cambiar('A3')"><input type="text" id="I_A3" value="@Model.A3" name="A3" /></div>
+                            <div class="col-xs-1 col-sm-1 col-md-1 col-lg-1 col-xl-1 celda" id="B3" onclick="cambiar('B3')"><input type="text" id="I_B3" value="@Model.B3" name="B3" /></div>
+                            <div class="col-xs-1 col-sm-1 col-md-1 col-lg-1 col-xl-1 celda" id="C3" onclick="cambiar('C3')"><input type="text" id="I_C3" value="@Model.C3" name="C3" /></div>
+                            <div class="col-xs-1 col-sm-1 col-md-1 col-lg-1 col-xl-1 celda" id="D3" onclick="cambiar('D3')"><input type="text" id="I_D3" value="@Model.D3" name="D3" /></div>
+                            <div class="col-xs-1 col-sm-1 col-md-1 col-lg-1 col-xl-1 celda" id="E3" onclick="cambiar('E3')"><input type="text" id="I_E3" value="@Model.E3" name="E3" /></div>
+                            <div class="col-xs-1 col-sm-1 col-md-1 col-lg-1 col-xl-1 celda" id="F3" onclick="cambiar('F3')"><input type="text" id="I_F3" value="@Model.F3" name="F3" /></div>
+                            <div class="col-xs-1 col-sm-1 col-md-1 col-lg-1 col-xl-1 celda" id="G3" onclick="cambiar('G3')"><input type="text" id="I_G3" value="@Model.G3" name="G3" /></div>
+                            <div class="col-xs-1 col-sm-1 col-md-1 col-lg-1 col-xl-1 celda" id="H3" onclick="cambiar('H3')"><input type="text" id="I_H3" value="@Model.H3" name="H3" /></div>
                         </div>
                         <div class="row fila">
-                            <div class="col-xs-1 col-sm-1 col-md-1 col-lg-1 col-xl-1 celda" id="A4" onclick="celda('A4')"><input type="text" id="I_A4" value="" name="A4" /></div>
-                            <div class="col-xs-1 col-sm-1 col-md-1 col-lg-1 col-xl-1 celda" id="B4" onclick="celda('B4')"><input type="text" id="I_B4" value="" name="B4" /></div>
-                            <div class="col-xs-1 col-sm-1 col-md-1 col-lg-1 col-xl-1 celda" id="C4" onclick="celda('C4')"><input type="text" id="I_C4" value="" name="C4" /></div>
-                            <div class="col-xs-1 col-sm-1 col-md-1 col-lg-1 col-xl-1 celda" id="D4" onclick="celda('D4')"><input type="text" id="I_D4" value="blanco" name="D4" /></div>
-                            <div class="col-xs-1 col-sm-1 col-md-1 col-lg-1 col-xl-1 celda" id="E4" onclick="celda('E4')"><input type="text" id="I_E4" value="negro" name="E4" /></div>
-                            <div class="col-xs-1 col-sm-1 col-md-1 col-lg-1 col-xl-1 celda" id="F4" onclick="celda('F4')"><input type="text" id="I_F4" value="" name="F4" /></div>
-                            <div class="col-xs-1 col-sm-1 col-md-1 col-lg-1 col-xl-1 celda" id="G4" onclick="celda('G4')"><input type="text" id="I_G4" value="" name="G4" /></div>
-                            <div class="col-xs-1 col-sm-1 col-md-1 col-lg-1 col-xl-1 celda" id="H4" onclick="celda('H4')"><input type="text" id="I_H4" value="" name="H4" /></div>
+                            <div class="col-xs-1 col-sm-1 col-md-1 col-lg-1 col-xl-1 celda" id="A4" onclick="cambiar('A4')"><input type="text" id="I_A4" value="@Model.A4" name="A4" /></div>
+                            <div class="col-xs-1 col-sm-1 col-md-1 col-lg-1 col-xl-1 celda" id="B4" onclick="cambiar('B4')"><input type="text" id="I_B4" value="@Model.B4" name="B4" /></div>
+                            <div class="col-xs-1 col-sm-1 col-md-1 col-lg-1 col-xl-1 celda" id="C4" onclick="cambiar('C4')"><input type="text" id="I_C4" value="@Model.C4" name="C4" /></div>
+                            <div class="col-xs-1 col-sm-1 col-md-1 col-lg-1 col-xl-1 celda" id="D4" onclick="cambiar('D4')"><input type="text" id="I_D4" value="@Model.D4" name="D4" /></div>
+                            <div class="col-xs-1 col-sm-1 col-md-1 col-lg-1 col-xl-1 celda" id="E4" onclick="cambiar('E4')"><input type="text" id="I_E4" value="@Model.E4" name="E4" /></div>
+                            <div class="col-xs-1 col-sm-1 col-md-1 col-lg-1 col-xl-1 celda" id="F4" onclick="cambiar('F4')"><input type="text" id="I_F4" value="@Model.F4" name="F4" /></div>
+                            <div class="col-xs-1 col-sm-1 col-md-1 col-lg-1 col-xl-1 celda" id="G4" onclick="cambiar('G4')"><input type="text" id="I_G4" value="@Model.G4" name="G4" /></div>
+                            <div class="col-xs-1 col-sm-1 col-md-1 col-lg-1 col-xl-1 celda" id="H4" onclick="cambiar('H4')"><input type="text" id="I_H4" value="@Model.H4" name="H4" /></div>
                         </div>
                         <div class="row fila">
-                            <div class="col-xs-1 col-sm-1 col-md-1 col-lg-1 col-xl-1 celda" id="A5" onclick="celda('A5')"><input type="text" id="I_A5" value="" name="A5" /></div>
-                            <div class="col-xs-1 col-sm-1 col-md-1 col-lg-1 col-xl-1 celda" id="B5" onclick="celda('B5')"><input type="text" id="I_B5" value="" name="B5" /></div>
-                            <div class="col-xs-1 col-sm-1 col-md-1 col-lg-1 col-xl-1 celda" id="C5" onclick="celda('C5')"><input type="text" id="I_C5" value="" name="C5" /></div>
-                            <div class="col-xs-1 col-sm-1 col-md-1 col-lg-1 col-xl-1 celda" id="D5" onclick="celda('D5')"><input type="text" id="I_D5" value="negro" name="D5" /></div>
-                            <div class="col-xs-1 col-sm-1 col-md-1 col-lg-1 col-xl-1 celda" id="E5" onclick="celda('E5')"><input type="text" id="I_E5" value="blanco" name="E5" /></div>
-                            <div class="col-xs-1 col-sm-1 col-md-1 col-lg-1 col-xl-1 celda" id="F5" onclick="celda('F5')"><input type="text" id="I_F5" value="" name="F5" /></div>
-                            <div class="col-xs-1 col-sm-1 col-md-1 col-lg-1 col-xl-1 celda" id="G5" onclick="celda('G5')"><input type="text" id="I_G5" value="" name="G5" /></div>
-                            <div class="col-xs-1 col-sm-1 col-md-1 col-lg-1 col-xl-1 celda" id="H5" onclick="celda('H5')"><input type="text" id="I_H5" value="" name="H5" /></div>
+                            <div class="col-xs-1 col-sm-1 col-md-1 col-lg-1 col-xl-1 celda" id="A5" onclick="cambiar('A5')"><input type="text" id="I_A5" value="@Model.A5" name="A5" /></div>
+                            <div class="col-xs-1 col-sm-1 col-md-1 col-lg-1 col-xl-1 celda" id="B5" onclick="cambiar('B5')"><input type="text" id="I_B5" value="@Model.B5" name="B5" /></div>
+                            <div class="col-xs-1 col-sm-1 col-md-1 col-lg-1 col-xl-1 celda" id="C5" onclick="cambiar('C5')"><input type="text" id="I_C5" value="@Model.C5" name="C5" /></div>
+                            <div class="col-xs-1 col-sm-1 col-md-1 col-lg-1 col-xl-1 celda" id="D5" onclick="cambiar('D5')"><input type="text" id="I_D5" value="@Model.D5" name="D5" /></div>
+                            <div class="col-xs-1 col-sm-1 col-md-1 col-lg-1 col-xl-1 celda" id="E5" onclick="cambiar('E5')"><input type="text" id="I_E5" value="@Model.E5" name="E5" /></div>
+                            <div class="col-xs-1 col-sm-1 col-md-1 col-lg-1 col-xl-1 celda" id="F5" onclick="cambiar('F5')"><input type="text" id="I_F5" value="@Model.F5" name="F5" /></div>
+                            <div class="col-xs-1 col-sm-1 col-md-1 col-lg-1 col-xl-1 celda" id="G5" onclick="cambiar('G5')"><input type="text" id="I_G5" value="@Model.G5" name="G5" /></div>
+                            <div class="col-xs-1 col-sm-1 col-md-1 col-lg-1 col-xl-1 celda" id="H5" onclick="cambiar('H5')"><input type="text" id="I_H5" value="@Model.H5" name="H5" /></div>
                         </div>
                         <div class="row fila">
-                            <div class="col-xs-1 col-sm-1 col-md-1 col-lg-1 col-xl-1 celda" id="A6" onclick="celda('A6')"><input type="text" id="I_A6" value="" name="A6" /></div>
-                            <div class="col-xs-1 col-sm-1 col-md-1 col-lg-1 col-xl-1 celda" id="B6" onclick="celda('B6')"><input type="text" id="I_B6" value="" name="B6" /></div>
-                            <div class="col-xs-1 col-sm-1 col-md-1 col-lg-1 col-xl-1 celda" id="C6" onclick="celda('C6')"><input type="text" id="I_C6" value="" name="C6" /></div>
-                            <div class="col-xs-1 col-sm-1 col-md-1 col-lg-1 col-xl-1 celda" id="D6" onclick="celda('D6')"><input type="text" id="I_D6" value="" name="D6" /></div>
-                            <div class="col-xs-1 col-sm-1 col-md-1 col-lg-1 col-xl-1 celda" id="E6" onclick="celda('E6')"><input type="text" id="I_E6" value="" name="E6" /></div>
-                            <div class="col-xs-1 col-sm-1 col-md-1 col-lg-1 col-xl-1 celda" id="F6" onclick="celda('F6')"><input type="text" id="I_F6" value="" name="F6" /></div>
-                            <div class="col-xs-1 col-sm-1 col-md-1 col-lg-1 col-xl-1 celda" id="G6" onclick="celda('G6')"><input type="text" id="I_G6" value="" name="G6" /></div>
-                            <div class="col-xs-1 col-sm-1 col-md-1 col-lg-1 col-xl-1 celda" id="H6" onclick="celda('H6')"><input type="text" id="I_H6" value="" name="H6" /></div>
+                            <div class="col-xs-1 col-sm-1 col-md-1 col-lg-1 col-xl-1 celda" id="A6" onclick="cambiar('A6')"><input type="text" id="I_A6" value="@Model.A6" name="A6" /></div>
+                            <div class="col-xs-1 col-sm-1 col-md-1 col-lg-1 col-xl-1 celda" id="B6" onclick="cambiar('B6')"><input type="text" id="I_B6" value="@Model.B6" name="B6" /></div>
+                            <div class="col-xs-1 col-sm-1 col-md-1 col-lg-1 col-xl-1 celda" id="C6" onclick="cambiar('C6')"><input type="text" id="I_C6" value="@Model.C6" name="C6" /></div>
+                            <div class="col-xs-1 col-sm-1 col-md-1 col-lg-1 col-xl-1 celda" id="D6" onclick="cambiar('D6')"><input type="text" id="I_D6" value="@Model.D6" name="D6" /></div>
+                            <div class="col-xs-1 col-sm-1 col-md-1 col-lg-1 col-xl-1 celda" id="E6" onclick="cambiar('E6')"><input type="text" id="I_E6" value="@Model.E6" name="E6" /></div>
+                            <div class="col-xs-1 col-sm-1 col-md-1 col-lg-1 col-xl-1 celda" id="F6" onclick="cambiar('F6')"><input type="text" id="I_F6" value="@Model.F6" name="F6" /></div>
+                            <div class="col-xs-1 col-sm-1 col-md-1 col-lg-1 col-xl-1 celda" id="G6" onclick="cambiar('G6')"><input type="text" id="I_G6" value="@Model.G6" name="G6" /></div>
+                            <div class="col-xs-1 col-sm-1 col-md-1 col-lg-1 col-xl-1 celda" id="H6" onclick="cambiar('H6')"><input type="text" id="I_H6" value="@Model.H6" name="H6" /></div>
                         </div>
                         <div class="row fila">
-                            <div class="col-xs-1 col-sm-1 col-md-1 col-lg-1 col-xl-1 celda" id="A7" onclick="celda('A7')"><input type="text" id="I_A7" value="" name="A7" /></div>
-                            <div class="col-xs-1 col-sm-1 col-md-1 col-lg-1 col-xl-1 celda" id="B7" onclick="celda('B7')"><input type="text" id="I_B7" value="" name="B7" /></div>
-                            <div class="col-xs-1 col-sm-1 col-md-1 col-lg-1 col-xl-1 celda" id="C7" onclick="celda('C7')"><input type="text" id="I_C7" value="" name="C7" /></div>
-                            <div class="col-xs-1 col-sm-1 col-md-1 col-lg-1 col-xl-1 celda" id="D7" onclick="celda('D7')"><input type="text" id="I_D7" value="" name="D7" /></div>
-                            <div class="col-xs-1 col-sm-1 col-md-1 col-lg-1 col-xl-1 celda" id="E7" onclick="celda('E7')"><input type="text" id="I_E7" value="" name="E7" /></div>
-                            <div class="col-xs-1 col-sm-1 col-md-1 col-lg-1 col-xl-1 celda" id="F7" onclick="celda('F7')"><input type="text" id="I_F7" value="" name="F7" /></div>
-                            <div class="col-xs-1 col-sm-1 col-md-1 col-lg-1 col-xl-1 celda" id="G7" onclick="celda('G7')"><input type="text" id="I_G7" value="" name="G7" /></div>
-                            <div class="col-xs-1 col-sm-1 col-md-1 col-lg-1 col-xl-1 celda" id="H7" onclick="celda('H7')"><input type="text" id="I_H7" value="" name="H7" /></div>
+                            <div class="col-xs-1 col-sm-1 col-md-1 col-lg-1 col-xl-1 celda" id="A7" onclick="cambiar('A7')"><input type="text" id="I_A7" value="@Model.A7" name="A7" /></div>
+                            <div class="col-xs-1 col-sm-1 col-md-1 col-lg-1 col-xl-1 celda" id="B7" onclick="cambiar('B7')"><input type="text" id="I_B7" value="@Model.B7" name="B7" /></div>
+                            <div class="col-xs-1 col-sm-1 col-md-1 col-lg-1 col-xl-1 celda" id="C7" onclick="cambiar('C7')"><input type="text" id="I_C7" value="@Model.C7" name="C7" /></div>
+                            <div class="col-xs-1 col-sm-1 col-md-1 col-lg-1 col-xl-1 celda" id="D7" onclick="cambiar('D7')"><input type="text" id="I_D7" value="@Model.D7" name="D7" /></div>
+                            <div class="col-xs-1 col-sm-1 col-md-1 col-lg-1 col-xl-1 celda" id="E7" onclick="cambiar('E7')"><input type="text" id="I_E7" value="@Model.E7" name="E7" /></div>
+                            <div class="col-xs-1 col-sm-1 col-md-1 col-lg-1 col-xl-1 celda" id="F7" onclick="cambiar('F7')"><input type="text" id="I_F7" value="@Model.F7" name="F7" /></div>
+                            <div class="col-xs-1 col-sm-1 col-md-1 col-lg-1 col-xl-1 celda" id="G7" onclick="cambiar('G7')"><input type="text" id="I_G7" value="@Model.G7" name="G7" /></div>
+                            <div class="col-xs-1 col-sm-1 col-md-1 col-lg-1 col-xl-1 celda" id="H7" onclick="cambiar('H7')"><input type="text" id="I_H7" value="@Model.H7" name="H7" /></div>
                         </div>
                         <div class="row fila">
-                            <div class="col-xs-1 col-sm-1 col-md-1 col-lg-1 col-xl-1 celda" id="A8" onclick="celda('A8')"><input type="text" id="I_A8" value="" name="A8" /></div>
-                            <div class="col-xs-1 col-sm-1 col-md-1 col-lg-1 col-xl-1 celda" id="B8" onclick="celda('B8')"><input type="text" id="I_B8" value="" name="B8" /></div>
-                            <div class="col-xs-1 col-sm-1 col-md-1 col-lg-1 col-xl-1 celda" id="C8" onclick="celda('C8')"><input type="text" id="I_C8" value="" name="C8" /></div>
-                            <div class="col-xs-1 col-sm-1 col-md-1 col-lg-1 col-xl-1 celda" id="D8" onclick="celda('D8')"><input type="text" id="I_D8" value="" name="D8" /></div>
-                            <div class="col-xs-1 col-sm-1 col-md-1 col-lg-1 col-xl-1 celda" id="E8" onclick="celda('E8')"><input type="text" id="I_E8" value="" name="E8" /></div>
-                            <div class="col-xs-1 col-sm-1 col-md-1 col-lg-1 col-xl-1 celda" id="F8" onclick="celda('F8')"><input type="text" id="I_F8" value="" name="F8" /></div>
-                            <div class="col-xs-1 col-sm-1 col-md-1 col-lg-1 col-xl-1 celda" id="G8" onclick="celda('G8')"><input type="text" id="I_G8" value="" name="G8" /></div>
-                            <div class="col-xs-1 col-sm-1 col-md-1 col-lg-1 col-xl-1 celda" id="H8" onclick="celda('H8')"><input type="text" id="I_H8" value="" name="H8" /></div>
+                            <div class="col-xs-1 col-sm-1 col-md-1 col-lg-1 col-xl-1 celda" id="A8" onclick="cambiar('A8')"><input type="text" id="I_A8" value="@Model.A8" name="A8" /></div>
+                            <div class="col-xs-1 col-sm-1 col-md-1 col-lg-1 col-xl-1 celda" id="B8" onclick="cambiar('B8')"><input type="text" id="I_B8" value="@Model.B8" name="B8" /></div>
+                            <div class="col-xs-1 col-sm-1 col-md-1 col-lg-1 col-xl-1 celda" id="C8" onclick="cambiar('C8')"><input type="text" id="I_C8" value="@Model.C8" name="C8" /></div>
+                            <div class="col-xs-1 col-sm-1 col-md-1 col-lg-1 col-xl-1 celda" id="D8" onclick="cambiar('D8')"><input type="text" id="I_D8" value="@Model.D8" name="D8" /></div>
+                            <div class="col-xs-1 col-sm-1 col-md-1 col-lg-1 col-xl-1 celda" id="E8" onclick="cambiar('E8')"><input type="text" id="I_E8" value="@Model.E8" name="E8" /></div>
+                            <div class="col-xs-1 col-sm-1 col-md-1 col-lg-1 col-xl-1 celda" id="F8" onclick="cambiar('F8')"><input type="text" id="I_F8" value="@Model.F8" name="F8" /></div>
+                            <div class="col-xs-1 col-sm-1 col-md-1 col-lg-1 col-xl-1 celda" id="G8" onclick="cambiar('G8')"><input type="text" id="I_G8" value="@Model.G8" name="G8" /></div>
+                            <div class="col-xs-1 col-sm-1 col-md-1 col-lg-1 col-xl-1 celda" id="H8" onclick="cambiar('H8')"><input type="text" id="I_H8" value="@Model.H8" name="H8" /></div>
                         </div>
                     </div>
                 </div>

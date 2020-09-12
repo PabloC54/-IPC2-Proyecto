@@ -11508,8 +11508,13 @@ body.menu-active #Header .logo {
     width: 100%;
 }
 
-.xml-row {
+.xml-save-row {
     margin: 150px 28%;
+    position: absolute;
+}
+
+.xml-load-row {
+    margin: 180px 28%;
     position: absolute;
 }
 
@@ -11560,15 +11565,6 @@ body.menu-active #Header .logo {
         background-color: rgba(0, 0, 0, 0.2);
         cursor: pointer;
     }
-
-
-#D4, #E5 {
-    background-image: url(../images/ficha_b.jpg);
-}
-
-#E4, #D5 {
-    background-image: url(../images/ficha_n.jpg);
-}
 
 .xmlbtn {
     background: none;

@@ -135,7 +135,6 @@
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="Models\Tablero.cs" />
-    <Compile Include="Models\Archivo.cs" />
     <Compile Include="Models\Usuario.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
@@ -144,18 +143,15 @@
     <Content Include="Global.asax" />
     <Content Include="Scripts\bootstrap.js" />
     <Content Include="Scripts\bootstrap.min.js" />
-    <Content Include="wwwroot\images\banner.jpg" />
     <Content Include="wwwroot\images\board.png" />
-    <Content Include="wwwroot\images\favicons\android-chrome-192x192.png" />
-    <Content Include="wwwroot\images\favicons\apple-touch-icon.png" />
-    <Content Include="wwwroot\images\favicons\browserconfig.xml" />
     <Content Include="wwwroot\images\favicons\favicon-16x16.png" />
     <Content Include="wwwroot\images\favicons\favicon-32x32.png" />
-    <Content Include="wwwroot\images\favicons\favicon.ico" />
-    <Content Include="wwwroot\images\favicons\mstile-150x150.png" />
-    <Content Include="wwwroot\images\favicons\safari-pinned-tab.svg" />
     <Content Include="wwwroot\images\ficha_b.jpg" />
-    <Content Include="wwwroot\images\ficha_n.png" />
+    <Content Include="wwwroot\images\ficha_n.jpg" />
+    <Content Include="wwwroot\images\game_bg.jpg" />
+    <Content Include="wwwroot\images\login-bg.jpg" />
+    <Content Include="wwwroot\images\menu-bg.jpg" />
+    <Content Include="wwwroot\images\registro-bg.jpg" />
     <Content Include="wwwroot\images\table.png" />
     <Content Include="wwwroot\scripts\all-plugins.js" />
     <Content Include="wwwroot\scripts\jquery-3.2.1.min.js" />
@@ -185,13 +181,12 @@
     <Content Include="Views\Shared\Error.cshtml" />
     <Content Include="Views\Shared\_Layout.cshtml" />
     <Content Include="Views\Home\Menu.cshtml" />
-    <Content Include="wwwroot\images\favicons\.DS_Store" />
-    <Content Include="wwwroot\images\favicons\site.webmanifest" />
     <Content Include="Views\Game\Solo.cshtml" />
     <Content Include="Views\Home\Login.cshtml" />
     <Content Include="Views\Home\Registro.cshtml" />
     <Content Include="Views\Shared\_Layout_NoNav.cshtml" />
     <Content Include="Views\Shared\_Layout_NoLogin.cshtml" />
+    <Content Include="wwwroot\xml\anchor" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
