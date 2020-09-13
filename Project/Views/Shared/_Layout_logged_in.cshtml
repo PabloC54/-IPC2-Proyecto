@@ -1,5 +1,15 @@
 ﻿@{
-  Layout=null;
+    Layout=null;
+
+    string message_display;
+    if (ViewBag.Message == null)
+    {
+        message_display = "none";
+    }
+    else
+    {
+        message_display = "block";
+    }
 }
 
 <!DOCTYPE html>
@@ -35,30 +45,44 @@
     <!--Estilo-->
     <link rel="stylesheet" type="text/css" href="~/wwwroot/styles/style.css" />
     <link rel="stylesheet" type="text/css" href="~/wwwroot/styles/custom-responsive-style.css" />
+
+    <script>
+
+        function hide_message() {
+            document.getElementById("message").style.display = "none";
+        }
+
+    </script>
+
 </head>
-  <body>
+
+  <body style="background-color: black">
     <!-- NAVEGACION -->
     <header id="Header">
-      <nav class="main-navigation">
-        <div class="container">
-            <div class="row">
-                <div class="col-xs-12 col-sm-12 col-md-12 col-lg-4 col-xl-4">
-                    <div class="logo">
-                        <a href="~/Home/Menu" class="logo">Othello</a>
+        <nav class="main-navigation">
+            <div class="@ViewBag.MessageType" id="message" style="display:@message_display">@Html.Raw(ViewBag.Message) <i class="fa fa-arrow-right" aria-hidden="true" onclick="hide_message()"></i></div>
+            <div class="container">
+                <div class="row">
+                    <div class="col-xs-12 col-sm-12 col-md-12 col-lg-4 col-xl-4">
+                        <div class="logo">
+                            <a href="~/Home/Menu" class="logo">Othello</a>
+                        </div>
+                    </div>
+                    <div class="col-xs-4 col-sm-4 col-md-4 col-lg-2 col-xl-2 op">
+                        <a href="~/Game/Solo"><i class="fa fa-arrow-right" aria-hidden="true"></i>     Solo</a>
+                    </div>
+                    <div class="col-xs-4 col-sm-4 col-md-4 col-lg-2 col-xl-2 op">
+                        <a href="~/Game/Versus"><i class="fa fa-arrow-right" aria-hidden="true"></i>     Versus</a>
+                    </div>
+                    <div class="col-xs-4 col-sm-4 col-md-4 col-lg-2 col-xl-2 op">
+                        <a href="~/Game/Torneos"><i class="fa fa-arrow-right" aria-hidden="true"></i>     Torneo</a>
+                    </div>
+                    <div class="col-xs-4 col-sm-4 col-md-4 col-lg-2 col-xl-2 op user-logged">
+                        <a href="#">  @Globals.usuario_activo</a>
                     </div>
                 </div>
-                <div class="col-xs-4 col-sm-4 col-md-4 col-lg-2 col-xl-2 op">
-                    <a href="~/Game/Solo"><i class="fa fa-arrow-right" aria-hidden="true"></i>     Solo</a>
-                </div>
-                <div class="col-xs-4 col-sm-4 col-md-4 col-lg-2 col-xl-2 op">
-                    <a href="~/Game/Versus"><i class="fa fa-arrow-right" aria-hidden="true"></i>     Versus</a>
-                </div>
-                <div class="col-xs-4 col-sm-4 col-md-4 col-lg-2 col-xl-2 op">
-                    <a href="~/Game/Torneos"><i class="fa fa-arrow-right" aria-hidden="true"></i>     Torneo</a>
-                </div>
             </div>
-        </div>
-      </nav>
+        </nav>
     </header>
     <!-- FIN DE NAVEGACION -->
 

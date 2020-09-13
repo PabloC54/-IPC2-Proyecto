@@ -18,4 +18,11 @@ namespace IPC2_P1
             BundleConfig.RegisterBundles(BundleTable.Bundles);
         }
     }
+
+    public static class Globals
+    {
+        public static Boolean logged_in = false;
+        public static string usuario_activo;
+
+    }
 }

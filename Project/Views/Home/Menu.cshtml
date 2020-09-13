@@ -1,5 +1,14 @@
 ﻿@{ 
     ViewBag.Title = "Inicio";
+    if (Globals.logged_in == true)
+    {
+        Layout = "~/Views/Shared/_Layout_logged_in.cshtml";
+    }
+    else
+    {
+        Layout = "~/Views/Shared/_Layout.cshtml";
+    }
+
 }
 
 <!DOCTYPE html>
@@ -7,7 +16,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta http-equiv="“X-UA-Compatible”" content="“IE" ="edge”" />
+    <meta http-equiv="“X-UA-Compatible”" content="'IE' ='edge'" />
 </head>
 
   <body>

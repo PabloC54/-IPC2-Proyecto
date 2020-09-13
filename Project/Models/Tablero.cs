@@ -8,10 +8,6 @@ namespace IPC2_P1.Models
 {
     public class Tablero
     {
-        public HttpPostedFile archivo { get; set; }
-
-        public Boolean archivo_cargado { get; set; }
-
         public string A1 { get; set; }
          
         public string B1 { get; set; }

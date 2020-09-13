@@ -141,8 +141,9 @@
   <ItemGroup>
     <Content Include="fonts\glyphicons-halflings-regular.svg" />
     <Content Include="Global.asax" />
-    <Content Include="Scripts\bootstrap.js" />
-    <Content Include="Scripts\bootstrap.min.js" />
+    <Content Include="Scripts\all-plugins.js" />
+    <Content Include="Scripts\jquery-3.2.1.min.js" />
+    <Content Include="Scripts\plugin-active.js" />
     <Content Include="wwwroot\images\board.png" />
     <Content Include="wwwroot\images\favicons\favicon-16x16.png" />
     <Content Include="wwwroot\images\favicons\favicon-32x32.png" />
@@ -158,17 +159,6 @@
     <Content Include="wwwroot\scripts\plugin-active.js" />
     <Content Include="wwwroot\styles\custom-responsive-style.css" />
     <Content Include="wwwroot\styles\style.css" />
-    <None Include="Scripts\jquery-3.3.1.intellisense.js" />
-    <Content Include="Scripts\jquery-3.3.1.js" />
-    <Content Include="Scripts\jquery-3.3.1.min.js" />
-    <Content Include="Scripts\jquery-3.3.1.slim.js" />
-    <Content Include="Scripts\jquery-3.3.1.slim.min.js" />
-    <None Include="Scripts\jquery.validate-vsdoc.js" />
-    <Content Include="Scripts\jquery.validate.js" />
-    <Content Include="Scripts\jquery.validate.min.js" />
-    <Content Include="Scripts\jquery.validate.unobtrusive.js" />
-    <Content Include="Scripts\jquery.validate.unobtrusive.min.js" />
-    <Content Include="Scripts\modernizr-2.8.3.js" />
     <Content Include="Web.config" />
     <Content Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
@@ -184,8 +174,8 @@
     <Content Include="Views\Game\Solo.cshtml" />
     <Content Include="Views\Home\Login.cshtml" />
     <Content Include="Views\Home\Registro.cshtml" />
-    <Content Include="Views\Shared\_Layout_NoNav.cshtml" />
-    <Content Include="Views\Shared\_Layout_NoLogin.cshtml" />
+    <Content Include="Views\Shared\_Layout_logged_in_no_nav.cshtml" />
+    <Content Include="Views\Shared\_Layout_logged_in.cshtml" />
     <Content Include="wwwroot\xml\anchor" />
   </ItemGroup>
   <ItemGroup>
@@ -197,8 +187,9 @@
     <Content Include="fonts\glyphicons-halflings-regular.ttf" />
     <Content Include="fonts\glyphicons-halflings-regular.eot" />
     <None Include="packages.config" />
-    <Content Include="Scripts\jquery-3.3.1.slim.min.map" />
-    <Content Include="Scripts\jquery-3.3.1.min.map" />
+    <Content Include="Views\Shared\_Layout_no_nav.cshtml" />
+    <Content Include="Views\Game\Versus.cshtml" />
+    <Content Include="Views\Game\Torneo.cshtml" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

@@ -1,17 +1,13 @@
 ﻿using IPC2_P1.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
 using System.Web.Mvc;
-using System.Data;
 using System.Data.SqlClient;
-using System.Configuration;
 
 namespace IPC2_P1.Controllers
 {
     public class HomeController : Controller
     {
+        public static string sql = "Data Source=PCP-PC;Initial Catalog=Othello_db;User ID=pabloc54;Password=pepe3343";
+        public SqlConnection con = new SqlConnection(sql);
 
         public ActionResult Index()
         {
@@ -19,7 +15,7 @@ namespace IPC2_P1.Controllers
         }
 
         public ActionResult Menu()
-        {
+        {                
             return View();
         }
 
@@ -28,15 +24,58 @@ namespace IPC2_P1.Controllers
         [HttpGet]
         public ActionResult Login()
         {
-            return View(new Usuario { Username = "201901698", Contraseña = "pepe3343" });
+            if (Globals.logged_in == true)
+            {
+                ViewBag.Message = "Sesión iniciada como <b>" + Globals.usuario_activo + "</b>";
+                ViewBag.MessageType = "neutral-message";
+                return View("Menu");
+            }
+            else
+            {
+                return View();
+            }
         }
 
         [HttpPost]
         public ActionResult Login(Usuario user)
         {
+            con.Open();
 
-            ViewBag.Message = "La combinación usuario-contraseña no existe";
-            return View();
+            string txt = "select * from Usuario where username='"+user.Username+"' and contraseña='"+user.Contraseña+"'";
+            SqlCommand cmd = new SqlCommand(txt, con);
+
+            SqlDataReader dr = cmd.ExecuteReader();
+
+            try
+            {
+                if (dr.Read())
+                {
+                    Globals.logged_in = true;
+                    Globals.usuario_activo = user.Username;
+
+                    ViewBag.Message = "¡Inicio de sesión exitoso!";
+                    ViewBag.MessageType = "neutral-message";
+
+                    con.Close();
+                    return View("Menu");
+                }
+                else
+                {
+                    ViewBag.Message = "La combinación usuario-contraseña no existe";
+                    ViewBag.MessageType = "error-message";
+
+                    con.Close();
+                    return View(user);
+                }
+            }
+            catch
+            {
+                ViewBag.Message = "Se produjo un error";
+                ViewBag.MessageType = "error-message";
+
+                con.Close();
+                return View();
+            }            
         }
 
         /*REGISTRO*/
@@ -49,29 +88,42 @@ namespace IPC2_P1.Controllers
         [HttpPost]
         public ActionResult Registro(Usuario user)
         {// código de https://www.youtube.com/watch?v=1FB_X3adKpQ 
-            
-            SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["connDB"].ConnectionString);
+
             con.Open();
 
-            string txt= "insert into Usuario values ('" + user.Username + "','" + user.Nombres + "','" + user.Apellidos + "','" + user.Email + "','" + user.Contraseña + "',04-04-2004,'" + user.Pais + "',1";
-            Console.WriteLine("texto:  " + txt);
+            string txt= "insert into Usuario values ('" + user.Username + "','" + user.Nombres + "','" + user.Apellidos + "','" + user.Email + "','" + user.Contraseña + "','"+user.Fecha_Nacimiento.ToString("yyyy-MM-dd")+"','" + user.Pais + "',1)";
             SqlCommand cmd = new SqlCommand(txt,con);
-            //cmd.ExecuteReader();
-            ViewBag.Message = "¡Registro exitoso!";   
-            return View();
 
-            
+            int n = cmd.ExecuteNonQuery();
 
-            //return Content("Se registró al usuario: "+user.Username+", Nombres: "+user.Nombres+", Apellidos: "+user.Apellidos+", Email: "+user.Email+", Contraseña: "+user.Contrasena+", Fecha de nacimiento: "+user.Fecha_Nacimiento+", Pais: "+user.Pais);
-            
-            /*if (ModelState.IsValid)            {
+            try
+            {
+                if (n > 0)
+                {
+                    ViewBag.Message = "¡Registro exitoso!";
+                    ViewBag.MessageType = "success-message";
 
-                ViewBag.Message = "¡Registro exitoso!";
+                    con.Close();
+                    return View("Menu");
+                }
+                else
+                {
+                    ViewBag.Message = "¡Ocurrió un error!";
+                    ViewBag.MessageType = "error-message";
+
+                    con.Close();
+                    return View();
+                }
+            }
+            catch
+            {
+                ViewBag.Message = "Se produjo un error";
+                ViewBag.MessageType = "error-message";
+
+                con.Close();
                 return View();
             }
-            else
-                return View(user);*/
         }
-
+        
     }
 }

@@ -1,9 +1,6 @@
-﻿@model IPC2_P1.Models.Usuario
-
-@{
-
+﻿@{
     ViewBag.Title = "Login";
-    Layout = "~/Views/Shared/_Layout_NoNav.cshtml";
+    Layout = "~/Views/Shared/_Layout_no_nav.cshtml";
 }
 
 <!DOCTYPE html>
@@ -11,7 +8,7 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta http-equiv="“X-UA-Compatible”" content="“IE" ="edge”" />
+    <meta http-equiv="“X-UA-Compatible”" content="'IE' ='edge'" />
 </head>
 
 <body>
@@ -31,24 +28,22 @@
                                     <div class="form-wrap">
                                         <div class="fname floating-label">
                                             <input type="text"
-                                                   value="@Model.Username"
                                                    required
                                                    class="floating-input"
-                                                   name="username" />
-                                            <label for="username">Usuario</label>
+                                                   name="Username" />
+                                            <label for="Username">Usuario</label>
                                         </div>
                                         <div class="fname floating-label">
                                             <input type="password"
-                                                   value="@Model.Contraseña"
                                                    required
                                                    class="floating-input"
-                                                   name="password" />
-                                            <label for="password">Contraseña</label>
+                                                   name="Contraseña" />
+                                            <label for="Contraseña">Contraseña</label>
                                         </div>
 
                                         <div class="bannet-cta">
                                             <div class="cta-1">
-                                                <input type="submit" value="Iniciar sesión" />  <div class="error-message">@Html.Raw(ViewBag.Message)</div>
+                                                <input type="submit" value="Iniciar sesión" />
                                             </div>
                                             <div class="cta-2">
                                                 <a href="~/Home/Registro">Regístrate</a>

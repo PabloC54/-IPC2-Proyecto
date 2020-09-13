@@ -11489,7 +11489,13 @@ body.menu-active #Header .logo {
 #Header .login_btn {
     padding: 20px 10px;
     border: 2px double white;
-    text-align-last:center;
+    text-align-last: center;
+}
+
+#Header .user-logged {
+    padding: 20px 10px;
+    border: 2px double white;
+    text-align-last: center;
 }
 
     #Header .login_btn:hover {
@@ -11509,12 +11515,12 @@ body.menu-active #Header .logo {
 }
 
 .xml-save-row {
-    margin: 150px 28%;
+    margin: 200px 28%;
     position: absolute;
 }
 
 .xml-load-row {
-    margin: 180px 28%;
+    margin: 120px 28%;
     position: absolute;
 }
 
@@ -11572,6 +11578,12 @@ body.menu-active #Header .logo {
     border: 2px double white;
 }
 
+#xml-cargar {
+    color: gray;
+    border-color: gray;
+}
+
+
     .xmlbtn:hover {
         cursor: pointer;
         background: rgba(255, 255, 255, 0.20);
@@ -11581,9 +11593,27 @@ body.menu-active #Header .logo {
         cursor: pointer;
     }
 
-.succes-message {
-    color: #19af83;
+#message i {
+    margin-left: 100px;
 }
+#message i:hover {
+    cursor:pointer;
+}
+
+.neutral-message {
+    background-color: dodgerblue;
+    text-align:center;
+    color: white;
+}
+
+.succes-message {
+    background-color: limegreen;
+    text-align: center;
+    color: white;
+}
+
 .error-message {
-    color: #b51818;
+    background-color: #dc3545;
+    text-align: center;
+    color: white;
 }

@@ -1,6 +1,6 @@
 ﻿@{
     ViewBag.Title = "Registro";
-    Layout = "~/Views/Shared/_Layout_NoNav.cshtml";
+    Layout = "~/Views/Shared/_Layout_no_nav.cshtml";
 }
 
 <!DOCTYPE html>
@@ -269,6 +269,7 @@
                                         <div class="fname floating-label">
                                             <input type="text"
                                                    required
+                                                   maxlength="30"
                                                    class="floating-input"
                                                    name="Nombres" />
                                             <label for="Nombres">Nombres</label>
@@ -276,6 +277,7 @@
                                         <div class="fname floating-label">
                                             <input type="text"
                                                    required
+                                                   maxlength="30"
                                                    class="floating-input"
                                                    name="Apellidos" />
                                             <label for="Apellidos">Apellidos</label>
@@ -283,6 +285,7 @@
                                         <div class="fname floating-label">
                                             <input type="text"
                                                    required
+                                                   maxlength="20"
                                                    class="floating-input"
                                                    name="Username" />
                                             <label for="Username">Username</label>
@@ -290,6 +293,7 @@
                                         <div class="fname floating-label">
                                             <input type="email"
                                                    required
+                                                   maxlength="50"
                                                    class="floating-input"
                                                    name="Email" />
                                             <label for="Email">Correo electrónico</label>
@@ -297,6 +301,7 @@
                                         <div class="fname floating-label">
                                             <input type="password"
                                                    required
+                                                   maxlength="30"
                                                    class="floating-input"
                                                    name="Contraseña" />
                                             <label for="Contraseña">Contraseña</label>
@@ -304,6 +309,7 @@
                                         <div class="fname floating-label">
                                             <input type="password"
                                                    required
+                                                   maxlength="30"
                                                    class="floating-input"
                                                    name="password" />
                                             <label for="password">Confirmar contraseña</label>
