@@ -26,7 +26,6 @@
             ids.forEach(celda)
         }
 
-
         function celda(id) {
             if (document.getElementById("I_" + id).value == "blanco")
                 document.getElementById(id).style.backgroundImage = "url('../wwwroot/images/ficha_b.jpg')";
@@ -40,17 +39,7 @@
                 document.getElementById(id).style.backgroundImage = "url('../wwwroot/images/ficha_b.jpg')";
                 document.getElementById("I_" + id).value = "blanco";
             }
-        }      
-
-        function archivo_cargado() {
-            document.getElementById("xml-cargar").disabled = false;
-            document.getElementById("xml-cargar").color = white;
-            document.getElementById("xml-cargar").border-color = white;
-
-            document.getElementById("xml-guardar").disabled = true;
-            document.getElementById("xml-guardar").color = gray;
-            document.getElementById("xml-guardar").border-color = gray;
-        }
+        }              
 
     </script>
 </head>
@@ -61,8 +50,8 @@
         <form action="/Game/Solo" method="post" enctype="multipart/form-data">
             <div class="row xml-load-row">
                 <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 col-xl-12">
-                    <input class="xmlbtn" type="file" name="archivo" accept=".xml" onclick="archivo_cargado()">
-                    <button class="xmlbtn" id="xml-cargar" type="submit" disabled>  Cargar archivo XML.. </button>
+                    <input class="xmlbtn" type="file" name="archivo" accept=".xml">
+                    <button class="xmlbtn" id="xml-cargar" type="submit">  Cargar archivo XML.. </button>
                 </div>
             </div>
         </form>

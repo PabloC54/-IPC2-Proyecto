@@ -11578,12 +11578,6 @@ body.menu-active #Header .logo {
     border: 2px double white;
 }
 
-#xml-cargar {
-    color: gray;
-    border-color: gray;
-}
-
-
     .xmlbtn:hover {
         cursor: pointer;
         background: rgba(255, 255, 255, 0.20);
