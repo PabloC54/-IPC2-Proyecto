@@ -29,7 +29,6 @@ usuario_anfitrion varchar(20) not null,
 registro_torneo varchar(10) not null)
 
 create table Registro_Torneo(
-idRegistro_Torneo varchar(10) primary key not null,
 usuario varchar(20) not null,
 nombre_torneo varchar(10) not null)
 
@@ -53,8 +52,6 @@ alter table Partida add foreign key (numero_ronda) references Ronda(numero_ronda
 alter table Registro_Torneo add foreign key (usuario) references Usuario(username)
 
 alter table Registro_Torneo add foreign key (nombre_torneo) references Torneo(nombre_torneo)
-
-/*añadir al DER*/ alter table Torneo add foreign key (registro_torneo) references Registro_Torneo(idRegistroTorneo)
 
 alter table Ronda add foreign key (nombre_torneo) references Torneo(nombre_torneo)
 

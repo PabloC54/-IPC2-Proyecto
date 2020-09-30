@@ -52,6 +52,15 @@
             document.getElementById("message").style.display = "none";
         }
 
+        function toggle_menu(id) {
+            if (document.getElementById(id).style.display == "block") {
+                document.getElementById(id).style.display = "none";
+            }
+            else {
+                document.getElementById(id).style.display = "block";
+            }
+        }
+
     </script>
 
 </head>
@@ -68,15 +77,40 @@
                             <a href="~/Home/Menu" class="logo">Othello</a>
                         </div>
                     </div>
+
                     <div class="col-xs-4 col-sm-4 col-md-4 col-lg-2 col-xl-2 op">
-                        <a href="~/Game/Solo"><i class="fa fa-arrow-right" aria-hidden="true"></i>     Solo</a>
+                        <a href="#" onclick="toggle_menu('Menu_solo')"><i class="fa fa-arrow-right" aria-hidden="true"></i>     Solo</a>
+                        <div id="Menu_solo">
+                            <ul>
+                                <li id="f_b"><a href="~/Game/Solo" class="subop" onclick="">Ficha blanca</a></li>
+                                <li id="f_n"><a href="~/Game/Solo" class="subop" onclick="">Ficha negra</a></li>
+                                <li id="f_a"><a href="~/Game/Solo" class="subop" onclick="">Ficha aleatoria</a></li>
+                            </ul>
+                        </div>
                     </div>
+
                     <div class="col-xs-4 col-sm-4 col-md-4 col-lg-2 col-xl-2 op">
-                        <a href="~/Game/Versus"><i class="fa fa-arrow-right" aria-hidden="true"></i>     Versus</a>
+                        <a href="#" onclick="toggle_menu('Menu_versus')"><i class="fa fa-arrow-right" aria-hidden="true"></i>     Versus</a>
+                        <div id="Menu_versus">
+                            <ul>
+                                <li id="f_b"><a href="~/Game/Versus" class="subop" onclick="">Ficha blanca</a></li>
+                                <li id="f_n"><a href="~/Game/Versus" class="subop" onclick="">Ficha negra</a></li>
+                                <li id="f_a"><a href="~/Game/Versus" class="subop" onclick="">Ficha aleatoria</a></li>
+                            </ul>
+                        </div>
                     </div>
+
                     <div class="col-xs-4 col-sm-4 col-md-4 col-lg-2 col-xl-2 op">
-                        <a href="~/Game/Torneos"><i class="fa fa-arrow-right" aria-hidden="true"></i>     Torneo</a>
+                        <a href="#" onclick="toggle_menu('Menu_torneos')"><i class="fa fa-arrow-right" aria-hidden="true"></i>     Torneo</a>
+                        <div id="Menu_torneos">
+                            <ul>
+                                <li id="f_b"><a href="~/Game/Torneos" class="subop" onclick="">Ficha blanca</a></li>
+                                <li id="f_n"><a href="~/Game/Torneos" class="subop" onclick="">Ficha negra</a></li>
+                                <li id="f_a"><a href="~/Game/Torneos" class="subop" onclick="">Ficha aleatoria</a></li>
+                            </ul>
+                        </div>
                     </div>
+
                     <div class="col-xs-4 col-sm-4 col-md-4 col-lg-2 col-xl-2 op user-logged">
                         <a href="#">  @Globals.usuario_activo</a>
                     </div>

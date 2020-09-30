@@ -91,7 +91,7 @@ namespace IPC2_P1.Controllers
 
             con.Open();
 
-            string txt= "insert into Usuario values ('" + user.Username + "','" + user.Nombres + "','" + user.Apellidos + "','" + user.Email + "','" + user.Contraseña + "','"+user.Fecha_Nacimiento.ToString("yyyy-MM-dd")+"','" + user.Pais + "',1)";
+            string txt= "insert into Usuario values ('" + user.Username + "','" + user.Nombres + "','" + user.Apellidos + "','" + user.Email + "','" + user.Contraseña + "','"+user.Fecha_Nacimiento.ToString("yyyy-MM-dd")+"','" + user.Pais + "',1); insert into Reporte values ('" + user.Username + "', 0, 0, 0)";
             SqlCommand cmd = new SqlCommand(txt,con);
 
             int n = cmd.ExecuteNonQuery();

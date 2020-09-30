@@ -8,6 +8,16 @@ namespace IPC2_P1.Controllers
 {
     public class GameController : Controller
     {
+
+        public ActionResult GetMessage()
+        {
+            string message = "Welcome";
+            return new JsonResult { Data = message, JsonRequestBehavior = JsonRequestBehavior.AllowGet };
+        }
+
+
+
+
         public ActionResult Solo()
         {
             if (Globals.logged_in == true)
@@ -17,27 +27,6 @@ namespace IPC2_P1.Controllers
                     E4 = "negro",
                     D5 = "negro",
                     E5 = "blanco"});
-            }
-            else
-            {
-                ViewBag.Message = "Primero debes iniciar sesión";
-                ViewBag.MessageType = "error-message";
-
-                return View("../Home/Login");
-            }
-        }
-
-        public ActionResult Versus()
-        {
-            if (Globals.logged_in == true)
-            {
-                return View(new Tablero
-                {
-                    D4 = "blanco",
-                    E4 = "negro",
-                    D5 = "negro",
-                    E5 = "blanco"
-                });
             }
             else
             {
@@ -59,12 +48,34 @@ namespace IPC2_P1.Controllers
                 WriteXML(ToArray(tablero));
                 return View(tablero);
             }
-        }   
+        } 
 
+        public ActionResult Versus()
+        {
+            if (Globals.logged_in == true)
+            {
+                Tablero tablero = new Tablero
+                {
+                    D4 = "blanco",
+                    D5 = "negro",
+                    E4 = "blanco",
+                    E5 = "negro"
+                };
+
+                return View(tablero);
+            }
+            else
+            {
+                ViewBag.Message = "Primero debes iniciar sesión";
+                ViewBag.MessageType = "error-message";
+
+                return View("../Home/Login");
+            }
+        }
+      
         //CARGAR TABLERO
         public Tablero ReadXML(HttpPostedFileBase archivo)
         {
-
             string result = string.Empty;
             using (BinaryReader b = new BinaryReader(archivo.InputStream))   // FUENTE: https://stackoverflow.com/questions/16030034/asp-net-mvc-read-file-from-httppostedfilebase-without-save/16030326
             {
@@ -74,80 +85,159 @@ namespace IPC2_P1.Controllers
 
             XmlDocument doc = new XmlDocument();
             doc.LoadXml(result);
+            
+            string[] Ids=new string[64];
+            foreach(XmlNode nodo in doc.SelectNodes("tablero")[0].SelectNodes("ficha"))
+            {
+                int pos=0;
+
+                switch (nodo.ChildNodes[2].InnerText)
+                {
+                    case "1":
+                        pos = 0;
+                        break;
+
+                    case "2":
+                        pos = 8;
+                        break;
+
+                    case "3":
+                        pos = 16;
+                        break;
+
+                    case "4":
+                        pos = 24;
+                        break;
+
+                    case "5":
+                        pos = 32;
+                        break;
+
+                    case "6":
+                        pos = 40;
+                        break;
+
+                    case "7":
+                        pos = 48;
+                        break;
+
+                    case "8":
+                        pos = 56;
+                        break;
+
+                }
+
+                switch (nodo.ChildNodes[1].InnerText)
+                {
+                    case "A":
+                        break;
+
+                    case "B":
+                        pos += 1;
+                        break;
+
+                    case "C":
+                        pos += 2;
+                        break;
+
+                    case "D":
+                        pos += 3;
+                        break;
+
+                    case "E":
+                        pos += 4;
+                        break;
+
+                    case "F":
+                        pos += 5;
+                        break;
+
+                    case "G":
+                        pos += 6;
+                        break;
+
+                    case "H":
+                        pos += 7;
+                        break;
+
+                }
+
+                Ids[pos] = nodo.ChildNodes[0].InnerText;
+            }
 
             Tablero tablero_cargado = new Tablero
             {
-                A1 = doc.ChildNodes[1].ChildNodes[0].ChildNodes[0].InnerText,
-                B1 = doc.ChildNodes[1].ChildNodes[1].ChildNodes[0].InnerText,
-                C1 = doc.ChildNodes[1].ChildNodes[2].ChildNodes[0].InnerText,
-                D1 = doc.ChildNodes[1].ChildNodes[3].ChildNodes[0].InnerText,
-                E1 = doc.ChildNodes[1].ChildNodes[4].ChildNodes[0].InnerText,
-                F1 = doc.ChildNodes[1].ChildNodes[5].ChildNodes[0].InnerText,
-                G1 = doc.ChildNodes[1].ChildNodes[6].ChildNodes[0].InnerText,
-                H1 = doc.ChildNodes[1].ChildNodes[7].ChildNodes[0].InnerText,
+                A1 = Ids[0],
+                B1 = Ids[1],
+                C1 = Ids[2],
+                D1 = Ids[3],
+                E1 = Ids[4],
+                F1 = Ids[5],
+                G1 = Ids[6],
+                H1 = Ids[7],
+ 
+                A2 = Ids[8],
+                B2 = Ids[9],
+                C2 = Ids[10],
+                D2 = Ids[11],
+                E2 = Ids[12],
+                F2 = Ids[13],
+                G2 = Ids[14],
+                H2 = Ids[15],
 
-                A2 = doc.ChildNodes[1].ChildNodes[8].ChildNodes[0].InnerText,
-                B2 = doc.ChildNodes[1].ChildNodes[9].ChildNodes[0].InnerText,
-                C2 = doc.ChildNodes[1].ChildNodes[10].ChildNodes[0].InnerText,
-                D2 = doc.ChildNodes[1].ChildNodes[11].ChildNodes[0].InnerText,
-                E2 = doc.ChildNodes[1].ChildNodes[12].ChildNodes[0].InnerText,
-                F2 = doc.ChildNodes[1].ChildNodes[13].ChildNodes[0].InnerText,
-                G2 = doc.ChildNodes[1].ChildNodes[14].ChildNodes[0].InnerText,
-                H2 = doc.ChildNodes[1].ChildNodes[15].ChildNodes[0].InnerText,
+                A3 = Ids[16],
+                B3 = Ids[17],
+                C3 = Ids[18],
+                D3 = Ids[19],
+                E3 = Ids[20],
+                F3 = Ids[21],
+                G3 = Ids[22],
+                H3 = Ids[23],
 
-                A3 = doc.ChildNodes[1].ChildNodes[16].ChildNodes[0].InnerText,
-                B3 = doc.ChildNodes[1].ChildNodes[17].ChildNodes[0].InnerText,
-                C3 = doc.ChildNodes[1].ChildNodes[18].ChildNodes[0].InnerText,
-                D3 = doc.ChildNodes[1].ChildNodes[19].ChildNodes[0].InnerText,
-                E3 = doc.ChildNodes[1].ChildNodes[20].ChildNodes[0].InnerText,
-                F3 = doc.ChildNodes[1].ChildNodes[21].ChildNodes[0].InnerText,
-                G3 = doc.ChildNodes[1].ChildNodes[22].ChildNodes[0].InnerText,
-                H3 = doc.ChildNodes[1].ChildNodes[23].ChildNodes[0].InnerText,
+                A4 = Ids[24],
+                B4 = Ids[25],
+                C4 = Ids[26],
+                D4 = Ids[27],
+                E4 = Ids[28],
+                F4 = Ids[29],
+                G4 = Ids[30],
+                H4 = Ids[31],
 
-                A4 = doc.ChildNodes[1].ChildNodes[24].ChildNodes[0].InnerText,
-                B4 = doc.ChildNodes[1].ChildNodes[25].ChildNodes[0].InnerText,
-                C4 = doc.ChildNodes[1].ChildNodes[26].ChildNodes[0].InnerText,
-                D4 = doc.ChildNodes[1].ChildNodes[27].ChildNodes[0].InnerText,
-                E4 = doc.ChildNodes[1].ChildNodes[28].ChildNodes[0].InnerText,
-                F4 = doc.ChildNodes[1].ChildNodes[29].ChildNodes[0].InnerText,
-                G4 = doc.ChildNodes[1].ChildNodes[30].ChildNodes[0].InnerText,
-                H4 = doc.ChildNodes[1].ChildNodes[31].ChildNodes[0].InnerText,
+                A5 = Ids[32],
+                B5 = Ids[33],
+                C5 = Ids[34],
+                D5 = Ids[35],
+                E5 = Ids[36],
+                F5 = Ids[37],
+                G5 = Ids[38],
+                H5 = Ids[39],
 
-                A5 = doc.ChildNodes[1].ChildNodes[32].ChildNodes[0].InnerText,
-                B5 = doc.ChildNodes[1].ChildNodes[33].ChildNodes[0].InnerText,
-                C5 = doc.ChildNodes[1].ChildNodes[34].ChildNodes[0].InnerText,
-                D5 = doc.ChildNodes[1].ChildNodes[35].ChildNodes[0].InnerText,
-                E5 = doc.ChildNodes[1].ChildNodes[36].ChildNodes[0].InnerText,
-                F5 = doc.ChildNodes[1].ChildNodes[37].ChildNodes[0].InnerText,
-                G5 = doc.ChildNodes[1].ChildNodes[38].ChildNodes[0].InnerText,
-                H5 = doc.ChildNodes[1].ChildNodes[39].ChildNodes[0].InnerText,
+                A6 = Ids[40],
+                B6 = Ids[41],
+                C6 = Ids[42],
+                D6 = Ids[43],
+                E6 = Ids[44],
+                F6 = Ids[45],
+                G6 = Ids[46],
+                H6 = Ids[47],
 
-                A6 = doc.ChildNodes[1].ChildNodes[40].ChildNodes[0].InnerText,
-                B6 = doc.ChildNodes[1].ChildNodes[41].ChildNodes[0].InnerText,
-                C6 = doc.ChildNodes[1].ChildNodes[42].ChildNodes[0].InnerText,
-                D6 = doc.ChildNodes[1].ChildNodes[43].ChildNodes[0].InnerText,
-                E6 = doc.ChildNodes[1].ChildNodes[44].ChildNodes[0].InnerText,
-                F6 = doc.ChildNodes[1].ChildNodes[45].ChildNodes[0].InnerText,
-                G6 = doc.ChildNodes[1].ChildNodes[46].ChildNodes[0].InnerText,
-                H6 = doc.ChildNodes[1].ChildNodes[47].ChildNodes[0].InnerText,
+                A7 = Ids[48],
+                B7 = Ids[49],
+                C7 = Ids[50],
+                D7 = Ids[51],
+                E7 = Ids[52],
+                F7 = Ids[53],
+                G7 = Ids[54],
+                H7 = Ids[55],
 
-                A7 = doc.ChildNodes[1].ChildNodes[48].ChildNodes[0].InnerText,
-                B7 = doc.ChildNodes[1].ChildNodes[49].ChildNodes[0].InnerText,
-                C7 = doc.ChildNodes[1].ChildNodes[50].ChildNodes[0].InnerText,
-                D7 = doc.ChildNodes[1].ChildNodes[51].ChildNodes[0].InnerText,
-                E7 = doc.ChildNodes[1].ChildNodes[52].ChildNodes[0].InnerText,
-                F7 = doc.ChildNodes[1].ChildNodes[53].ChildNodes[0].InnerText,
-                G7 = doc.ChildNodes[1].ChildNodes[54].ChildNodes[0].InnerText,
-                H7 = doc.ChildNodes[1].ChildNodes[55].ChildNodes[0].InnerText,
-
-                A8 = doc.ChildNodes[1].ChildNodes[56].ChildNodes[0].InnerText,
-                B8 = doc.ChildNodes[1].ChildNodes[57].ChildNodes[0].InnerText,
-                C8 = doc.ChildNodes[1].ChildNodes[58].ChildNodes[0].InnerText,
-                D8 = doc.ChildNodes[1].ChildNodes[59].ChildNodes[0].InnerText,
-                E8 = doc.ChildNodes[1].ChildNodes[60].ChildNodes[0].InnerText,
-                F8 = doc.ChildNodes[1].ChildNodes[61].ChildNodes[0].InnerText,
-                G8 = doc.ChildNodes[1].ChildNodes[62].ChildNodes[0].InnerText,
-                H8 = doc.ChildNodes[1].ChildNodes[63].ChildNodes[0].InnerText
+                A8 = Ids[56],
+                B8 = Ids[57],
+                C8 = Ids[58],
+                D8 = Ids[59],
+                E8 = Ids[60],
+                F8 = Ids[61],
+                G8 = Ids[62],
+                H8 = Ids[63]
             };
             
             return tablero_cargado;
@@ -157,13 +247,14 @@ namespace IPC2_P1.Controllers
         //GUARDAR TABLERO
         public void WriteXML(string[][] tablero)
         {
+            XmlTextWriter writer = null;
+
             int num = 1;
-            /*while (System.IO.File.Exists("~/wwwroot/xml/tablero" + num + ".xml") == true)
+            while (System.IO.File.Exists("C:/Users/pablo/Downloads/archivo" + num + ".xml") == true)
             {
                 num += 1;
-            }*/
-            //string directorio = Directory.GetCurrentDirectory("~/wwwroot/");
-            XmlTextWriter writer = null;
+            }
+
             writer = new XmlTextWriter("C:/Users/pablo/Downloads/archivo" + num + ".xml", null);
 
             writer.WriteStartDocument();
@@ -174,17 +265,21 @@ namespace IPC2_P1.Controllers
 
             for (int i = 0; i < 64; i++)
             {
-                writer.WriteStartElement("ficha");
-                writer.WriteStartElement("color");
-                writer.WriteString(tablero[i][0]); //COLOR
-                writer.WriteEndElement();
-                writer.WriteStartElement("columna");
-                writer.WriteString(tablero[i][1]);//COLUMNA
-                writer.WriteEndElement();
-                writer.WriteStartElement("fila");
-                writer.WriteString(tablero[i][2]);//FILA
-                writer.WriteEndElement();
-                writer.WriteEndElement();
+                if (tablero[i][0]=="blanco" || tablero[i][0] == "negro")
+                {
+
+                    writer.WriteStartElement("ficha");
+                    writer.WriteStartElement("color");
+                    writer.WriteString(tablero[i][0]); //COLOR
+                    writer.WriteEndElement();
+                    writer.WriteStartElement("columna");
+                    writer.WriteString(tablero[i][1]);//COLUMNA
+                    writer.WriteEndElement();
+                    writer.WriteStartElement("fila");
+                    writer.WriteString(tablero[i][2]);//FILA
+                    writer.WriteEndElement();
+                    writer.WriteEndElement();
+                }
             }
 
             writer.WriteStartElement("siguienteTiro");
