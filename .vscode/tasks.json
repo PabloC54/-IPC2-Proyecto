@@ -4,36 +4,6 @@
 	"version": "2.0.0",
 	"tasks": [
 		{
-			"label": "Build & Run Server",
-			"dependsOrder": "sequence",
-			"group": "build",
-			"dependsOn": ["Build ASP.NET", "Run IIS EXPRESS"]
-		},
-		{
-			"type": "shell",
-			"label": "Build ASP.NET",
-			"group": "build",
-			"presentation": {
-				"echo": true,
-				"reveal": "always",
-				"focus": false,
-				"panel": "shared",
-				"showReuseMessage": true,
-				"clear": true
-			},
-			"args": [
-				"-p:Configuration=Debug;DebugType=portable;PlatformTarget=Any CPU",
-				// Ask msbuild to generate full paths for file names.
-				"/property:GenerateFullPaths=true"
-			],
-			"windows": {
-				// change according your msbuild location
-				"command": "C:\\Program Files (x86)\\Microsoft Visual Studio\\2017\\Community\\MSBuild\\15.0\\Bin\\amd64\\MSBuild.exe"
-			},
-			// Use the standard MS compiler pattern to detect errors, warnings and infos
-			"problemMatcher": "$msCompile"
-		},
-		{
 			"type": "shell",
 			"label": "Run IIS EXPRESS",
 			"group": "build",
@@ -41,11 +11,9 @@
 				"command": "C:\\Program Files\\IIS Express\\iisexpress.exe"
 			},
 			"args": [
-				// change according your project folder and desired port
 				"/path:${workspaceRoot}\\Project",
-				"/port:59010"
+				"/port:8000"
 			],
-			// Show the iisexpress output always.
 			"presentation": {
 				"echo": true,
 				"reveal": "always",
@@ -53,7 +21,8 @@
 				"panel": "shared",
 				"showReuseMessage": true,
 				"clear": false
-			}
+			},
+			"problemMatcher": []
 		}
 	]
 }

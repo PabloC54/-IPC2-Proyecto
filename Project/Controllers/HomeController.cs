@@ -9,9 +9,9 @@ namespace IPC2_P1.Controllers
         public static string sql = "Data Source=PCP-PC;Initial Catalog=Othello_db;User ID=pabloc54;Password=pepe3343";
         public SqlConnection con = new SqlConnection(sql);
 
-        public ActionResult Index()
+        public RedirectToRouteResult Index()
         {
-            return View("Menu");
+            return RedirectToAction("Menu","Home");
         }
 
         public ActionResult Menu()
@@ -28,7 +28,7 @@ namespace IPC2_P1.Controllers
             {
                 ViewBag.Message = "Sesión iniciada como <b>" + Globals.usuario_activo + "</b>";
                 ViewBag.MessageType = "neutral-message";
-                return View("Menu");
+                return RedirectToAction("Menu", "Home");
             }
             else
             {
@@ -57,7 +57,7 @@ namespace IPC2_P1.Controllers
                     ViewBag.MessageType = "neutral-message";
 
                     con.Close();
-                    return View("Menu");
+                    return RedirectToAction("Menu", "Home");
                 }
                 else
                 {
@@ -104,7 +104,7 @@ namespace IPC2_P1.Controllers
                     ViewBag.MessageType = "success-message";
 
                     con.Close();
-                    return View("Menu");
+                    return RedirectToAction("Menu", "Home");
                 }
                 else
                 {

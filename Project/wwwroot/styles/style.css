@@ -11564,9 +11564,11 @@ body.menu-active #Header .logo {
     background-image: none;
     background-repeat: no-repeat;
     background-size: contain;
+    background-color: unset;
+    border: thick;
 }
 
-    .celda input {
+    .celda + input {
         display: none;
     }
 

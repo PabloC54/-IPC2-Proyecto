@@ -8,47 +8,41 @@ namespace IPC2_P1.Controllers
 {
     public class GameController : Controller
     {
+               
+        // SOLO
 
-        public ActionResult GetMessage()
-        {
-            string message = "Welcome";
-            return new JsonResult { Data = message, JsonRequestBehavior = JsonRequestBehavior.AllowGet };
-        }
-
-
-
-
-        public ActionResult Solo()
+        public ActionResult Solo(string ficha_inicial)
         {
             if (Globals.logged_in == true)
             {
-                return View(new Tablero {
-                    D4 = "blanco",
-                    E4 = "negro",
-                    D5 = "negro",
-                    E5 = "blanco"});
+                ViewBag.ficha_inicial = ficha_inicial;
+                return View(new Tablero
+                {
+                    D4 = "blanca",
+                    E4 = "negra",
+                    D5 = "negra",
+                    H5 = "negra",
+                    E5 = "blanca"
+                });
             }
             else
             {
                 ViewBag.Message = "Primero debes iniciar sesión";
                 ViewBag.MessageType = "error-message";
 
-                return View("../Home/Login");
+                return RedirectToAction("Login", "Home");
             }
         }
 
         [HttpPost]
-        public ActionResult Solo(HttpPostedFileBase archivo, Tablero tablero)
+        public ActionResult Solo(HttpPostedFileBase archivo)
         {
-            if (archivo != null) { 
+            if (archivo != null)
                 return View(ReadXML(archivo));
-            }
             else
-            {
-                WriteXML(ToArray(tablero));
-                return View(tablero);
-            }
-        } 
+                return View();
+        }
+
 
         public ActionResult Versus()
         {
@@ -74,6 +68,7 @@ namespace IPC2_P1.Controllers
         }
       
         //CARGAR TABLERO
+
         public Tablero ReadXML(HttpPostedFileBase archivo)
         {
             string result = string.Empty;
@@ -245,17 +240,20 @@ namespace IPC2_P1.Controllers
 
 
         //GUARDAR TABLERO
+        
+        [HttpPost]
+        public ActionResult Descargar(Tablero tablero)
+        {
+            WriteXML(ToArray(tablero));
+            return File("../temp.xml", "text/xml", "partida.xml");
+        }
+
         public void WriteXML(string[][] tablero)
         {
-            XmlTextWriter writer = null;
+            var ruta = Server.MapPath("../temp.xml");
 
-            int num = 1;
-            while (System.IO.File.Exists("C:/Users/pablo/Downloads/archivo" + num + ".xml") == true)
-            {
-                num += 1;
-            }
-
-            writer = new XmlTextWriter("C:/Users/pablo/Downloads/archivo" + num + ".xml", null);
+            XmlTextWriter writer = null;            
+            writer = new XmlTextWriter(ruta, null);
 
             writer.WriteStartDocument();
             writer.Formatting = Formatting.Indented;
@@ -265,7 +263,7 @@ namespace IPC2_P1.Controllers
 
             for (int i = 0; i < 64; i++)
             {
-                if (tablero[i][0]=="blanco" || tablero[i][0] == "negro")
+                if (tablero[i][0]=="blanca" || tablero[i][0] == "negra")
                 {
 
                     writer.WriteStartElement("ficha");
@@ -371,5 +369,33 @@ namespace IPC2_P1.Controllers
 
             return array;
         }
+
+
+        //LÓGICA DEL TABLERO
+
+        [HttpGet]
+        public ActionResult Foo(string id)
+        {
+            var tablero = new Tablero { E7="blanca"};
+            
+            return Json(tablero, JsonRequestBehavior.AllowGet);
+        }
+
+        [HttpGet]
+        public ActionResult getMessage()
+        {
+
+            string message = "negra";
+            return new JsonResult { Data = message, JsonRequestBehavior = JsonRequestBehavior.AllowGet };
+        }
+
+        [HttpGet]
+        public ActionResult ActualizarTablero()
+        {
+
+            string message = "blanca";
+            return new JsonResult { Data = message, JsonRequestBehavior = JsonRequestBehavior.AllowGet };
+        }
+
     }
 }
