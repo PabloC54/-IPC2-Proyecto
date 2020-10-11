@@ -1,21 +1,40 @@
-﻿@model List<Ficha>
+﻿@model IPC2_P1.Models.Tablero
 @{
-    ViewBag.Title = "Solo";
+    ViewBag.Title = "Prueba";
     Layout = "~/Views/Shared/_Layout_logged_in_no_nav.cshtml";
     string Turno_actual = "";
 
-    string[] ids = {
-"A1", "B1", "C1", "D1", "E1", "F1", "G1", "H1",
+
+
+    string[] ids = {"A1", "B1", "C1", "D1", "E1", "F1", "G1", "H1",
 "A2", "B2", "C2", "D2", "E2", "F2", "G2", "H2",
 "A3", "B3", "C3", "D3", "E3", "F3", "G3", "H3",
 "A4", "B4", "C4", "D4", "E4", "F4", "G4", "H4",
 "A5", "B5", "C5", "D5", "E5", "F5", "G5", "H5",
 "A6", "B6", "C6", "D6", "E6", "F6", "G6", "H6",
 "A7", "B7", "C7", "D7", "E7", "F7", "G7", "H7",
-"A8", "B8", "C8", "D8", "E8", "F8", "G8", "H8"};
+"A8", "B8", "C8", "D8", "E8", "F8", "G8", "H8" };
 
-    
-    @* EMPIEZA SIEMPRE LA FICHA NEGRA *@
+
+    Model.fichas.RemoveAt(27);
+    Model.fichas.Insert(27, new Ficha("negra"));
+
+
+    switch (ViewBag.ficha_inicial)
+    {
+        case "blanca":
+            Turno_actual = "Oponente";
+            break;
+
+        case "negra":
+            Turno_actual = Globals.usuario_activo;
+            break;
+
+        case "aleatoria":
+            Turno_actual = "Oponente";
+            break;
+    }
+
 }
 
 <!DOCTYPE html>
@@ -41,20 +60,25 @@
 
             if (document.getElementById("I_" + id).value == "blanca") {
                 document.getElementById(id).style.backgroundImage = "url('../wwwroot/images/ficha_b.jpg')";
+                console.log("blanca");
             }
             else
                 if (document.getElementById("I_" + id).value == "negra") {
-                document.getElementById(id).style.backgroundImage = "url('../wwwroot/images/ficha_n.jpg')";
-            }
+                    document.getElementById(id).style.backgroundImage = "url('../wwwroot/images/ficha_n.jpg')";
+                    console.log("negra");
+                }
+                else {
+                    console.log("niuno");
+                }
         }
 
-        function fichaColocada(id, color) {
-            console.log("EL COLOR ES: "+color)
+        function fichaColocada(id) {
+
             if (document.getElementById("I_" + id).value == "") { //NOTA: VALIDAR DE QUIEN ES EL TURNO
-                document.getElementById("I_" + id).value = color;
-                document.getElementById("R_" + id).value = "true";
+                document.getElementById("I_" + id).value = "blanca";
                 actualizar(id);
             }
+
         }
 
 
@@ -64,26 +88,22 @@
 <body onload="ids.forEach(actualizar)">
     <!-- AREA DE JUEGO -->
     <section id="Game">
-        @using (Html.BeginForm("Load", "Game", FormMethod.Post, new { enctype = "multipart/form-data" }))
-        {
-                <div class="row xml-load-row">
-                    <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 col-xl-12">
-                        <input class="xmlbtn" type="file" name="archivo" accept=".xml">
-                        <button class="xmlbtn" id="xml-cargar" type="submit">  Cargar archivo XML.. </button>
-                    </div>
+        <form action="/Game/Solo" method="post" enctype="multipart/form-data">
+            <div class="row xml-load-row">
+                <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 col-xl-12">
+                    <input class="xmlbtn" type="file" name="archivo" accept=".xml">
+                    <button class="xmlbtn" id="xml-cargar" type="submit">  Cargar archivo XML.. </button>
                 </div>
-        }
+            </div>
+        </form>
 
-    @using (Html.BeginForm("Solo", "Game", FormMethod.Post))
-        {
+        <form action="/Game/Descargar" method="post" target="_blank">
+            <div class="row xml-save-row">
+                <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 col-xl-12"><button class="xmlbtn" id="xml-guardar" type="submit">  Guardar archivo XML.. </button></div>
+            </div>
             <asp:UpdatePanel ID="OrdersPanel"
                              UpdateMode="Conditional"
                              runat="server">
-                <div class="row xml-save-row">
-                    <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 col-xl-12">
-                        <button formaction="Descargar" class="xmlbtn" id="xml-guardar" type="submit">  Guardar archivo XML.. </button>
-                    </div>
-                </div>
                 <div class="row">
                     <div id="GameBoard" class="col-xs-12 col-sm-12 col-md-12 col-lg-12 col-xl-12">
                         <div id="GameTable">
@@ -91,34 +111,36 @@
                             @using IPC2_P1.Models
                             @{
                                 int count = 0;
+                                System.Diagnostics.Debug.WriteLine("TAMAÑO: " + @Model.fichas.Count);
 
                                 for (int i = 0; i < 8; i++)
                                 {
+                                    System.Diagnostics.Debug.WriteLine("i: " + i);
 
                                     <div class='row fila'>
 
                                         @for (int j = 0; j < 8; j++)
                                         {
-
-                                            <input type='submit' value="" class='col-xs-1 col-sm-1 col-md-1 col-lg-1 col-xl-1 celda' id='@ids[count]' onclick='fichaColocada("@ids[count]", "@Model[64].valor")' />
-                                            <input type='text' name="[@count].valor" id='I_@ids[count]' value='@Model[count].valor' />
-                                            <input type="text" name="[@count].presionado" id='R_@ids[count]' value="false" style="display:none" />
+                                            System.Diagnostics.Debug.WriteLine("j: " + j);
+                                            <input type='button' class='col-xs-1 col-sm-1 col-md-1 col-lg-1 col-xl-1 celda' id='@ids[count]' onclick='fichaColocada("@ids[count]")' /><input type='text' id='I_@ids[count]' value='@Model.fichas[count].valor' />
                                             count += 1;
+                                            System.Diagnostics.Debug.WriteLine("COUNT: " + count);
                                         }
 
                                     </div>
                                 }
-                                <input type="text" name="[64].valor" value="@Model[64].valor" id="ficha" style="display:none" />
                             }
+
+
                         </div>
                     </div>
                 </div>
-                
 
             </asp:UpdatePanel>
-        }
-            <div id="turno">El turno es de @Turno_actual</div>
-            <!-- FIN DE AREA DE JUEGO -->
-        </section>
-    </body>
+        </form>
+
+        <div id="turno">El turno es de @Turno_actual</div>
+        <!-- FIN DE AREA DE JUEGO -->
+    </section>
+</body>
 </html>

@@ -1,4 +1,5 @@
 ﻿using IPC2_P1.Models;
+using System.Collections.Generic;
 using System.IO;
 using System.Web;
 using System.Web.Mvc;
@@ -8,22 +9,39 @@ namespace IPC2_P1.Controllers
 {
     public class GameController : Controller
     {
-               
-        // SOLO
+        public string[] ids = {"A1", "B1", "C1", "D1", "E1", "F1", "G1", "H1",
+            "A2", "B2", "C2", "D2", "E2", "F2", "G2", "H2",
+            "A3", "B3", "C3", "D3", "E3", "F3", "G3", "H3",
+            "A4", "B4", "C4", "D4", "E4", "F4", "G4", "H4",
+            "A5", "B5", "C5", "D5", "E5", "F5", "G5", "H5",
+            "A6", "B6", "C6", "D6", "E6", "F6", "G6", "H6",
+            "A7", "B7", "C7", "D7", "E7", "F7", "G7", "H7",
+            "A8", "B8", "C8", "D8", "E8", "F8", "G8", "H8" };
+
+        // SOLO, VERSUS, TORNEO
 
         public ActionResult Solo(string ficha_inicial)
         {
             if (Globals.logged_in == true)
             {
-                ViewBag.ficha_inicial = ficha_inicial;
-                return View(new Tablero
+                List<Ficha> tablero = new List<Ficha>();
+
+                int tam=64; // Para diferentes tamaños de tablero
+
+                for (int i = 0; i < tam; i++)
                 {
-                    D4 = "blanca",
-                    E4 = "negra",
-                    D5 = "negra",
-                    H5 = "negra",
-                    E5 = "blanca"
-                });
+                    tablero.Add(new Ficha(""));
+                }
+
+                Reemplazar(tablero, 27, "negra");
+                Reemplazar(tablero, 28, "blanca");
+                Reemplazar(tablero, 35, "blanca");
+                Reemplazar(tablero, 36, "negra");
+                                
+
+                tablero.Add(new Ficha("negra"));              
+                
+                return View(tablero);
             }
             else
             {
@@ -33,43 +51,152 @@ namespace IPC2_P1.Controllers
                 return RedirectToAction("Login", "Home");
             }
         }
+        
+
+        //LÓGICA DEL TABLERO
 
         [HttpPost]
-        public ActionResult Solo(HttpPostedFileBase archivo)
+        public ActionResult Solo(List<Ficha> tablero)
         {
-            if (archivo != null)
-                return View(ReadXML(archivo));
-            else
-                return View();
-        }
+            int index = 0;
+            string color=tablero[64].valor, color_opuesto="";
+            bool izq=false, der=false, sup=false, inf=false;
 
-
-        public ActionResult Versus()
-        {
-            if (Globals.logged_in == true)
+            if (color == "blanca")
             {
-                Tablero tablero = new Tablero
+                color_opuesto = "negra";
+                Reemplazar(tablero, 64, "negra");
+            }
+            else
+            {
+                color_opuesto = "blanca";
+                Reemplazar(tablero, 64, "blanca");
+            }
+
+            // RECONOCIMIENTO DE LA FICHA SELECCIONADA
+            for (int i = 0; i < tablero.Count; i++)
+            {
+                if (tablero[i].presionado == "true")
                 {
-                    D4 = "blanco",
-                    D5 = "negro",
-                    E4 = "blanco",
-                    E5 = "negro"
-                };
-
-                return View(tablero);
+                    System.Diagnostics.Debug.WriteLine("FICHA EN: " +i);
+                    index = i;
+                    izq = (index - 1 >= 0)&& (index/8==(index-1)/8);
+                    der = (index + 1 < 64)&& (index/8==(index+1)/8);
+                    sup = (index - 8 >= 0);
+                    inf = (index + 8 < 64);                                 
+                }
             }
-            else
+
+            // FICHA A LA IZQUIERDA
+            if (izq)
             {
-                ViewBag.Message = "Primero debes iniciar sesión";
-                ViewBag.MessageType = "error-message";
-
-                return View("../Home/Login");
+                if (tablero[index - 1].valor == color_opuesto)
+                {
+                    izq = (index - 2 >= 0) && (index / 8 == (index - 2) / 8);
+                    if (izq)
+                    {
+                        if (tablero[index - 2].valor == color)
+                        {
+                            Reemplazar(tablero, index - 1, color);
+                        }
+                    }
+                }
             }
+
+            // FICHA A LA DERECHA
+            if (der)
+            {
+                if (tablero[index + 1].valor == color_opuesto)
+                {
+                    int acc = 2;
+
+                    bool salir = false;
+                    while (salir == false)
+                    {
+                        der = (index + acc < 64) && (index / 8 == (index + acc) / 8);
+                        if (der)
+                        {
+                            if (tablero[index + acc].valor == color_opuesto)
+                            {
+                                Reemplazar(tablero, index + acc-1, color);
+
+                            }
+                            else
+                            {
+                                if (tablero[index + acc].valor == color)
+                                {
+                                    //Aqui me quedé
+                                }
+                            }
+                        }
+                        else
+                        {
+                            salir = true;
+                        }
+
+                        acc++;
+                    }
+                }
+            }
+
+            // FICHA SUPERIOR
+            if (sup)
+            {
+                if (tablero[index - 8].valor == color_opuesto)
+                {
+                    sup = (index - 16 >= 0);
+                    if (sup)
+                    {
+                        if (tablero[index - 16].valor == color)
+                        {
+                            Reemplazar(tablero, index - 8, color);
+                        }
+                    }
+                }
+            }
+
+            // FICHA INFERIOR
+            if (inf)
+            {
+                if (tablero[index + 8].valor == color_opuesto)
+                {
+                    inf = (index + 16 < 64);
+                    if (inf)
+                    {
+                        if (tablero[index + 16].valor == color)
+                        {
+                            Reemplazar(tablero, index + 8, color);
+                        }
+                    }
+                }
+            }
+
+
+
+
+            return View(tablero);
         }
-      
+
+        public void Reemplazar(List<Ficha> tablero, int pos, string valor)
+        {
+            System.Diagnostics.Debug.WriteLine("Se reemplazo");
+            tablero.RemoveAt(pos);
+            tablero.Insert(pos, new Ficha(valor));            
+        }
+
+
         //CARGAR TABLERO
 
-        public Tablero ReadXML(HttpPostedFileBase archivo)
+        [HttpPost]
+        public ActionResult Load(HttpPostedFileBase archivo)
+        {
+            if (archivo != null)
+                return View("Solo",ReadXML(archivo));
+            else
+                return View("Solo");
+        }
+
+        public List<Ficha> ReadXML(HttpPostedFileBase archivo)
         {
             string result = string.Empty;
             using (BinaryReader b = new BinaryReader(archivo.InputStream))   // FUENTE: https://stackoverflow.com/questions/16030034/asp-net-mvc-read-file-from-httppostedfilebase-without-save/16030326
@@ -80,48 +207,53 @@ namespace IPC2_P1.Controllers
 
             XmlDocument doc = new XmlDocument();
             doc.LoadXml(result);
+
+            List<Ficha> tablero_cargado = new List<Ficha>();
+
+            int tam = 64; // Para diferentes tamaños de tablero
+            for (int i = 0; i < tam; i++)
+            {
+                tablero_cargado.Add(new Ficha(""));
+            }
             
-            string[] Ids=new string[64];
             foreach(XmlNode nodo in doc.SelectNodes("tablero")[0].SelectNodes("ficha"))
             {
                 int pos=0;
-
                 switch (nodo.ChildNodes[2].InnerText)
                 {
                     case "1":
-                        pos = 0;
+                        pos = 8*0;
                         break;
 
                     case "2":
-                        pos = 8;
+                        pos = 8*1;
                         break;
 
                     case "3":
-                        pos = 16;
+                        pos = 8*2;
                         break;
 
                     case "4":
-                        pos = 24;
+                        pos = 8*3;
                         break;
 
                     case "5":
-                        pos = 32;
+                        pos = 8*4;
                         break;
 
                     case "6":
-                        pos = 40;
+                        pos = 8*5;
                         break;
 
                     case "7":
-                        pos = 48;
+                        pos = 8*6;
                         break;
 
                     case "8":
-                        pos = 56;
+                        pos = 8*7;
                         break;
 
                 }
-
                 switch (nodo.ChildNodes[1].InnerText)
                 {
                     case "A":
@@ -157,98 +289,25 @@ namespace IPC2_P1.Controllers
 
                 }
 
-                Ids[pos] = nodo.ChildNodes[0].InnerText;
+                Reemplazar(tablero_cargado, pos, nodo.ChildNodes[0].InnerText);
             }
-
-            Tablero tablero_cargado = new Tablero
-            {
-                A1 = Ids[0],
-                B1 = Ids[1],
-                C1 = Ids[2],
-                D1 = Ids[3],
-                E1 = Ids[4],
-                F1 = Ids[5],
-                G1 = Ids[6],
-                H1 = Ids[7],
- 
-                A2 = Ids[8],
-                B2 = Ids[9],
-                C2 = Ids[10],
-                D2 = Ids[11],
-                E2 = Ids[12],
-                F2 = Ids[13],
-                G2 = Ids[14],
-                H2 = Ids[15],
-
-                A3 = Ids[16],
-                B3 = Ids[17],
-                C3 = Ids[18],
-                D3 = Ids[19],
-                E3 = Ids[20],
-                F3 = Ids[21],
-                G3 = Ids[22],
-                H3 = Ids[23],
-
-                A4 = Ids[24],
-                B4 = Ids[25],
-                C4 = Ids[26],
-                D4 = Ids[27],
-                E4 = Ids[28],
-                F4 = Ids[29],
-                G4 = Ids[30],
-                H4 = Ids[31],
-
-                A5 = Ids[32],
-                B5 = Ids[33],
-                C5 = Ids[34],
-                D5 = Ids[35],
-                E5 = Ids[36],
-                F5 = Ids[37],
-                G5 = Ids[38],
-                H5 = Ids[39],
-
-                A6 = Ids[40],
-                B6 = Ids[41],
-                C6 = Ids[42],
-                D6 = Ids[43],
-                E6 = Ids[44],
-                F6 = Ids[45],
-                G6 = Ids[46],
-                H6 = Ids[47],
-
-                A7 = Ids[48],
-                B7 = Ids[49],
-                C7 = Ids[50],
-                D7 = Ids[51],
-                E7 = Ids[52],
-                F7 = Ids[53],
-                G7 = Ids[54],
-                H7 = Ids[55],
-
-                A8 = Ids[56],
-                B8 = Ids[57],
-                C8 = Ids[58],
-                D8 = Ids[59],
-                E8 = Ids[60],
-                F8 = Ids[61],
-                G8 = Ids[62],
-                H8 = Ids[63]
-            };
-            
+                       
             return tablero_cargado;
         }
 
 
-        //GUARDAR TABLERO
+        //GUARDAR TABLERO        
         
         [HttpPost]
-        public ActionResult Descargar(Tablero tablero)
+        public ActionResult Descargar(List<Ficha> tablero)
         {
-            WriteXML(ToArray(tablero));
+
+            System.Diagnostics.Debug.WriteLine("PRUEBA: " + tablero.Count);
+            WriteXML(tablero);
             return File("../temp.xml", "text/xml", "partida.xml");
         }
 
-        public void WriteXML(string[][] tablero)
+        public void WriteXML(List<Ficha> tablero)
         {
             var ruta = Server.MapPath("../temp.xml");
 
@@ -261,26 +320,26 @@ namespace IPC2_P1.Controllers
 
             writer.WriteStartElement("tablero");
 
-            for (int i = 0; i < 64; i++)
+            System.Diagnostics.Debug.WriteLine("TAMAÑO 2: " + tablero.Count);
+            for (int i = 0; i < tablero.Count; i++)
             {
-                if (tablero[i][0]=="blanca" || tablero[i][0] == "negra")
+                if (tablero[i].valor=="blanca" || tablero[i].valor == "negra")
                 {
-
                     writer.WriteStartElement("ficha");
                     writer.WriteStartElement("color");
-                    writer.WriteString(tablero[i][0]); //COLOR
+                    writer.WriteString(tablero[i].valor); //COLOR
                     writer.WriteEndElement();
                     writer.WriteStartElement("columna");
-                    writer.WriteString(tablero[i][1]);//COLUMNA
+                    writer.WriteString(ids[i].Substring(0,1));//COLUMNA
                     writer.WriteEndElement();
                     writer.WriteStartElement("fila");
-                    writer.WriteString(tablero[i][2]);//FILA
+                    writer.WriteString(ids[i].Substring(1,1));//FILA
                     writer.WriteEndElement();
                     writer.WriteEndElement();
                 }
             }
 
-            writer.WriteStartElement("siguienteTiro");
+            writer.WriteStartElement("siguienteTiro"); //Poner el siguiente tiro
             writer.WriteStartElement("color");
             writer.WriteString("blanco");
             writer.WriteEndElement();
@@ -289,113 +348,6 @@ namespace IPC2_P1.Controllers
             writer.WriteEndDocument();
             writer.Close();
         }
-
-        public string[][] ToArray(Tablero tablero)
-        {
-            string[][] array =
-            {
-                new string[]{tablero.A1,"A","1"},
-                new string[]{tablero.B1,"B","1"},
-                new string[]{tablero.C1,"C","1"},
-                new string[]{tablero.D1,"D","1"},
-                new string[]{tablero.E1,"E","1"},
-                new string[]{tablero.F1,"F","1"},
-                new string[]{tablero.G1,"G","1"},
-                new string[]{tablero.H1,"H","1"},
-
-                new string[]{tablero.A2,"A","2"},
-                new string[]{tablero.B2,"B","2"},
-                new string[]{tablero.C2,"C","2"},
-                new string[]{tablero.D2,"D","2"},
-                new string[]{tablero.E2,"E","2"},
-                new string[]{tablero.F2,"F","2"},
-                new string[]{tablero.G2,"G","2"},
-                new string[]{tablero.H2,"H","2"},
-
-                new string[]{tablero.A3,"A","3"},
-                new string[]{tablero.B3,"B","3"},
-                new string[]{tablero.C3,"C","3"},
-                new string[]{tablero.D3,"D","3"},
-                new string[]{tablero.E3,"E","3"},
-                new string[]{tablero.F3,"F","3"},
-                new string[]{tablero.G3,"G","3"},
-                new string[]{tablero.H3,"H","3"},
-
-                new string[]{tablero.A4,"A","4"},
-                new string[]{tablero.B4,"B","4"},
-                new string[]{tablero.C4,"C","4"},
-                new string[]{tablero.D4,"D","4"},
-                new string[]{tablero.E4,"E","4"},
-                new string[]{tablero.F4,"F","4"},
-                new string[]{tablero.G4,"G","4"},
-                new string[]{tablero.H4,"H","4"},
-
-                new string[]{tablero.A5,"A","5"},
-                new string[]{tablero.B5,"B","5"},
-                new string[]{tablero.C5,"C","5"},
-                new string[]{tablero.D5,"D","5"},
-                new string[]{tablero.E5,"E","5"},
-                new string[]{tablero.F5,"F","5"},
-                new string[]{tablero.G5,"G","5"},
-                new string[]{tablero.H5,"H","5"},
-
-                new string[]{tablero.A6,"A","6"},
-                new string[]{tablero.B6,"B","6"},
-                new string[]{tablero.C6,"C","6"},
-                new string[]{tablero.D6,"D","6"},
-                new string[]{tablero.E6,"E","6"},
-                new string[]{tablero.F6,"F","6"},
-                new string[]{tablero.G6,"G","6"},
-                new string[]{tablero.H6,"H","6"},
-
-                new string[]{tablero.A7,"A","7"},
-                new string[]{tablero.B7,"B","7"},
-                new string[]{tablero.C7,"C","7"},
-                new string[]{tablero.D7,"D","7"},
-                new string[]{tablero.E7,"E","7"},
-                new string[]{tablero.F7,"F","7"},
-                new string[]{tablero.G7,"G","7"},
-                new string[]{tablero.H7,"H","7"},
-
-                new string[]{tablero.A8,"A","8"},
-                new string[]{tablero.B8,"B","8"},
-                new string[]{tablero.C8,"C","8"},
-                new string[]{tablero.H8,"H","8"},
-                new string[]{tablero.D8,"D","8"},
-                new string[]{tablero.E8,"E","8"},
-                new string[]{tablero.F8,"F","8"},
-                new string[]{tablero.G8,"G","8"},
-            };
-
-            return array;
-        }
-
-
-        //LÓGICA DEL TABLERO
-
-        [HttpGet]
-        public ActionResult Foo(string id)
-        {
-            var tablero = new Tablero { E7="blanca"};
-            
-            return Json(tablero, JsonRequestBehavior.AllowGet);
-        }
-
-        [HttpGet]
-        public ActionResult getMessage()
-        {
-
-            string message = "negra";
-            return new JsonResult { Data = message, JsonRequestBehavior = JsonRequestBehavior.AllowGet };
-        }
-
-        [HttpGet]
-        public ActionResult ActualizarTablero()
-        {
-
-            string message = "blanca";
-            return new JsonResult { Data = message, JsonRequestBehavior = JsonRequestBehavior.AllowGet };
-        }
-
+                
     }
 }
