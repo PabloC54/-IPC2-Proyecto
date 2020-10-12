@@ -18,6 +18,8 @@ namespace IPC2_P1.Controllers
             "A7", "B7", "C7", "D7", "E7", "F7", "G7", "H7",
             "A8", "B8", "C8", "D8", "E8", "F8", "G8", "H8" };
 
+        public string ficha_inicial;
+
         // SOLO, VERSUS, TORNEO
 
         public ActionResult Solo(string ficha_inicial)
@@ -25,22 +27,25 @@ namespace IPC2_P1.Controllers
             if (Globals.logged_in == true)
             {
                 List<Ficha> tablero = new List<Ficha>();
+                this.ficha_inicial = ficha_inicial;
 
                 int tam=64; // Para diferentes tamaños de tablero
 
-                for (int i = 0; i < tam; i++)
-                {
+                for (int i = 0; i < tam; i++)                
                     tablero.Add(new Ficha(""));
-                }
-
-                Reemplazar(tablero, 27, "negra");
-                Reemplazar(tablero, 28, "blanca");
-                Reemplazar(tablero, 35, "blanca");
-                Reemplazar(tablero, 36, "negra");
-                                
-
-                tablero.Add(new Ficha("negra"));              
                 
+        
+                Reemplazar(tablero, 27, "blanca");
+                Reemplazar(tablero, 28, "negra");
+                Reemplazar(tablero, 35, "negra");
+                Reemplazar(tablero, 36, "blanca");                           
+                
+
+                if (ficha_inicial == "blanca")
+                    tablero.Add(new Ficha("negra","Oponente"));
+                else
+                    tablero.Add(new Ficha("negra",Globals.usuario_activo));
+
                 return View(tablero);
             }
             else
@@ -54,134 +59,426 @@ namespace IPC2_P1.Controllers
         
 
         //LÓGICA DEL TABLERO
-
         [HttpPost]
         public ActionResult Solo(List<Ficha> tablero)
         {
-            int index = 0;
+            int index=-1;
             string color=tablero[64].valor, color_opuesto="";
-            bool izq=false, der=false, sup=false, inf=false;
+            bool izq_f = false, der_f = false, sup_f = false, inf_f = false;
 
-            if (color == "blanca")
-            {
-                color_opuesto = "negra";
-                Reemplazar(tablero, 64, "negra");
-            }
-            else
-            {
-                color_opuesto = "blanca";
-                Reemplazar(tablero, 64, "blanca");
-            }
+            List<int> lista = new List<int>();
+
 
             // RECONOCIMIENTO DE LA FICHA SELECCIONADA
+
             for (int i = 0; i < tablero.Count; i++)
             {
                 if (tablero[i].presionado == "true")
                 {
                     System.Diagnostics.Debug.WriteLine("FICHA EN: " +i);
                     index = i;
-                    izq = (index - 1 >= 0)&& (index/8==(index-1)/8);
-                    der = (index + 1 < 64)&& (index/8==(index+1)/8);
-                    sup = (index - 8 >= 0);
-                    inf = (index + 8 < 64);                                 
+
+                    izq_f = (index - 1 >= 0)&& (index/8==(index-1)/8);
+                    der_f = (index + 1 < 64)&& (index/8==(index+1)/8);
+                    sup_f = (index - 8 >= 0);
+                    inf_f = (index + 8 < 64);                                 
                 }
             }
 
-            // FICHA A LA IZQUIERDA
-            if (izq)
+
+            // CAMBIANDO FICHAS ENCERRADAS
+
+            if (index >= 0)
             {
-                if (tablero[index - 1].valor == color_opuesto)
+                // CAMBIANDO EL COLOR DE LA FICHA SIGUIENTE
+
+                if (color == "blanca")
+                    color_opuesto = "negra";
+                else
+                    color_opuesto = "blanca";
+
+
+                System.Diagnostics.Debug.WriteLine("SIMON DICE: '" + tablero[64].presionado+"'");
+                if (tablero[64].presionado == "Oponente")
                 {
-                    izq = (index - 2 >= 0) && (index / 8 == (index - 2) / 8);
-                    if (izq)
-                    {
-                        if (tablero[index - 2].valor == color)
-                        {
-                            Reemplazar(tablero, index - 1, color);
-                        }
-                    }
+                    tablero.RemoveAt(64);
+                    tablero.Add(new Ficha(color_opuesto, Globals.usuario_activo));
                 }
-            }
+                else
+                { 
+                    tablero.RemoveAt(64);
+                    tablero.Add(new Ficha(color_opuesto, "Oponente"));
+                }
 
-            // FICHA A LA DERECHA
-            if (der)
-            {
-                if (tablero[index + 1].valor == color_opuesto)
+                // FICHAS A LA IZQUIERDA
+                if (izq_f)
                 {
-                    int acc = 2;
-
-                    bool salir = false;
-                    while (salir == false)
+                    if (tablero[index - 1].valor == color_opuesto)
                     {
-                        der = (index + acc < 64) && (index / 8 == (index + acc) / 8);
-                        if (der)
+                        int acc = -2;
+                        List<int> lista_temp = new List<int>();
+                        lista_temp.Add(index - 1);
+
+                        bool salir = false;
+                        while (salir == false)
                         {
-                            if (tablero[index + acc].valor == color_opuesto)
+                            bool izq = (index + acc >= 0) && (index / 8 == (index + acc) / 8);
+                            if (izq)
                             {
-                                Reemplazar(tablero, index + acc-1, color);
+                                if (tablero[index + acc].valor == color_opuesto)
+                                {
+                                    lista_temp.Add(index + acc);
 
+                                }
+                                else
+                                {
+                                    if (tablero[index + acc].valor == color)
+                                    {
+                                        lista.AddRange(lista_temp);
+                                    }
+                                    else
+                                    {
+                                        salir = true;
+                                    }
+                                }
                             }
                             else
                             {
-                                if (tablero[index + acc].valor == color)
+                                salir = true;
+                            }
+
+                            acc-=1;
+                        }
+                    }
+                }
+
+                // FICHAS A LA DERECHA
+                if (der_f)
+                {
+                    if (tablero[index + 1].valor == color_opuesto)
+                    {
+                        int acc = 2;
+                        List<int> lista_temp = new List<int>();
+                        lista_temp.Add(index + 1);
+
+                        bool salir = false;
+                        while (salir == false)
+                        {
+                            bool der = (index + acc < 64) && (index / 8 == (index + acc) / 8);
+                            if (der)
+                            {
+                                if (tablero[index + acc].valor == color_opuesto)
                                 {
-                                    //Aqui me quedé
+                                    lista_temp.Add(index + acc);
+
+                                }
+                                else
+                                {
+                                    if (tablero[index + acc].valor == color)
+                                    {
+                                        lista.AddRange(lista_temp);
+                                    }
+                                    else
+                                    {
+                                        salir = true;
+                                    }
                                 }
                             }
-                        }
-                        else
-                        {
-                            salir = true;
-                        }
+                            else
+                            {
+                                salir = true;
+                            }
 
-                        acc++;
+                            acc+=1;
+                        }
                     }
                 }
-            }
 
-            // FICHA SUPERIOR
-            if (sup)
-            {
-                if (tablero[index - 8].valor == color_opuesto)
+                // FICHAS SUPERIOR
+                if (sup_f)
                 {
-                    sup = (index - 16 >= 0);
-                    if (sup)
+                    if (tablero[index - 8].valor == color_opuesto)
                     {
-                        if (tablero[index - 16].valor == color)
+                        int acc = -16;
+                        List<int> lista_temp = new List<int>();
+                        lista_temp.Add(index - 8);
+
+                        bool salir = false;
+                        while (salir == false)
                         {
-                            Reemplazar(tablero, index - 8, color);
+                            bool sup = (index + acc >= 0);
+                            if (sup)
+                            {
+                                if (tablero[index + acc].valor == color_opuesto)
+                                {
+                                    lista_temp.Add(index + acc);
+
+                                }
+                                else
+                                {
+                                    if (tablero[index + acc].valor == color)
+                                    {
+                                        lista.AddRange(lista_temp);
+                                    }
+                                    else
+                                    {
+                                        salir = true;
+                                    }
+                                }
+                            }
+                            else
+                            {
+                                salir = true;
+                            }
+
+                            acc -= 8;
                         }
                     }
                 }
-            }
 
-            // FICHA INFERIOR
-            if (inf)
-            {
-                if (tablero[index + 8].valor == color_opuesto)
+                // FICHAS INFERIOR
+                if (inf_f)
                 {
-                    inf = (index + 16 < 64);
-                    if (inf)
+                    if (tablero[index + 8].valor == color_opuesto)
                     {
-                        if (tablero[index + 16].valor == color)
+                        int acc = 16;
+                        List<int> lista_temp = new List<int>();
+                        lista_temp.Add(index + 8);
+
+                        bool salir = false;
+                        while (salir == false)
                         {
-                            Reemplazar(tablero, index + 8, color);
+                            bool inf = (index + acc < 64);
+                            if (inf)
+                            {
+                                if (tablero[index + acc].valor == color_opuesto)
+                                {
+                                    lista_temp.Add(index + acc);
+
+                                }
+                                else
+                                {
+                                    if (tablero[index + acc].valor == color)
+                                    {
+                                        lista.AddRange(lista_temp);
+                                    }
+                                    else
+                                    {
+                                        salir = true;
+                                    }
+                                }
+                            }
+                            else
+                            {
+                                salir = true;
+                            }
+
+                            acc += 8;
                         }
                     }
                 }
+
+                // FICHAS IZQ SUP
+                if (izq_f && sup_f)
+                {
+                    if (tablero[index - 9].valor == color_opuesto)
+                    {
+                        int acc = -2; //izq
+                        int acc2 = -16; //sup
+                        List<int> lista_temp = new List<int>();
+                        lista_temp.Add(index - 9);
+
+                        bool salir = false;
+                        while (salir == false)
+                        {
+                            bool izq = (index + acc >= 0) && (index / 8 == (index + acc) / 8);
+                            bool sup = (index + acc2 >= 0);
+
+                            if (izq&&sup)
+                            {
+                                if (tablero[index + acc + acc2].valor == color_opuesto)
+                                {
+                                    lista_temp.Add(index + acc+acc2);
+
+                                }
+                                else
+                                {
+                                    if (tablero[index + acc+acc2].valor == color)
+                                    {
+                                        lista.AddRange(lista_temp);
+                                    }
+                                    else
+                                    {
+                                        salir = true;
+                                    }
+                                }
+                            }
+                            else
+                            {
+                                salir = true;
+                            }
+
+                            acc-=1;
+                            acc2-=8;
+                        }
+                    }
+                }
+
+                // FICHAS DER SUP
+                if (der_f && sup_f)
+                {
+                    if (tablero[index - 7].valor == color_opuesto)
+                    {
+                        int acc = 2; //der
+                        int acc2 = -16; //sup
+                        List<int> lista_temp = new List<int>();
+                        lista_temp.Add(index - 7);
+
+                        bool salir = false;
+                        while (salir == false)
+                        {
+                            bool der = (index + acc < 64) && (index / 8 == (index + acc) / 8);
+                            bool sup = (index + acc2 >= 0);
+
+                            if (der&&sup)
+                            {
+                                if (tablero[index + acc + acc2].valor == color_opuesto)
+                                {
+                                    lista_temp.Add(index + acc + acc2);
+                                }
+                                else
+                                {
+                                    if (tablero[index + acc + acc2].valor == color)
+                                    {
+                                        lista.AddRange(lista_temp);
+                                    }
+                                    else
+                                    {
+                                        salir = true;
+                                    }
+                                }
+                            }
+                            else
+                            {
+                                salir = true;
+                            }
+
+                            acc += 1;
+                            acc2 -= 8;
+                        }
+                    }
+                }
+
+                // FICHAS IZQ INF
+                if (izq_f && inf_f)
+                {
+                    if (tablero[index +7].valor == color_opuesto)
+                    {
+                        int acc = -2; //izq
+                        int acc2 = 16; //inf
+                        List<int> lista_temp = new List<int>();
+                        lista_temp.Add(index +7);
+
+                        bool salir = false;
+                        while (salir == false)
+                        {
+                            bool izq = (index + acc >= 0) && (index / 8 == (index + acc) / 8);
+                            bool inf = (index + acc2 < 64);
+
+                            if (izq&&inf)
+                            {
+                                if (tablero[index + acc + acc2].valor == color_opuesto)
+                                {
+                                    lista_temp.Add(index + acc + acc2);
+                                }
+                                else
+                                {
+                                    if (tablero[index + acc + acc2].valor == color)
+                                    {
+                                        lista.AddRange(lista_temp);
+                                    }
+                                    else
+                                    {
+                                        salir = true;
+                                    }
+                                }
+                            }
+                            else
+                            {
+                                salir = true;
+                            }
+
+                            acc -= 1;
+                            acc2 += 8;
+                        }
+                    }
+                }
+
+                // FICHAS DER INF
+                if (der_f && inf_f)
+                {
+                    if (tablero[index + 9].valor == color_opuesto)
+                    {
+                        int acc = 2; //der
+                        int acc2 = 16; //inf
+                        List<int> lista_temp = new List<int>();
+                        lista_temp.Add(index + 9);
+
+                        bool salir = false;
+                        while (salir == false)
+                        {
+                            bool der = (index + acc < 64) && (index / 8 == (index + acc) / 8);
+                            bool inf = (index + acc2 < 64);
+
+                            if (der&&inf)
+                            {
+                                if (tablero[index + acc + acc2].valor == color_opuesto)
+                                {
+                                    lista_temp.Add(index + acc + acc2);
+                                }
+                                else
+                                {
+                                    if (tablero[index + acc + acc2].valor == color)
+                                    {
+                                        lista.AddRange(lista_temp);
+                                    }
+                                    else
+                                    {
+                                        salir = true;
+                                    }
+                                }
+                            }
+                            else
+                            {
+                                salir = true;
+                            }
+
+                            acc += 1;
+                            acc2 += 8;
+                        }
+                    }
+                }
+
+                Reemplazar_list(tablero, lista, color);
+
             }
-
-
-
 
             return View(tablero);
         }
 
         public void Reemplazar(List<Ficha> tablero, int pos, string valor)
-        {
-            System.Diagnostics.Debug.WriteLine("Se reemplazo");
+        {            
             tablero.RemoveAt(pos);
             tablero.Insert(pos, new Ficha(valor));            
+        }
+
+        public void Reemplazar_list(List<Ficha> tablero, List<int> pos_list, string valor)
+        {
+            foreach (int pos in pos_list)
+            {
+                tablero.RemoveAt(pos);
+                tablero.Insert(pos, new Ficha(valor));
+            }
         }
 
 
