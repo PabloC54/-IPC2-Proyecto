@@ -11519,12 +11519,12 @@ body.menu-active #Header .logo {
 }
 
 .xml-save-row {
-    margin: 200px 28%;
+    margin: 720px 28%;
     position: absolute;
 }
 
 .xml-load-row {
-    margin: 120px 28%;
+    margin: 750px 28%;
     position: absolute;
 }
 
@@ -11594,8 +11594,8 @@ body.menu-active #Header .logo {
 
 #turno {
     position: absolute;
-    top: 750px;
-    left: 370px;
+    top: 120px;
+    left: 390px;
     background: black;
     color: white;
     padding: 20px 100px;

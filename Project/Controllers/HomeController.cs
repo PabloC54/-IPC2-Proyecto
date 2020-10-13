@@ -43,7 +43,6 @@ namespace IPC2_P1.Controllers
 
             string txt = "select * from Usuario where username='"+user.Username+"' and contraseña='"+user.Contraseña+"'";
             SqlCommand cmd = new SqlCommand(txt, con);
-
             SqlDataReader dr = cmd.ExecuteReader();
 
             try

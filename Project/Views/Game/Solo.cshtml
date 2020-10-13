@@ -12,7 +12,7 @@
 "A6", "B6", "C6", "D6", "E6", "F6", "G6", "H6",
 "A7", "B7", "C7", "D7", "E7", "F7", "G7", "H7",
 "A8", "B8", "C8", "D8", "E8", "F8", "G8", "H8"};
-    
+
 }
 
 <!DOCTYPE html>
@@ -41,12 +41,12 @@
             }
             else
                 if (document.getElementById("I_" + id).value == "negra") {
-                document.getElementById(id).style.backgroundImage = "url('../wwwroot/images/ficha_n.jpg')";
-            }
+                    document.getElementById(id).style.backgroundImage = "url('../wwwroot/images/ficha_n.jpg')";
+                }
         }
 
         function fichaColocada(id, color) {
-            console.log("EL COLOR ES: "+color)
+            console.log("EL COLOR ES: " + color)
             if (document.getElementById("I_" + id).value == "") { //NOTA: VALIDAR DE QUIEN ES EL TURNO
                 document.getElementById("I_" + id).value = color;
                 document.getElementById("R_" + id).value = "true";
@@ -61,26 +61,17 @@
 <body onload="ids.forEach(actualizar)">
     <!-- AREA DE JUEGO -->
     <section id="Game">
-        @using (Html.BeginForm("Load", "Game", FormMethod.Post, new { enctype = "multipart/form-data" }))
-        {
-                <div class="row xml-load-row">
-                    <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 col-xl-12">
-                        <input class="xmlbtn" type="file" name="archivo" accept=".xml">
-                        <button class="xmlbtn" id="xml-cargar" type="submit">  Cargar archivo XML.. </button>
-                    </div>
-                </div>
-        }
 
-    @using (Html.BeginForm("Solo", "Game", FormMethod.Post))
-        {
-            <asp:UpdatePanel ID="OrdersPanel"
-                             UpdateMode="Conditional"
-                             runat="server">
-                <div class="row xml-save-row">
-                    <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 col-xl-12">
-                        <button formaction="Descargar" class="xmlbtn" id="xml-guardar" type="submit">  Guardar archivo XML.. </button>
-                    </div>
+        <asp:UpdatePanel ID="OrdersPanel" UpdateMode="Conditional" runat="server">
+            @using (Html.BeginForm("Solo", "Game", FormMethod.Post))
+            {
+                <div id="turno">
+                    El turno es de @Model[64].presionado<br />
+                    @Globals.usuario_activo: @Model[64].mov1 movimientos<br />
+                    Oponente: @Model[64].mov2 movimientos
                 </div>
+
+
                 <div class="row">
                     <div id="GameBoard" class="col-xs-12 col-sm-12 col-md-12 col-lg-12 col-xl-12">
                         <div id="GameTable">
@@ -105,22 +96,35 @@
 
                                     </div>
                                 }
-                                <input type="text" name="[64].valor" value="@Model[64].valor" id="ficha" style="display:none" />
-                                <input type="text" name="[64].presionado" value="@Model[64].presionado" id="ficha_n" style="display:none" />
+                                <input type="text" name="[64].valor" value="@Model[64].valor" style="display:none" />
+                                <input type="text" name="[64].presionado" value="@Model[64].presionado" style="display:none" />
+                                <input type="text" name="[64].mov1" value="@Model[64].mov1" style="display:none" />
+                                <input type="text" name="[64].mov2" value="@Model[64].mov2" style="display:none" />
                             }
                         </div>
                     </div>
                 </div>
-                
 
-            </asp:UpdatePanel>
-        }
-            <div id="turno">
-                El turno es de @Model[64].presionado<br />
-                Oponente: movimientos<br />
-                @Globals.usuario_activo: movimientos
-            </div>
+                <div class="row xml-save-row">
+                    <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 col-xl-12">
+                        <button formaction="Descargar" class="xmlbtn" id="xml-guardar" type="submit">  Guardar archivo XML.. </button>
+                    </div>
+                </div>
+
+            }
+        </asp:UpdatePanel>
+
+            @using (Html.BeginForm("Load", "Game", FormMethod.Post, new { enctype = "multipart/form-data" }))
+            {
+                <div class="row xml-load-row">
+                    <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 col-xl-12">
+                        <input class="xmlbtn" type="file" name="archivo" accept=".xml">
+                        <button class="xmlbtn" id="xml-cargar" type="submit">  Cargar archivo XML.. </button>
+                    </div>
+                </div>
+            }
+
             <!-- FIN DE AREA DE JUEGO -->
         </section>
-    </body>
+</body>
 </html>

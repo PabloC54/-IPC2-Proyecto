@@ -142,7 +142,7 @@
     <Content Include="fonts\glyphicons-halflings-regular.svg" />
     <Content Include="Global.asax" />
     <Content Include="Scripts\all-plugins.js" />
-    <Content Include="Scripts\jquery-3.5.1.min.js" />
+    <Content Include="Scripts\jquery-3.2.1.min.js" />
     <Content Include="Scripts\plugin-active.js" />
     <Content Include="wwwroot\images\board.png" />
     <Content Include="wwwroot\images\favicons\favicon-16x16.png" />
