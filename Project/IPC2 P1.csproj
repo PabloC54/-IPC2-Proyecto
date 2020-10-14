@@ -188,7 +188,7 @@
     <Content Include="fonts\glyphicons-halflings-regular.eot" />
     <None Include="packages.config" />
     <Content Include="Views\Shared\_Layout_no_nav.cshtml" />
-    <Content Include="Views\Game\Prueba.cshtml" />
+    <Content Include="Views\Game\Versus.cshtml" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

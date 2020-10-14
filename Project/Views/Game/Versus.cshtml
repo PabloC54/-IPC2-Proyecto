@@ -1,6 +1,6 @@
 ﻿@model List<Ficha>
 @{
-    ViewBag.Title = "Solo";
+    ViewBag.Title = "Versus";
     Layout = "~/Views/Shared/_Layout_logged_in_no_nav.cshtml";
 
     string[] ids = {
@@ -62,7 +62,7 @@
     <section id="Game">
 
         <asp:UpdatePanel ID="OrdersPanel" UpdateMode="Conditional" runat="server">
-            @using (Html.BeginForm("Solo", "Game", FormMethod.Post))
+            @using (Html.BeginForm("Versus", "Game", FormMethod.Post))
             {
                 <div id="turno">
                     El turno es de @Model[64].presionado<br />
@@ -121,7 +121,7 @@
                         <button class="xmlbtn" id="xml-cargar" type="submit">  Cargar archivo XML.. </button>
                         <input type="text" name="valor" value="@Model[64].valor" style="display:none" />
                         <input type="text" name="usuario" value="@Model[64].presionado" style="display:none" />
-                        <input type="text" name="action" value="Solo" style="display:none" />
+                        <input type="text" name="action" value="Versus" style="display:none" />
                     </div>
                 </div>
             }

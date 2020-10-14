@@ -14,6 +14,12 @@ fecha_nacimiento date not null,
 pais varchar(30) not null,
 habilitado bit not null)
 
+create table Reporte(
+username varchar(20) not null,
+partidas_ganadas int not null,
+partidas_perdidas int not null,
+partidas_empatadas int not null)
+
 create table Partida(
 idPartida varchar(10) primary key not null,
 privacidad varchar(10) not null,
@@ -29,6 +35,7 @@ usuario_anfitrion varchar(20) not null,
 registro_torneo varchar(10) not null)
 
 create table Registro_Torneo(
+idRegistro_Torneo varchar(10) primary key not null,
 usuario varchar(20) not null,
 nombre_torneo varchar(10) not null)
 
@@ -43,6 +50,8 @@ reporte varchar(200) not null)
 
 
 --CREACIÓN DE LAS LLAVES FORANEAS
+alter table Reporte add foreign key (username) references Usuario(username)
+
 alter table Partida add foreign key (usuario_anfitrion) references Usuario(username)
 
 alter table Partida add foreign key (usuario_invitado) references Usuario(username)
@@ -53,10 +62,17 @@ alter table Registro_Torneo add foreign key (usuario) references Usuario(usernam
 
 alter table Registro_Torneo add foreign key (nombre_torneo) references Torneo(nombre_torneo)
 
+alter table Torneo add foreign key (registro_torneo) references Registro_Torneo(idRegistroTorneo)
+
 alter table Ronda add foreign key (nombre_torneo) references Torneo(nombre_torneo)
 
 
 --CONSULTAS
-select * from Usuario
+select * from Reporte where username='user'
+select partidas_perdidas from Reporte where username='user'
+select * from Reporte
 
+delete from Usuario
+delete from Reporte
 
+update Reporte set partidas_ganadas=0, partidas_perdidas=0, partidas_empatadas=0

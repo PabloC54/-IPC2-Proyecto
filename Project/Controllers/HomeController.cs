@@ -6,7 +6,7 @@ namespace IPC2_P1.Controllers
 {
     public class HomeController : Controller
     {
-        public static string sql = "Data Source=PCP-PC;Initial Catalog=Othello_db;User ID=pabloc54;Password=pepe3343";
+        public static string sql = "Data Source=PCP-PC;Initial Catalog=Othello_db;User ID=pabloc54;Password=pablo125";
         public SqlConnection con = new SqlConnection(sql);
 
         public RedirectToRouteResult Index()
