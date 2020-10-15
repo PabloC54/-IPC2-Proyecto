@@ -1,7 +1,7 @@
 ﻿@model IPC2_P1.Models.Tablero
 @{
-    ViewBag.Title = "Versus";
-    Layout = "~/Views/Shared/_Layout_logged_in_no_nav.cshtml";    
+    ViewBag.Title = "Xtreme";
+    Layout = "~/Views/Shared/_Layout_logged_in_no_nav.cshtml";
 }
 
 <!DOCTYPE html>
@@ -18,10 +18,10 @@
         let ids = [];
 
         function generar(num_filas, num_columnas) {
-            ids = []
-            for (i = 0; i < num_filas; i++)
-                for (j = 0; j < num_columnas; j++)
-                    ids.push(columnas[j] + filas[i]);
+            ids=[]
+            for (i = 0; i < num_filas; i++) 
+                for (j = 0; j < num_columnas; j++) 
+                    ids.push(columnas[j] + filas[i]);       
         }
 
         function actualizar(id) {
@@ -82,12 +82,12 @@
     </script>
 </head>
 
-<body onload="ids.forEach(actualizar)">
+<body onload="generar(@Model.filas, @Model.columnas);ids.forEach(actualizar)">
     <!-- AREA DE JUEGO -->
     <section id="Game">
 
         <asp:UpdatePanel ID="OrdersPanel" UpdateMode="Conditional" runat="server">
-            @using (Html.BeginForm("Versus", "Game", FormMethod.Post))
+            @using (Html.BeginForm("Xtreme", "Game", FormMethod.Post))
             {
                 <div id="turno">
                     El turno es de @Model.usuario <br/>
@@ -106,17 +106,17 @@
 
                                 for (int i = 0; i < Model.filas; i++)
                                 {
-                                <div class='row fila'>
+                                    <div class='row fila'>
 
-                                    @for (int j = 0; j < Model.columnas; j++)
-                                    {
-                                        <input type='submit' value="" class='col-xs-1 col-sm-1 col-md-1 col-lg-1 col-xl-1 celda' id='@Globals.columnas[j]@Globals.filas[i]' onclick='fichaColocada("@Globals.columnas[j]@Globals.filas[i]", "@Model.color")' />
-                                        <input type='text' name="fichas[@count].color" id='I_@Globals.columnas[j]@Globals.filas[i]' value='@Model.fichas[count].color' />
-                                        <input type="text" name="fichas[@count].presionado" id='R_@Globals.columnas[j]@Globals.filas[i]' value="false" style="display:none" />
-                                        count += 1;
-                                    }
+                                        @for (int j = 0; j < Model.columnas; j++)
+                                        {
+                                            <input type='submit' value="" class='col-xs-1 col-sm-1 col-md-1 col-lg-1 col-xl-1 celda' id='@Globals.columnas[j]@Globals.filas[i]' onclick='fichaColocada("@Globals.columnas[j]@Globals.filas[i]", "@Model.color")' />
+                                            <input type='text' name="fichas[@count].color" id='I_@Globals.columnas[j]@Globals.filas[i]' value='@Model.fichas[count].color' />
+                                            <input type="text" name="fichas[@count].presionado" id='R_@Globals.columnas[j]@Globals.filas[i]' value="false" style="display:none" />
+                                            count += 1;
+                                        }
 
-                                </div>
+                                    </div>
                                 }
                                 <input type="text" name="columnas" value="@Model.columnas" style="display:none" />
                                 <input type="text" name="filas" value="@Model.filas" style="display:none" />
@@ -146,7 +146,7 @@
                         <button class="xmlbtn" id="xml-cargar" type="submit">  Cargar archivo XML.. </button>
                         <input type="text" name="color" value="@Model.color" style="display:none" />
                         <input type="text" name="usuario" value="@Model.usuario" style="display:none" />
-                        <input type="text" name="action" value="Versus" style="display:none" />
+                        <input type="text" name="action" value="Xtreme" style="display:none" />
                     </div>
                 </div>
             }

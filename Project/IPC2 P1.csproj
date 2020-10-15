@@ -126,6 +126,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="App_Code\Othello.cs" />
     <Compile Include="App_Start\BundleConfig.cs" />
     <Compile Include="App_Start\FilterConfig.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
@@ -134,6 +135,7 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Models\Tablero.cs" />
     <Compile Include="Models\Ficha.cs" />
     <Compile Include="Models\Usuario.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -159,7 +161,9 @@
     <Content Include="wwwroot\scripts\plugin-active.js" />
     <Content Include="wwwroot\styles\custom-responsive-style.css" />
     <Content Include="wwwroot\styles\style.css" />
-    <Content Include="Web.config" />
+    <Content Include="Web.config">
+      <SubType>Designer</SubType>
+    </Content>
     <Content Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </Content>
@@ -178,9 +182,7 @@
     <Content Include="Views\Shared\_Layout_logged_in.cshtml" />
     <Content Include="wwwroot\xml\anchor" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="App_Data\" />
-  </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
     <Content Include="fonts\glyphicons-halflings-regular.woff2" />
     <Content Include="fonts\glyphicons-halflings-regular.woff" />
@@ -189,6 +191,7 @@
     <None Include="packages.config" />
     <Content Include="Views\Shared\_Layout_no_nav.cshtml" />
     <Content Include="Views\Game\Versus.cshtml" />
+    <Content Include="Views\Game\Xtreme.cshtml" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

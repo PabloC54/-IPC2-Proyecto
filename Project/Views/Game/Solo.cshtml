@@ -1,18 +1,7 @@
-﻿@model List<Ficha>
+﻿@model IPC2_P1.Models.Tablero
 @{
     ViewBag.Title = "Solo";
     Layout = "~/Views/Shared/_Layout_logged_in_no_nav.cshtml";
-
-    string[] ids = {
-"A1", "B1", "C1", "D1", "E1", "F1", "G1", "H1",
-"A2", "B2", "C2", "D2", "E2", "F2", "G2", "H2",
-"A3", "B3", "C3", "D3", "E3", "F3", "G3", "H3",
-"A4", "B4", "C4", "D4", "E4", "F4", "G4", "H4",
-"A5", "B5", "C5", "D5", "E5", "F5", "G5", "H5",
-"A6", "B6", "C6", "D6", "E6", "F6", "G6", "H6",
-"A7", "B7", "C7", "D7", "E7", "F7", "G7", "H7",
-"A8", "B8", "C8", "D8", "E8", "F8", "G8", "H8"};
-
 }
 
 <!DOCTYPE html>
@@ -24,25 +13,62 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script>
 
-        var ids = ["A1", "B1", "C1", "D1", "E1", "F1", "G1", "H1",
-            "A2", "B2", "C2", "D2", "E2", "F2", "G2", "H2",
-            "A3", "B3", "C3", "D3", "E3", "F3", "G3", "H3",
-            "A4", "B4", "C4", "D4", "E4", "F4", "G4", "H4",
-            "A5", "B5", "C5", "D5", "E5", "F5", "G5", "H5",
-            "A6", "B6", "C6", "D6", "E6", "F6", "G6", "H6",
-            "A7", "B7", "C7", "D7", "E7", "F7", "G7", "H7",
-            "A8", "B8", "C8", "D8", "E8", "F8", "G8", "H8"];
+        var columnas = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T"];
+        var filas = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20"];
+        let ids = [];
 
+        function generar(num_filas, num_columnas) {
+            ids=[]
+            for (i = 0; i < num_filas; i++) 
+                for (j = 0; j < num_columnas; j++) 
+                    ids.push(columnas[j] + filas[i]);       
+        }
 
         function actualizar(id) {
+            var color = document.getElementById("I_" + id).value
 
-            if (document.getElementById("I_" + id).value == "blanca") {
-                document.getElementById(id).style.backgroundImage = "url('../wwwroot/images/ficha_b.jpg')";
+            switch (color) {
+
+                case "rojo":
+                    document.getElementById(id).style.backgroundImage = "url('../wwwroot/images/ficha_rojo.jpg')";
+                    break;
+
+                case "amarillo":
+                    document.getElementById(id).style.backgroundImage = "url('../wwwroot/images/ficha_amarillo.jpg')";
+                    break;
+
+                case "azul":
+                    document.getElementById(id).style.backgroundImage = "url('../wwwroot/images/ficha_azul.jpg')";
+                    break;
+
+                case "anaranjado":
+                    document.getElementById(id).style.backgroundImage = "url('../wwwroot/images/ficha_anaranjado.jpg')";
+                    break;
+
+                case "verde":
+                    document.getElementById(id).style.backgroundImage = "url('../wwwroot/images/ficha_verde.jpg')";
+                    break;
+
+                case "violeta":
+                    document.getElementById(id).style.backgroundImage = "url('../wwwroot/images/ficha_violeta.jpg')";
+                    break;
+
+                case "blanco":
+                    document.getElementById(id).style.backgroundImage = "url('../wwwroot/images/ficha_blanco.jpg')";
+                    break;
+
+                case "negro":
+                    document.getElementById(id).style.backgroundImage = "url('../wwwroot/images/ficha_negro.jpg')";
+                    break;
+
+                case "celeste":
+                    document.getElementById(id).style.backgroundImage = "url('../wwwroot/images/ficha_celeste.jpg')";
+                    break;
+
+                case "gris":
+                    document.getElementById(id).style.backgroundImage = "url('../wwwroot/images/ficha_gris.jpg')";
+                    break;
             }
-            else
-                if (document.getElementById("I_" + id).value == "negra") {
-                    document.getElementById(id).style.backgroundImage = "url('../wwwroot/images/ficha_n.jpg')";
-                }
         }
 
         function fichaColocada(id, color) {
@@ -53,11 +79,10 @@
             }
         }
 
-
     </script>
 </head>
 
-<body onload="ids.forEach(actualizar)">
+<body onload="generar(@Model.filas, @Model.columnas);ids.forEach(actualizar)">
     <!-- AREA DE JUEGO -->
     <section id="Game">
 
@@ -65,9 +90,9 @@
             @using (Html.BeginForm("Solo", "Game", FormMethod.Post))
             {
                 <div id="turno">
-                    El turno es de @Model[64].presionado<br />
-                    @Globals.usuario_activo: @Model[64].mov1 movimientos<br />
-                    Oponente: @Model[64].mov2 movimientos
+                    El turno es de @Model.usuario <br/>
+                    @Globals.usuario_activo: @Model.movimientos movimientos<br />
+                    Oponente: @Model.movimientos_oponente movimientos
                 </div>
 
 
@@ -79,26 +104,26 @@
                             @{
                                 int count = 0;
 
-                                for (int i = 0; i < 8; i++)
+                                for (int i = 0; i < Model.filas; i++)
                                 {
-
                                     <div class='row fila'>
 
-                                        @for (int j = 0; j < 8; j++)
+                                        @for (int j = 0; j < Model.columnas; j++)
                                         {
-
-                                            <input type='submit' value="" class='col-xs-1 col-sm-1 col-md-1 col-lg-1 col-xl-1 celda' id='@ids[count]' onclick='fichaColocada("@ids[count]", "@Model[64].valor")' />
-                                            <input type='text' name="[@count].valor" id='I_@ids[count]' value='@Model[count].valor' />
-                                            <input type="text" name="[@count].presionado" id='R_@ids[count]' value="false" style="display:none" />
+                                            <input type='submit' value="" class='col-xs-1 col-sm-1 col-md-1 col-lg-1 col-xl-1 celda' id='@Globals.columnas[j]@Globals.filas[i]' onclick='fichaColocada("@Globals.columnas[j]@Globals.filas[i]", "@Model.color")' />
+                                            <input type='text' name="fichas[@count].color" id='I_@Globals.columnas[j]@Globals.filas[i]' value='@Model.fichas[count].color' />
+                                            <input type="text" name="fichas[@count].presionado" id='R_@Globals.columnas[j]@Globals.filas[i]' value="false" style="display:none" />
                                             count += 1;
                                         }
 
                                     </div>
                                 }
-                                <input type="text" name="[64].valor" value="@Model[64].valor" style="display:none" />
-                                <input type="text" name="[64].presionado" value="@Model[64].presionado" style="display:none" />
-                                <input type="text" name="[64].mov1" value="@Model[64].mov1" style="display:none" />
-                                <input type="text" name="[64].mov2" value="@Model[64].mov2" style="display:none" />
+                                <input type="text" name="columnas" value="@Model.columnas" style="display:none" />
+                                <input type="text" name="filas" value="@Model.filas" style="display:none" />
+                                <input type="text" name="color" value="@Model.color" style="display:none" />
+                                <input type="text" name="usuario" value="@Model.usuario" style="display:none" />
+                                <input type="text" name="movimientos" value="@Model.movimientos" style="display:none" />
+                                <input type="text" name="movimientos_oponente" value="@Model.movimientos_oponente" style="display:none" />
                             }
                         </div>
                     </div>
@@ -119,8 +144,8 @@
                     <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 col-xl-12">
                         <input class="xmlbtn" type="file" name="archivo" accept=".xml">
                         <button class="xmlbtn" id="xml-cargar" type="submit">  Cargar archivo XML.. </button>
-                        <input type="text" name="valor" value="@Model[64].valor" style="display:none" />
-                        <input type="text" name="usuario" value="@Model[64].presionado" style="display:none" />
+                        <input type="text" name="color" value="@Model.color" style="display:none" />
+                        <input type="text" name="usuario" value="@Model.usuario" style="display:none" />
                         <input type="text" name="action" value="Solo" style="display:none" />
                     </div>
                 </div>

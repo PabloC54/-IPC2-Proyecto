@@ -9,58 +9,38 @@ using System.Xml;
 
 namespace IPC2_P1.Controllers
 {
+    //IMPRIMIR EN CONSOLA
+    // System.Diagnostics.Debug.WriteLine("PRUEBA: " + tablero.Count);
     public class GameController : Controller
     {
         public static string sql = "Data Source=PCP-PC;Initial Catalog=Othello_db;User ID=pabloc54;Password=pablo125";
         public SqlConnection con = new SqlConnection(sql);
-        public string[] ids = {"A1", "B1", "C1", "D1", "E1", "F1", "G1", "H1",
-            "A2", "B2", "C2", "D2", "E2", "F2", "G2", "H2",
-            "A3", "B3", "C3", "D3", "E3", "F3", "G3", "H3",
-            "A4", "B4", "C4", "D4", "E4", "F4", "G4", "H4",
-            "A5", "B5", "C5", "D5", "E5", "F5", "G5", "H5",
-            "A6", "B6", "C6", "D6", "E6", "F6", "G6", "H6",
-            "A7", "B7", "C7", "D7", "E7", "F7", "G7", "H7",
-            "A8", "B8", "C8", "D8", "E8", "F8", "G8", "H8" };
         
+
         // SOLO, VERSUS, TORNEO
-
-        public List<Ficha> Tablero(int tam, string valor, string usuario)
-        {
-            List<Ficha> tablero = new List<Ficha>();
-
-            for (int i = 0; i < tam; i++)
-                tablero.Add(new Ficha(""));
-
-            int lado = Convert.ToInt32(Math.Sqrt(Convert.ToDouble(tam)));
-
-            Reemplazar(tablero, tam/2-lado/2-1, "blanca");
-            Reemplazar(tablero, tam/2-lado/2, "negra");
-            Reemplazar(tablero, tam/2+lado/2-1, "negra");
-            Reemplazar(tablero, tam/2+lado/2, "blanca");
-
-            tablero.Add(new Ficha(valor, usuario, 0, 0));
-
-            return tablero;
-        }
 
         public ActionResult Solo(string ficha_inicial)
         {
             if (Globals.logged_in == true)
             {
-                List<Ficha> tablero = new List<Ficha>();
+                Tablero tablero;
 
-                if (ficha_inicial == "blanca")
+                if (ficha_inicial == "blanco")
                 {
-                    tablero = Tablero(64, "blanca", Globals.usuario_activo);
+                    tablero = new Tablero(8,8, "blanco", Globals.usuario_activo);
+                    tablero.Iniciar();
 
                     List<int> celdas_vacias = new List<int>();
                     List<int> celdas_validas = new List<int>();
                     List<int> list_temp = new List<int>();
-                    
-                    for(int i=0; i<64; i++)
+
+                    int acc = 0;
+                    foreach(Ficha ficha in tablero.fichas)
                     {
-                        if (tablero[i].valor!="blanca" && tablero[i].valor != "negra")                        
-                            celdas_vacias.Add(i);
+                        if (ficha.color==null)                        
+                            celdas_vacias.Add(acc);
+
+                        acc++;
                     }
 
                     int max = 0;
@@ -68,7 +48,7 @@ namespace IPC2_P1.Controllers
 
                     foreach(int i in celdas_vacias)
                     {
-                        list_temp = Flanquear(tablero, i, "negra", "blanca");
+                        list_temp = Flanquear(tablero, i, "negro", "blanco");
 
                         if (list_temp.Count > len)
                         {
@@ -77,35 +57,45 @@ namespace IPC2_P1.Controllers
                         }
                     }
 
-                    Reemplazar(tablero, max, "negra");
-                    List<int> lista_temp = Flanquear(tablero, max, "negra", "blanca");
+                    Reemplazar(tablero, max, "negro");
+                    List<int> lista_temp = Flanquear(tablero, max, "negro", "blanco");
 
-                    Reemplazar_list(tablero, lista_temp, "negra");
+                    Reemplazar_lista(tablero, lista_temp, "negro");
 
                 }
                 else
                 {
-                    if (ficha_inicial == "negra")
-                        tablero = Tablero(64, "negra", Globals.usuario_activo);
+                    if (ficha_inicial == "negro")
+                    {
+                        tablero = new Tablero(8, 8, "negro", Globals.usuario_activo);
+                        tablero.Iniciar();
+                    }
                     else
                     {
                         Random random = new Random();
                         double num = random.NextDouble();
 
                         if (num < 0.5)
-                            tablero = Tablero(64, "negra", Globals.usuario_activo);
+                        {
+                            tablero = new Tablero(8, 8, "negro", Globals.usuario_activo);
+                            tablero.Iniciar();
+                        }
                         else
                         {
-                            tablero = Tablero(64, "blanca", Globals.usuario_activo);
+                            tablero = new Tablero(8, 8, "blanco", Globals.usuario_activo);
+                            tablero.Iniciar();
 
                             List<int> celdas_vacias = new List<int>();
                             List<int> celdas_validas = new List<int>();
                             List<int> list_temp = new List<int>();
 
-                            for (int i = 0; i < 64; i++)
+                            int acc = 0;
+                            foreach (Ficha ficha in tablero.fichas)
                             {
-                                if (tablero[i].valor != "blanca" && tablero[i].valor != "negra")
-                                    celdas_vacias.Add(i);
+                                if (ficha.color == null)
+                                    celdas_vacias.Add(acc);
+
+                                acc++;
                             }
 
                             int max = 0;
@@ -113,7 +103,7 @@ namespace IPC2_P1.Controllers
 
                             foreach (int i in celdas_vacias)
                             {
-                                list_temp = Flanquear(tablero, i, "negra", "blanca");
+                                list_temp = Flanquear(tablero, i, "negro", "blanco");
 
                                 if (list_temp.Count > len)
                                 {
@@ -122,11 +112,11 @@ namespace IPC2_P1.Controllers
                                 }
                             }
 
-                            Reemplazar(tablero, max, "negra");
+                            Reemplazar(tablero, max, "negro");
                         }
                     }
                 }
-
+                
                 return View(tablero);
             }
             else
@@ -142,23 +132,35 @@ namespace IPC2_P1.Controllers
         {
             if (Globals.logged_in == true)
             {
-                List<Ficha> tablero = new List<Ficha>();
+                Tablero tablero;
 
-                if (ficha_inicial == "blanca")
-                    tablero = Tablero(64, "negra", "Oponente");
+                if (ficha_inicial == "blanco")
+                {
+                    tablero = new Tablero(8, 8, "negro", "Oponente");
+                    tablero.Iniciar();
+                }
                 else
                 {
-                    if (ficha_inicial == "negra")
-                        tablero = Tablero(64, "negra", Globals.usuario_activo);
+                    if (ficha_inicial == "negro")
+                    {
+                        tablero = new Tablero(8, 8, "negro", Globals.usuario_activo);
+                        tablero.Iniciar();
+                    }
                     else
                     {
                         Random random = new Random();
                         double num = random.NextDouble();
 
                         if (num < 0.5)
-                            tablero = Tablero(64, "negra", Globals.usuario_activo);
+                        {
+                            tablero = new Tablero(8, 8, "negro", Globals.usuario_activo);
+                            tablero.Iniciar();
+                        }
                         else
-                            tablero = Tablero(64, "negra", "Oponente");
+                        {
+                            tablero = new Tablero(8, 8, "negro", "Oponente");
+                            tablero.Iniciar();
+                        }
                     }
                 }
 
@@ -176,13 +178,13 @@ namespace IPC2_P1.Controllers
 
         //LÓGICA DEL TABLERO
         [HttpPost]
-        public ActionResult Solo(List<Ficha> tablero)
+        public ActionResult Solo(Tablero tablero)
         {
             int index = -1;
-            int num1 = tablero[64].mov1;
-            int num2 = tablero[64].mov2;
+            int num1 = tablero.movimientos;
+            int num2 = tablero.movimientos_oponente;
 
-            string usuario = tablero[64].presionado, usuario_opuesto = "";
+            string usuario = tablero.usuario, usuario_opuesto = "";
 
             if (usuario == Globals.usuario_activo)
                 usuario_opuesto = "Oponente";
@@ -190,22 +192,25 @@ namespace IPC2_P1.Controllers
                 usuario_opuesto = Globals.usuario_activo;
 
 
-            string color = tablero[64].valor, color_opuesto = "";
+            string color = tablero.color, color_opuesto = "";
 
-            if (color == "blanca")
-                color_opuesto = "negra";
+            if (color == "blanco")
+                color_opuesto = "negro";
             else
-                color_opuesto = "blanca";
+                color_opuesto = "blanco";
 
 
             // RECONOCIMIENTO DE LA FICHA SELECCIONADA
 
-            for (int i = 0; i < tablero.Count; i++)
+            int acc = 0;
+            foreach (Ficha ficha in tablero.fichas)
             {
-                if (tablero[i].presionado == "true")
+                if (ficha.presionado=="true")
                 {
-                    index = i;
+                    index = acc;
                 }
+
+                acc++;
             }
 
 
@@ -217,7 +222,7 @@ namespace IPC2_P1.Controllers
             {
                 // EJECUTANDO CAMBIOS
 
-                Reemplazar_list(tablero, lista, color);
+                Reemplazar_lista(tablero, lista, color);
 
                 // VALIDANDO SI HAY TIROS VALIDOS EN EL SIGUIENTE TURNO
 
@@ -225,10 +230,13 @@ namespace IPC2_P1.Controllers
                 List<int> celdas_vacias = new List<int>();
                 List<int> celdas_validas = new List<int>();
 
-                for (int i = 0; i < 64; i++) //reconociendo celdas vacias
+                acc = 0;
+                foreach (Ficha ficha in tablero.fichas) //reconociendo celdas vacias
                 {
-                    if (tablero[i].valor != "negra" && tablero[i].valor != "blanca")
-                        celdas_vacias.Add(i);
+                    if (ficha.color==null)
+                        celdas_vacias.Add(acc);
+
+                    acc++;
                 }
                 
                 foreach (int celda in celdas_vacias) //iterando en las celdas vacias, para ver si son celdas validas (generan cambios)
@@ -251,10 +259,10 @@ namespace IPC2_P1.Controllers
                     Reemplazar(tablero, celdas_validas[num], color_opuesto);
                     lista_temp=Flanquear(tablero, celdas_validas[num], color_opuesto, color);
 
-                    Reemplazar_list(tablero, lista_temp, color_opuesto);
+                    Reemplazar_lista(tablero, lista_temp, color_opuesto);
 
-                    tablero.RemoveAt(64);                    
-                    tablero.Add(new Ficha(color, Globals.usuario_activo, num1 + 1, num2 + 1));
+                    tablero.movimientos += 1;
+                    tablero.movimientos_oponente += 1;
                 }
                 else //no hay celdas validas en el siguiente turno
                 {
@@ -286,22 +294,22 @@ namespace IPC2_P1.Controllers
 
                             int count = 0, count2 = 0;
 
-                            foreach (Ficha ficha in tablero) //CONTANDO LAS FICHAS
+                            foreach (Ficha ficha in tablero.fichas) //CONTANDO LAS FICHAS
                             {
                                 if (usuario == Globals.usuario_activo)
                                 {
-                                    if (ficha.valor == color) //usuario                                    
+                                    if (ficha.color == color) //usuario                                    
                                         count++;
                                     else //oponente                                    
-                                        if (ficha.valor == color_opuesto)
+                                        if (ficha.color == color_opuesto)
                                         count2++;
                                 }
                                 else
                                 {
-                                    if (ficha.valor == color) //oponente                                    
+                                    if (ficha.color == color) //oponente                                    
                                         count2++;
                                     else //usuario                                    
-                                        if (ficha.valor == color_opuesto)
+                                        if (ficha.color == color_opuesto)
                                         count++;
                                 }
                             }
@@ -366,22 +374,22 @@ namespace IPC2_P1.Controllers
 
                         int count = 0, count2 = 0;
 
-                        foreach (Ficha ficha in tablero) //CONTANDO LAS FICHAS
+                        foreach (Ficha ficha in tablero.fichas) //CONTANDO LAS FICHAS
                         {
                             if (usuario == Globals.usuario_activo)
                             {
-                                if (ficha.valor == color) //usuario                                    
+                                if (ficha.color == color) //usuario                                    
                                     count++;
                                 else //oponente                                    
-                                    if (ficha.valor == color_opuesto)
+                                    if (ficha.color == color_opuesto)
                                     count2++;
                             }
                             else
                             {
-                                if (ficha.valor == color) //oponente                                    
+                                if (ficha.color == color) //oponente                                    
                                     count2++;
                                 else //usuario                                    
-                                    if (ficha.valor == color_opuesto)
+                                    if (ficha.color == color_opuesto)
                                     count++;
                             }
                         }
@@ -436,7 +444,6 @@ namespace IPC2_P1.Controllers
                         cmd = new SqlCommand(txt, con);
                         dr = cmd.ExecuteReader();
                         dr.Close();
-                        System.Diagnostics.Debug.WriteLine("TODO FINE BBGG BD");
                     }
                 }
 
@@ -444,20 +451,19 @@ namespace IPC2_P1.Controllers
             }
             else
             {
-                System.Diagnostics.Debug.WriteLine("NO SE HICIERON CAMBIOS");
                 Reemplazar(tablero, index, "");
                 return View(tablero);
             }
         }
 
         [HttpPost]
-        public ActionResult Versus(List<Ficha> tablero)
+        public ActionResult Versus(Tablero tablero)
         {
             int index = -1;
-            int num1 = tablero[64].mov1;
-            int num2 = tablero[64].mov2;
+            int num1 = tablero.movimientos;
+            int num2 = tablero.movimientos_oponente;
 
-            string usuario = tablero[64].presionado, usuario_opuesto = "";
+            string usuario = tablero.usuario, usuario_opuesto = "";
 
             if (usuario == Globals.usuario_activo)
                 usuario_opuesto = "Oponente";
@@ -465,22 +471,25 @@ namespace IPC2_P1.Controllers
                 usuario_opuesto = Globals.usuario_activo;
 
 
-            string color = tablero[64].valor, color_opuesto = "";
+            string color = tablero.color, color_opuesto = "";
 
-            if (color == "blanca")
-                color_opuesto = "negra";
+            if (color == "blanco")
+                color_opuesto = "negro";
             else
-                color_opuesto = "blanca";
+                color_opuesto = "blanco";
 
 
             // RECONOCIMIENTO DE LA FICHA SELECCIONADA
 
-            for (int i = 0; i < tablero.Count; i++)
+            int acc = 0;
+            foreach (Ficha ficha in tablero.fichas)
             {
-                if (tablero[i].presionado == "true")
+                if (ficha.presionado == "true")
                 {
-                    index = i;
+                    index = acc;
                 }
+
+                acc++;
             }
 
 
@@ -492,7 +501,7 @@ namespace IPC2_P1.Controllers
             {
                 // EJECUTANDO CAMBIOS
 
-                Reemplazar_list(tablero, lista, color);
+                Reemplazar_lista(tablero, lista, color);
 
                 // VALIDANDO SI HAY TIROS VALIDOS EN EL SIGUIENTE TURNO
 
@@ -500,10 +509,13 @@ namespace IPC2_P1.Controllers
                 List<int> celdas_vacias = new List<int>();
                 List<int> celdas_validas = new List<int>();
 
-                for (int i = 0; i < 64; i++) //reconociendo celdas vacias
+                acc = 0;
+                foreach (Ficha ficha in tablero.fichas) //reconociendo celdas vacias
                 {
-                    if (tablero[i].valor != "negra" && tablero[i].valor != "blanca")
-                        celdas_vacias.Add(i);
+                    if (ficha.color==null)
+                        celdas_vacias.Add(acc);
+
+                    acc++;
                 }
 
                 foreach (int celda in celdas_vacias) //iterando en las celdas vacias, para ver si son celdas validas (generan cambios)
@@ -515,12 +527,10 @@ namespace IPC2_P1.Controllers
 
                 if (celdas_validas.Count > 0) //si existen celdas validas en el turno siguiente
                 {
-                    tablero.RemoveAt(64);
-
                     if (usuario == "Oponente")
-                        tablero.Add(new Ficha(color_opuesto, Globals.usuario_activo, num1, num2 + 1));
+                        tablero.Actualizar(color_opuesto, Globals.usuario_activo, num1, num2 + 1);
                     else
-                        tablero.Add(new Ficha(color_opuesto, "Oponente", num1 + 1, num2));
+                        tablero.Actualizar(color_opuesto, "Oponente", num1+1, num2);
                 }
                 else //no hay celdas validas en el siguiente turno
                 {
@@ -552,22 +562,22 @@ namespace IPC2_P1.Controllers
 
                             int count = 0, count2 = 0;
 
-                            foreach (Ficha ficha in tablero) //CONTANDO LAS FICHAS
+                            foreach (Ficha ficha in tablero.fichas) //CONTANDO LAS FICHAS
                             {
                                 if (usuario == Globals.usuario_activo)
                                 {
-                                    if (ficha.valor == color) //usuario                                    
+                                    if (ficha.color == color) //usuario                                    
                                         count++;
                                     else //oponente                                    
-                                        if (ficha.valor == color_opuesto)
+                                        if (ficha.color == color_opuesto)
                                         count2++;
                                 }
                                 else
                                 {
-                                    if (ficha.valor == color) //oponente                                    
+                                    if (ficha.color == color) //oponente                                    
                                         count2++;
                                     else //usuario                                    
-                                        if (ficha.valor == color_opuesto)
+                                        if (ficha.color == color_opuesto)
                                         count++;
                                 }
                             }
@@ -632,22 +642,22 @@ namespace IPC2_P1.Controllers
 
                         int count = 0, count2 = 0;
 
-                        foreach (Ficha ficha in tablero) //CONTANDO LAS FICHAS
+                        foreach (Ficha ficha in tablero.fichas) //CONTANDO LAS FICHAS
                         {
                             if (usuario == Globals.usuario_activo)
                             {
-                                if (ficha.valor == color) //usuario                                    
+                                if (ficha.color == color) //usuario                                    
                                     count++;
                                 else //oponente                                    
-                                    if (ficha.valor == color_opuesto)
+                                    if (ficha.color == color_opuesto)
                                     count2++;
                             }
                             else
                             {
-                                if (ficha.valor == color) //oponente                                    
+                                if (ficha.color == color) //oponente                                    
                                     count2++;
                                 else //usuario                                    
-                                    if (ficha.valor == color_opuesto)
+                                    if (ficha.color == color_opuesto)
                                     count++;
                             }
                         }
@@ -717,7 +727,7 @@ namespace IPC2_P1.Controllers
         }
 
 
-        public List<int> Flanquear(List<Ficha> tablero, int index, string color, string color_opuesto)
+        public List<int> Flanquear(Tablero tablero, int index, string color, string color_opuesto)
         {
             List<int> lista = new List<int>();
 
@@ -735,7 +745,7 @@ namespace IPC2_P1.Controllers
                 // FICHAS A LA IZQUIERDA
                 if (izq_f)
                 {
-                    if (tablero[index - 1].valor == color_opuesto)
+                    if (tablero.fichas[index - 1].color == color_opuesto)
                     {
                         int acc = -2;
                         List<int> lista_temp = new List<int>();
@@ -747,14 +757,14 @@ namespace IPC2_P1.Controllers
                             bool izq = (index + acc >= 0) && (index / 8 == (index + acc) / 8);
                             if (izq)
                             {
-                                if (tablero[index + acc].valor == color_opuesto)
+                                if (tablero.fichas[index + acc].color == color_opuesto)
                                 {
                                     lista_temp.Add(index + acc);
 
                                 }
                                 else
                                 {
-                                    if (tablero[index + acc].valor == color)
+                                    if (tablero.fichas[index + acc].color == color)
                                     {
                                         lista.AddRange(lista_temp);
                                     }
@@ -777,7 +787,7 @@ namespace IPC2_P1.Controllers
                 // FICHAS A LA DERECHA
                 if (der_f)
                 {
-                    if (tablero[index + 1].valor == color_opuesto)
+                    if (tablero.fichas[index + 1].color == color_opuesto)
                     {
                         int acc = 2;
                         List<int> lista_temp = new List<int>();
@@ -789,14 +799,14 @@ namespace IPC2_P1.Controllers
                             bool der = (index + acc < 64) && (index / 8 == (index + acc) / 8);
                             if (der)
                             {
-                                if (tablero[index + acc].valor == color_opuesto)
+                                if (tablero.fichas[index + acc].color == color_opuesto)
                                 {
                                     lista_temp.Add(index + acc);
 
                                 }
                                 else
                                 {
-                                    if (tablero[index + acc].valor == color)
+                                    if (tablero.fichas[index + acc].color == color)
                                     {
                                         lista.AddRange(lista_temp);
                                     }
@@ -819,7 +829,7 @@ namespace IPC2_P1.Controllers
                 // FICHAS SUPERIOR
                 if (sup_f)
                 {
-                    if (tablero[index - 8].valor == color_opuesto)
+                    if (tablero.fichas[index - 8].color == color_opuesto)
                     {
                         int acc = -16;
                         List<int> lista_temp = new List<int>();
@@ -831,14 +841,14 @@ namespace IPC2_P1.Controllers
                             bool sup = (index + acc >= 0);
                             if (sup)
                             {
-                                if (tablero[index + acc].valor == color_opuesto)
+                                if (tablero.fichas[index + acc].color == color_opuesto)
                                 {
                                     lista_temp.Add(index + acc);
 
                                 }
                                 else
                                 {
-                                    if (tablero[index + acc].valor == color)
+                                    if (tablero.fichas[index + acc].color == color)
                                     {
                                         lista.AddRange(lista_temp);
                                     }
@@ -861,7 +871,7 @@ namespace IPC2_P1.Controllers
                 // FICHAS INFERIOR
                 if (inf_f)
                 {
-                    if (tablero[index + 8].valor == color_opuesto)
+                    if (tablero.fichas[index + 8].color == color_opuesto)
                     {
                         int acc = 16;
                         List<int> lista_temp = new List<int>();
@@ -873,14 +883,14 @@ namespace IPC2_P1.Controllers
                             bool inf = (index + acc < 64);
                             if (inf)
                             {
-                                if (tablero[index + acc].valor == color_opuesto)
+                                if (tablero.fichas[index + acc].color == color_opuesto)
                                 {
                                     lista_temp.Add(index + acc);
 
                                 }
                                 else
                                 {
-                                    if (tablero[index + acc].valor == color)
+                                    if (tablero.fichas[index + acc].color == color)
                                     {
                                         lista.AddRange(lista_temp);
                                     }
@@ -903,7 +913,7 @@ namespace IPC2_P1.Controllers
                 // FICHAS IZQ SUP
                 if (izq_f && sup_f)
                 {
-                    if (tablero[index - 9].valor == color_opuesto)
+                    if (tablero.fichas[index - 9].color == color_opuesto)
                     {
                         int acc = -2; //izq
                         int acc2 = -16; //sup
@@ -918,14 +928,14 @@ namespace IPC2_P1.Controllers
 
                             if (izq && sup)
                             {
-                                if (tablero[index + acc + acc2].valor == color_opuesto)
+                                if (tablero.fichas[index + acc + acc2].color == color_opuesto)
                                 {
                                     lista_temp.Add(index + acc + acc2);
 
                                 }
                                 else
                                 {
-                                    if (tablero[index + acc + acc2].valor == color)
+                                    if (tablero.fichas[index + acc + acc2].color == color)
                                     {
                                         lista.AddRange(lista_temp);
                                     }
@@ -949,7 +959,7 @@ namespace IPC2_P1.Controllers
                 // FICHAS DER SUP
                 if (der_f && sup_f)
                 {
-                    if (tablero[index - 7].valor == color_opuesto)
+                    if (tablero.fichas[index - 7].color == color_opuesto)
                     {
                         int acc = 2; //der
                         int acc2 = -16; //sup
@@ -964,13 +974,13 @@ namespace IPC2_P1.Controllers
 
                             if (der && sup)
                             {
-                                if (tablero[index + acc + acc2].valor == color_opuesto)
+                                if (tablero.fichas[index + acc + acc2].color == color_opuesto)
                                 {
                                     lista_temp.Add(index + acc + acc2);
                                 }
                                 else
                                 {
-                                    if (tablero[index + acc + acc2].valor == color)
+                                    if (tablero.fichas[index + acc + acc2].color == color)
                                     {
                                         lista.AddRange(lista_temp);
                                     }
@@ -994,7 +1004,7 @@ namespace IPC2_P1.Controllers
                 // FICHAS IZQ INF
                 if (izq_f && inf_f)
                 {
-                    if (tablero[index + 7].valor == color_opuesto)
+                    if (tablero.fichas[index + 7].color == color_opuesto)
                     {
                         int acc = -2; //izq
                         int acc2 = 16; //inf
@@ -1009,13 +1019,13 @@ namespace IPC2_P1.Controllers
 
                             if (izq && inf)
                             {
-                                if (tablero[index + acc + acc2].valor == color_opuesto)
+                                if (tablero.fichas[index + acc + acc2].color == color_opuesto)
                                 {
                                     lista_temp.Add(index + acc + acc2);
                                 }
                                 else
                                 {
-                                    if (tablero[index + acc + acc2].valor == color)
+                                    if (tablero.fichas[index + acc + acc2].color == color)
                                     {
                                         lista.AddRange(lista_temp);
                                     }
@@ -1039,7 +1049,7 @@ namespace IPC2_P1.Controllers
                 // FICHAS DER INF
                 if (der_f && inf_f)
                 {
-                    if (tablero[index + 9].valor == color_opuesto)
+                    if (tablero.fichas[index + 9].color == color_opuesto)
                     {
                         int acc = 2; //der
                         int acc2 = 16; //inf
@@ -1054,13 +1064,13 @@ namespace IPC2_P1.Controllers
 
                             if (der && inf)
                             {
-                                if (tablero[index + acc + acc2].valor == color_opuesto)
+                                if (tablero.fichas[index + acc + acc2].color == color_opuesto)
                                 {
                                     lista_temp.Add(index + acc + acc2);
                                 }
                                 else
                                 {
-                                    if (tablero[index + acc + acc2].valor == color)
+                                    if (tablero.fichas[index + acc + acc2].color == color)
                                     {
                                         lista.AddRange(lista_temp);
                                     }
@@ -1086,22 +1096,18 @@ namespace IPC2_P1.Controllers
             return lista;
         }
 
-        public void Reemplazar(List<Ficha> tablero, int pos, string valor)
+        public void Reemplazar(Tablero tablero, int pos, string valor)
         {
-            if (pos >= 0)
-            {
-                tablero.RemoveAt(pos);
-                tablero.Insert(pos, new Ficha(valor));
-            }
+            if (pos >= 0)            
+                tablero.fichas[pos].color = valor;            
         }
 
-        public void Reemplazar_list(List<Ficha> tablero, List<int> pos_list, string valor)
+        public void Reemplazar_lista(Tablero tablero, List<int> pos_list, string valor)
         {
             foreach (int pos in pos_list)
-            {
-                tablero.RemoveAt(pos);
-                tablero.Insert(pos, new Ficha(valor));
-            }
+                if(pos>=0)
+                    tablero.fichas[pos].color = valor;
+            
         }
         
 
@@ -1112,12 +1118,12 @@ namespace IPC2_P1.Controllers
         {
             if (archivo != null)
             {
-                List<Ficha> tablero = ReadXML(archivo, color_temp, usuario_temp);
+                Tablero tablero = ReadXML(archivo, color_temp, usuario_temp);
 
-                int num1 = tablero[64].mov1;
-                int num2 = tablero[64].mov2;
+                int num1 = tablero.movimientos;
+                int num2 = tablero.movimientos_oponente;
 
-                string usuario = tablero[64].presionado, usuario_opuesto = "";
+                string usuario = tablero.usuario, usuario_opuesto = "";
 
                 if (usuario == Globals.usuario_activo)
                     usuario_opuesto = "Oponente";
@@ -1125,12 +1131,12 @@ namespace IPC2_P1.Controllers
                     usuario_opuesto = Globals.usuario_activo;
 
 
-                string color = tablero[64].valor, color_opuesto = "";
+                string color = tablero.color, color_opuesto = "";
 
-                if (color == "blanca")
-                    color_opuesto = "negra";
+                if (color == "blanco")
+                    color_opuesto = "negro";
                 else
-                    color_opuesto = "blanca";
+                    color_opuesto = "blanco";
 
 
              
@@ -1140,10 +1146,13 @@ namespace IPC2_P1.Controllers
                 List<int> celdas_vacias = new List<int>();
                 List<int> celdas_validas = new List<int>();
 
-                for (int i = 0; i < 64; i++) //reconociendo celdas vacias
+                int acc = 0;
+                foreach (Ficha ficha in tablero.fichas) //reconociendo celdas vacias
                 {
-                    if (tablero[i].valor != "negra" && tablero[i].valor != "blanca")
-                        celdas_vacias.Add(i);
+                    if (ficha.color== null)
+                        celdas_vacias.Add(acc);
+
+                    acc++;
                 }
 
                 foreach (int celda in celdas_vacias) //iterando en las celdas vacias, para ver si son celdas validas (generan cambios)
@@ -1157,12 +1166,10 @@ namespace IPC2_P1.Controllers
                 if (celdas_validas.Count == 0)  //no hay celdas validas en el siguiente turno
                 {
 
-                    tablero.RemoveAt(64);
-
                     if (usuario == "Oponente")
-                        tablero.Add(new Ficha(color_opuesto, Globals.usuario_activo, num1, num2 + 1));
+                        tablero.Actualizar(color_opuesto, Globals.usuario_activo, num1, num2 + 1);
                     else
-                        tablero.Add(new Ficha(color_opuesto, "Oponente", num1 + 1, num2));
+                        tablero.Actualizar(color_opuesto, "Oponente", num1+1, num2);
 
 
                     if (celdas_vacias.Count > 0) //si todavia hay celdas vacias
@@ -1190,7 +1197,7 @@ namespace IPC2_P1.Controllers
                         {
                             ViewBag.Message = "El tablero cargado no es válido";
                             ViewBag.MessageType = "error-message";
-                            return View(action, Tablero(64, color_temp, usuario_temp));
+                            return View(action, new Tablero(8, 8, color_temp, usuario_temp));
                         }
 
                     }
@@ -1199,7 +1206,7 @@ namespace IPC2_P1.Controllers
                         ViewBag.Message = "El tablero cargado está lleno";
                         ViewBag.MessageType = "error-message";
 
-                        return View(action, Tablero(64, color_temp, usuario_temp));
+                        return View(action, new Tablero(8, 8, color_temp, usuario_temp));
                     }
                 }
                 else
@@ -1209,15 +1216,14 @@ namespace IPC2_P1.Controllers
                     return View(action, tablero);
                 }
                 
-
             } //no se cargó un archivo
             else
-                return View(action, Tablero(64, color_temp, usuario_temp));
+                return View(action, new Tablero(8, 8, color_temp, usuario_temp));
         }
 
-        public List<Ficha> ReadXML(HttpPostedFileBase archivo, string color, string usuario)
+        public Tablero ReadXML(HttpPostedFileBase archivo, string color, string usuario)
         {
-            string result = string.Empty;
+            string result = "";
             using (BinaryReader b = new BinaryReader(archivo.InputStream))   // FUENTE: https://stackoverflow.com/questions/16030034/asp-net-mvc-read-file-from-httppostedfilebase-without-save/16030326
             {
                 byte[] binData = b.ReadBytes(archivo.ContentLength);
@@ -1227,49 +1233,49 @@ namespace IPC2_P1.Controllers
             XmlDocument doc = new XmlDocument();
             doc.LoadXml(result);
 
-            List<Ficha> tablero_cargado = new List<Ficha>();
-
             int tam = 64; // Para diferentes tamaños de tablero
-            for (int i = 0; i < tam; i++)
-            {
-                tablero_cargado.Add(new Ficha(""));
-            }
+            int lado = Convert.ToInt32(Math.Sqrt(tam));
+
+            Tablero tablero_cargado = new Tablero(lado, lado, "", "");
+            
             
             foreach(XmlNode nodo in doc.SelectNodes("tablero")[0].SelectNodes("ficha"))
             {
                 int pos=-1;
+                string color_temp = nodo.ChildNodes[0].InnerText;
+
                 switch (nodo.ChildNodes[2].InnerText)
                 {
                     case "1":
-                        pos = 8*0;
+                        pos = lado*0;
                         break;
 
                     case "2":
-                        pos = 8*1;
+                        pos = lado * 1;
                         break;
 
                     case "3":
-                        pos = 8*2;
+                        pos = lado * 2;
                         break;
 
                     case "4":
-                        pos = 8*3;
+                        pos = lado * 3;
                         break;
 
                     case "5":
-                        pos = 8*4;
+                        pos = lado * 4;
                         break;
 
                     case "6":
-                        pos = 8*5;
+                        pos = lado * 5;
                         break;
 
                     case "7":
-                        pos = 8*6;
+                        pos = lado * 6;
                         break;
 
                     case "8":
-                        pos = 8*7;
+                        pos = lado * 7;
                         break;
 
                 }
@@ -1307,21 +1313,21 @@ namespace IPC2_P1.Controllers
                         break;
 
                 }
-
-                Reemplazar(tablero_cargado, pos, nodo.ChildNodes[0].InnerText);
+                
+                Reemplazar(tablero_cargado, pos, color_temp);
             }
 
             int count = 0;
 
-            foreach (Ficha ficha in tablero_cargado)
+            foreach (Ficha ficha in tablero_cargado.fichas)
             {
-                if (ficha.valor == "blanca" || ficha.valor == "negra")
+                if (ficha.color != null)
                     count++;
             }
 
-            string color_temp = doc.SelectNodes("tablero")[0].SelectNodes("siguienteTiro")[0].InnerText;
+            string color_temp2 = doc.SelectNodes("tablero")[0].SelectNodes("siguienteTiro")[0].InnerText;
 
-            if (color != color_temp)
+            if (color != color_temp2)
             {
                 if (usuario == Globals.usuario_activo)
                     usuario = "Oponente";
@@ -1329,7 +1335,7 @@ namespace IPC2_P1.Controllers
                     usuario = Globals.usuario_activo;
             }
 
-            tablero_cargado.Add(new Ficha(color_temp, usuario, count/2, count/2));
+            tablero_cargado.Actualizar(color_temp2, usuario, count / 2-2, count / 2-2);
 
             return tablero_cargado;
         }
@@ -1338,15 +1344,14 @@ namespace IPC2_P1.Controllers
         //GUARDAR TABLERO        
 
         [HttpPost]
-        public ActionResult Descargar(List<Ficha> tablero)
+        public ActionResult Descargar(Tablero tablero)
         {
 
-            System.Diagnostics.Debug.WriteLine("PRUEBA: " + tablero.Count);
             WriteXML(tablero);
             return File("../temp.xml", "text/xml", "partida.xml");
         }
 
-        public void WriteXML(List<Ficha> tablero)
+        public void WriteXML(Tablero tablero)
         {
             var ruta = Server.MapPath("../temp.xml");
 
@@ -1358,29 +1363,34 @@ namespace IPC2_P1.Controllers
             writer.Indentation = 3;
 
             writer.WriteStartElement("tablero");
-            
-            for (int i = 0; i < 64; i++)
+
+            int acc = 0;
+            for (int i = 0; i < tablero.filas; i++)
             {
-                if (tablero[i].valor=="blanca" || tablero[i].valor == "negra")
+                for (int j = 0; j < tablero.columnas; j++)
                 {
-                    writer.WriteStartElement("ficha");
-                    writer.WriteStartElement("color");
-                    writer.WriteString(tablero[i].valor); //COLOR
-                    writer.WriteEndElement();
-                    writer.WriteStartElement("columna");
-                    writer.WriteString(ids[i].Substring(0,1));//COLUMNA
-                    writer.WriteEndElement();
-                    writer.WriteStartElement("fila");
-                    writer.WriteString(ids[i].Substring(1,1));//FILA
-                    writer.WriteEndElement();
-                    writer.WriteEndElement();
+                    if (tablero.fichas[acc].color != null)
+                    {
+                        writer.WriteStartElement("ficha");
+                        writer.WriteStartElement("color");
+                        writer.WriteString(tablero.fichas[acc].color); //COLOR
+                        writer.WriteEndElement();
+                        writer.WriteStartElement("columna");
+                        writer.WriteString(Globals.columnas[j]);//COLUMNA
+                        writer.WriteEndElement();
+                        writer.WriteStartElement("fila");
+                        writer.WriteString(Globals.filas[i]);//FILA
+                        writer.WriteEndElement();
+                        writer.WriteEndElement();
+                    }
+
+                    acc++;
                 }
             }
 
             writer.WriteStartElement("siguienteTiro"); //Poner el siguiente tiro
             writer.WriteStartElement("color");
-            writer.WriteString(tablero[64].valor);
-            System.Diagnostics.Debug.WriteLine("escribí "+tablero[64].valor);
+            writer.WriteString(tablero.color);
             writer.WriteEndElement();
             writer.WriteEndElement();
 
