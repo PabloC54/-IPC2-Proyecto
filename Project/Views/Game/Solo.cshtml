@@ -2,6 +2,17 @@
 @{
     ViewBag.Title = "Solo";
     Layout = "~/Views/Shared/_Layout_logged_in_no_nav.cshtml";
+
+    string juego_terminado = "false";
+    
+    try
+    {
+        if (ViewBag.Message.StartsWith("¡El juego ha terminado!") == true)
+        {
+            juego_terminado = "true";
+        }
+    }
+    catch { }
 }
 
 <!DOCTYPE html>
@@ -12,20 +23,47 @@
     <meta http-equiv="“X-UA-Compatible”" content="'IE' ='edge'" />
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script>
-
+        
+        var contador, segundos;
         var columnas = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T"];
         var filas = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20"];
-        let ids = [];
+        var ids = [];    
 
-        function generar(num_filas, num_columnas) {
-            ids=[]
-            for (i = 0; i < num_filas; i++) 
-                for (j = 0; j < num_columnas; j++) 
-                    ids.push(columnas[j] + filas[i]);       
+        for (i = 0; i < @Model.filas; i++) 
+            for (j = 0; j < @Model.columnas; j++) 
+                ids.push(columnas[j] + filas[i]);   
+                
+        function init() {
+            ids.forEach(actualizar);
+
+            if (@juego_terminado==false && @Model.cronometro_agotado==false) {
+                contador = setInterval(cronometro, 1000);
+                segundos = 10;
+            }
+            else {
+                document.getElementById("cronometro").innerHTML = "-----------------------------------";
+                ids.forEach(function (id) {
+                    doc.getElementById(id).disabled = true;
+                });
+            }
+        }
+
+        function cronometro() {            
+            if (segundos == 0) {
+                clearInterval(contador);
+                document.getElementById("cronometro").innerHTML = "Tiempo agotado";
+                document.getElementById("I_cronometro_agotado").value="true";
+                document.getElementById("cronometro_agotado").click();
+            }
+            else {
+                segundos -= 1;
+                document.getElementById("cronometro").innerHTML = segundos + " segundos";
+            }
         }
 
         function actualizar(id) {
-            var color = document.getElementById("I_" + id).value
+
+            var color = document.getElementById("I_" + id).value;
 
             switch (color) {
 
@@ -78,11 +116,11 @@
                 actualizar(id);
             }
         }
-
+                      
     </script>
 </head>
 
-<body onload="generar(@Model.filas, @Model.columnas);ids.forEach(actualizar)">
+<body onload="init()">
     <!-- AREA DE JUEGO -->
     <section id="Game">
 
@@ -92,7 +130,9 @@
                 <div id="turno">
                     El turno es de @Model.usuario <br/>
                     @Globals.usuario_activo: @Model.movimientos movimientos<br />
-                    Oponente: @Model.movimientos_oponente movimientos
+                    Oponente: @Model.movimientos_oponente movimientos<br />
+                    <span id="cronometro">10 segundos</span>
+
                 </div>
 
 
@@ -118,12 +158,18 @@
 
                                     </div>
                                 }
+
+                                <input type="text" id="I_cronometro_agotado" name="cronometro_agotado" value="@Model.cronometro_agotado" style="display:none" />
+                                <input type="submit" id="cronometro_agotado" style="display:none" />
+
                                 <input type="text" name="columnas" value="@Model.columnas" style="display:none" />
                                 <input type="text" name="filas" value="@Model.filas" style="display:none" />
                                 <input type="text" name="color" value="@Model.color" style="display:none" />
                                 <input type="text" name="usuario" value="@Model.usuario" style="display:none" />
                                 <input type="text" name="movimientos" value="@Model.movimientos" style="display:none" />
                                 <input type="text" name="movimientos_oponente" value="@Model.movimientos_oponente" style="display:none" />
+                                <input type="text" name="modalidad" value="@Model.modalidad" style="display:none" />
+                                <input type="text" name="apertura_personalizada" value="@Model.apertura_personalizada" style="display:none" />
                             }
                         </div>
                     </div>
@@ -138,7 +184,7 @@
             }
         </asp:UpdatePanel>
 
-            @using (Html.BeginForm("Load", "Game", FormMethod.Post, new { enctype = "multipart/form-data" }))
+            @using (Html.BeginForm("Cargar", "Game", FormMethod.Post, new { enctype = "multipart/form-data" }))
             {
                 <div class="row xml-load-row">
                     <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 col-xl-12">
@@ -146,6 +192,7 @@
                         <button class="xmlbtn" id="xml-cargar" type="submit">  Cargar archivo XML.. </button>
                         <input type="text" name="color" value="@Model.color" style="display:none" />
                         <input type="text" name="usuario" value="@Model.usuario" style="display:none" />
+                        <input type="text" name="tablero_variable" value="false" style="display:none" />
                         <input type="text" name="action" value="Solo" style="display:none" />
                     </div>
                 </div>

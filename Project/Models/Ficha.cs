@@ -8,7 +8,6 @@ namespace IPC2_P1.Models
 {
     public class Ficha
     {
-
         public Ficha()
         {
             presionado = "false";

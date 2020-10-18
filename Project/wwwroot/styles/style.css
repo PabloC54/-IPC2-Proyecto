@@ -11512,6 +11512,30 @@ body.menu-active #Header .logo {
     color: lightblue;
 }
 
+#GIndex {
+    background-image: url(../images/game_bg.jpg);
+    height: 600px;
+    width: 100%;
+    color:white;
+}
+
+    #GIndex > div {
+        padding: 100px 350px;
+    }
+
+    #GIndex h4 {
+        padding-left:20px;
+        padding-bottom:30px;
+    }
+    #GIndex span {
+        text-align: center;
+    }
+
+
+.subform {
+    padding: 40px 0;
+}
+
 #Game {
     background-image: url(../images/game_bg.jpg);
     height: 850px;

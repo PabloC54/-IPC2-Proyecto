@@ -82,9 +82,9 @@
                         <a href="#" onclick="toggle_menu('Menu_solo')"><i class="fa fa-arrow-right" aria-hidden="true"></i>     Solo</a>
                         <div id="Menu_solo">
                             <ul>
-                                <li id="f_b">@Html.ActionLink("Ficha blanca","Solo","Game",new { ficha_inicial="blanco" }, new { @class="subop" })</li>
-                                <li id="f_n">@Html.ActionLink("Ficha negra", "Solo", "Game", new { ficha_inicial = "negro" }, new { @class = "subop" })</li>
-                                <li id="f_a">@Html.ActionLink("Ficha aleatoria", "Solo", "Game", new { ficha_inicial = "aleatoria" }, new { @class = "subop" })</li>
+                                <li id="f_b">@Html.ActionLink("Ficha blanca","Index","Game",new {go_to="Solo", ficha_inicial="blanco" }, new { @class="subop" })</li>
+                                <li id="f_n">@Html.ActionLink("Ficha negra", "Index", "Game", new { go_to = "Solo", ficha_inicial = "negro" }, new { @class = "subop" })</li>
+                                <li id="f_a">@Html.ActionLink("Ficha aleatoria", "Index", "Game", new { go_to = "Solo", ficha_inicial = "aleatoria" }, new { @class = "subop" })</li>
                             </ul>
                         </div>
                     </div>
@@ -93,9 +93,9 @@
                         <a href="#" onclick="toggle_menu('Menu_versus')"><i class="fa fa-arrow-right" aria-hidden="true"></i>     Versus</a>
                         <div id="Menu_versus">
                             <ul>
-                                <li id="f_b">@Html.ActionLink("Ficha blanca", "Versus", "Game", new { ficha_inicial = "blanco" }, new { @class = "subop" })</li>
-                                <li id="f_n">@Html.ActionLink("Ficha negra", "Versus", "Game", new { ficha_inicial = "negro" }, new { @class = "subop" })</li>
-                                <li id="f_a">@Html.ActionLink("Ficha aleatoria", "Versus", "Game", new { ficha_inicial = "aleatoria" }, new { @class = "subop" })</li>
+                                <li id="f_b">@Html.ActionLink("Ficha blanca", "Index", "Game", new { go_to = "Versus", ficha_inicial = "blanco" }, new { @class = "subop" })</li>
+                                <li id="f_n">@Html.ActionLink("Ficha negra", "Index", "Game", new { go_to = "Versus", ficha_inicial = "negro" }, new { @class = "subop" })</li>
+                                <li id="f_a">@Html.ActionLink("Ficha aleatoria", "Index", "Game", new { go_to = "Versus", ficha_inicial = "aleatoria" }, new { @class = "subop" })</li>
                             </ul>
                         </div>
                     </div>
@@ -104,9 +104,9 @@
                         <a href="#" onclick="toggle_menu('Menu_torneos')"><i class="fa fa-arrow-right" aria-hidden="true"></i>     Torneo</a>
                         <div id="Menu_torneos">
                             <ul>
-                                <li id="f_b">@Html.ActionLink("Ficha blanca", "Torneos", "Game", new { ficha_inicial = "blanco" }, new { @class = "subop" })</li>
-                                <li id="f_n">@Html.ActionLink("Ficha negra", "Torneos", "Game", new { ficha_inicial = "negro" }, new { @class = "subop" })</li>
-                                <li id="f_a">@Html.ActionLink("Ficha aleatoria", "Torneos", "Game", new { ficha_inicial = "aleatoria" }, new { @class = "subop" })</li>
+                                <li id="f_b">@Html.ActionLink("Ficha blanca", "Index", "Game", new { go_to = "Torneos", ficha_inicial = "blanco" }, new { @class = "subop" })</li>
+                                <li id="f_n">@Html.ActionLink("Ficha negra", "Index", "Game", new { go_to = "Torneos", ficha_inicial = "negro" }, new { @class = "subop" })</li>
+                                <li id="f_a">@Html.ActionLink("Ficha aleatoria", "Index", "Game", new { go_to = "Torneos", ficha_inicial = "aleatoria" }, new { @class = "subop" })</li>
                             </ul>
                         </div>
                     </div>

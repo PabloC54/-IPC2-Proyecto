@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
 namespace IPC2_P1.Models
 {
@@ -7,12 +6,14 @@ namespace IPC2_P1.Models
     {
         public Tablero(){}
 
-        public Tablero(int filas, int columnas, string color, string usuario)
+        public Tablero(int filas, int columnas, string color, string usuario, string modalidad)
         {
             this.filas = filas;
             this.columnas = columnas;
             this.color = color;
             this.usuario = usuario;
+            this.modalidad = modalidad;
+            cronometro_agotado = "false";
 
             fichas = new List<Ficha>();
 
@@ -45,14 +46,41 @@ namespace IPC2_P1.Models
             }
                  
         }
+               
 
-        public void Iniciar()
+
+        public void Iniciar(bool apertura_personalizada)
+        {
+            if (apertura_personalizada)
+            {
+                this.apertura_personalizada = "true";
+                cronometro_agotado = "true";
+            }
+            else
+            {
+                this.apertura_personalizada = "false";
+                int x = columnas, y = filas;
+                fichas[(x / 2) * (y - 1) - 1].color = "blanco";
+                fichas[(x / 2) * (y - 1)].color = "negro";
+                fichas[(x / 2) * (y + 1) - 1].color = "negro";
+                fichas[(x / 2) * (y + 1)].color = "blanco";
+            }
+        }
+
+        public bool Apertura(int pos)
         {
             int x = columnas, y = filas;
-            fichas[(x / 2) * (y - 1)-1].color = "blanco";
-            fichas[(x / 2) * (y - 1)].color = "negro";
-            fichas[(x/2)*(y+1)-1].color = "negro";
-            fichas[(x / 2) * (y + 1)].color = "blanco";
+
+            List<int> temp = new List<int>();
+            temp.Add((x / 2) * (y - 1) - 1);
+            temp.Add((x / 2) * (y - 1));
+            temp.Add((x / 2) * (y + 1) - 1);
+            temp.Add((x / 2) * (y + 1));
+
+            if (temp.Contains(pos))            
+                return true;            
+            else
+                return false;
         }
 
         public void Actualizar(string color, string usuario, int movimientos, int movimientos_oponente)
@@ -62,6 +90,7 @@ namespace IPC2_P1.Models
             this.movimientos = movimientos;
             this.movimientos_oponente = movimientos_oponente;
         }
+
 
 
         public List<Ficha> fichas { get; set; }
@@ -78,5 +107,12 @@ namespace IPC2_P1.Models
 
         public int movimientos_oponente { get; set; }
 
+
+        public string modalidad { get; set; }
+
+        public string apertura_personalizada { get; set; }
+
+
+        public string cronometro_agotado { get; set; }
     }
 }

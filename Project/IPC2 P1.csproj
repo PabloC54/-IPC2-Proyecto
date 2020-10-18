@@ -126,12 +126,13 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="App_Code\Othello.cs" />
     <Compile Include="App_Start\BundleConfig.cs" />
     <Compile Include="App_Start\FilterConfig.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
+    <Compile Include="Controllers\Conversor.cs" />
     <Compile Include="Controllers\GameController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
+    <Compile Include="Controllers\Othello.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
@@ -191,7 +192,7 @@
     <None Include="packages.config" />
     <Content Include="Views\Shared\_Layout_no_nav.cshtml" />
     <Content Include="Views\Game\Versus.cshtml" />
-    <Content Include="Views\Game\Xtreme.cshtml" />
+    <Content Include="Views\Game\Index.cshtml" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

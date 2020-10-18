@@ -1,74 +1,75 @@
 ﻿using IPC2_P1.Models;
+using IPC2_P1.Controllers;
 using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
-using System.IO;
 using System.Web;
 using System.Web.Mvc;
-using System.Xml;
 
 namespace IPC2_P1.Controllers
 {
-    //IMPRIMIR EN CONSOLA
-    // System.Diagnostics.Debug.WriteLine("PRUEBA: " + tablero.Count);
+    // IMPRIMIR EN CONSOLA
+    // System.Diagnostics.Debug.WriteLine("PRUEBA: ");
     public class GameController : Controller
     {
-        public static string sql = "Data Source=PCP-PC;Initial Catalog=Othello_db;User ID=pabloc54;Password=pablo125";
-        public SqlConnection con = new SqlConnection(sql);
-        
+        public Conversor Conversor = new Conversor();
+        public Othello Juego = new Othello();
 
-        // SOLO, VERSUS, TORNEO
 
-        public ActionResult Solo(string ficha_inicial)
+        // I N I C I O
+
+        public ActionResult Index(string go_to, string ficha_inicial)
+        {
+            string[] temp = { go_to, ficha_inicial };
+            return View(temp);
+        }
+
+        [HttpPost]
+        public RedirectToRouteResult Index(string go_to, string ficha_inicial, string apertura, string modalidad)
+        {
+            return RedirectToAction(go_to, new {ficha_inicial, apertura, modalidad });
+        }
+
+
+        // SOLO, VERSUS, XTREME, TORNEO
+
+        public ActionResult Solo(string ficha_inicial, string apertura, string modalidad)
         {
             if (Globals.logged_in == true)
             {
                 Tablero tablero;
+                bool temp = false;
+
+                if (apertura == "Personalizada")
+                {
+                    temp = true;
+
+                }
 
                 if (ficha_inicial == "blanco")
                 {
-                    tablero = new Tablero(8,8, "blanco", Globals.usuario_activo);
-                    tablero.Iniciar();
+                    tablero = new Tablero(8,8, "blanco", Globals.usuario_activo, modalidad);
+                    tablero.Iniciar(temp);
 
-                    List<int> celdas_vacias = new List<int>();
-                    List<int> celdas_validas = new List<int>();
-                    List<int> list_temp = new List<int>();
-
-                    int acc = 0;
-                    foreach(Ficha ficha in tablero.fichas)
+                    ViewBag.MessageType = "neutral-message";
+                    if (tablero.apertura_personalizada == "true")
                     {
-                        if (ficha.color==null)                        
-                            celdas_vacias.Add(acc);
-
-                        acc++;
+                        ViewBag.Message = "Apertura personalizada en progreso, faltan 3 fichas por colocar";
+                        Juego.Movimiento_cpu_apertura(tablero, "negro");
                     }
-
-                    int max = 0;
-                    int len = 0;
-
-                    foreach(int i in celdas_vacias)
+                    else
                     {
-                        list_temp = Flanquear(tablero, i, "negro", "blanco");
-
-                        if (list_temp.Count > len)
-                        {
-                            len = list_temp.Count;
-                            max = i;
-                        }
+                        ViewBag.Message = "Apertura personalizada en progreso, faltan 4 fichas por colocar";
+                        Juego.Movimiento_cpu(tablero, "negro", "blanco");
                     }
-
-                    Reemplazar(tablero, max, "negro");
-                    List<int> lista_temp = Flanquear(tablero, max, "negro", "blanco");
-
-                    Reemplazar_lista(tablero, lista_temp, "negro");
 
                 }
                 else
                 {
                     if (ficha_inicial == "negro")
                     {
-                        tablero = new Tablero(8, 8, "negro", Globals.usuario_activo);
-                        tablero.Iniciar();
+                        tablero = new Tablero(8, 8, "negro", Globals.usuario_activo, modalidad);
+                        tablero.Iniciar(temp);
                     }
                     else
                     {
@@ -77,42 +78,25 @@ namespace IPC2_P1.Controllers
 
                         if (num < 0.5)
                         {
-                            tablero = new Tablero(8, 8, "negro", Globals.usuario_activo);
-                            tablero.Iniciar();
+                            tablero = new Tablero(8, 8, "negro", Globals.usuario_activo, modalidad);
+                            tablero.Iniciar(temp);
                         }
                         else
                         {
-                            tablero = new Tablero(8, 8, "blanco", Globals.usuario_activo);
-                            tablero.Iniciar();
+                            tablero = new Tablero(8, 8, "blanco", Globals.usuario_activo, modalidad);
+                            tablero.Iniciar(temp);
 
-                            List<int> celdas_vacias = new List<int>();
-                            List<int> celdas_validas = new List<int>();
-                            List<int> list_temp = new List<int>();
-
-                            int acc = 0;
-                            foreach (Ficha ficha in tablero.fichas)
+                            ViewBag.MessageType = "neutral-message";
+                            if (tablero.apertura_personalizada == "true")
                             {
-                                if (ficha.color == null)
-                                    celdas_vacias.Add(acc);
-
-                                acc++;
+                                ViewBag.Message = "Apertura personalizada en progreso, faltan 3 fichas por colocar";
+                                Juego.Movimiento_cpu_apertura(tablero, "negro");
                             }
-
-                            int max = 0;
-                            int len = 0;
-
-                            foreach (int i in celdas_vacias)
+                            else
                             {
-                                list_temp = Flanquear(tablero, i, "negro", "blanco");
-
-                                if (list_temp.Count > len)
-                                {
-                                    len = list_temp.Count;
-                                    max = i;
-                                }
+                                ViewBag.Message = "Apertura personalizada en progreso, faltan 4 fichas por colocar";
+                                Juego.Movimiento_cpu(tablero, "negro", "blanco");
                             }
-
-                            Reemplazar(tablero, max, "negro");
                         }
                     }
                 }
@@ -128,23 +112,32 @@ namespace IPC2_P1.Controllers
             }
         }
 
-        public ActionResult Versus(string ficha_inicial)
+        public ActionResult Versus(string ficha_inicial, string apertura, string modalidad)
         {
             if (Globals.logged_in == true)
             {
                 Tablero tablero;
+                bool temp=false;
 
+                if (apertura == "Personalizada")
+                {
+                    temp = true;
+                    ViewBag.MessageType = "neutral-message";
+                    ViewBag.Message = "Apertura personalizada en progreso, faltan 4 fichas por colocar";
+
+                }
+                
                 if (ficha_inicial == "blanco")
                 {
-                    tablero = new Tablero(8, 8, "negro", "Oponente");
-                    tablero.Iniciar();
+                    tablero = new Tablero(8, 8, "negro", "Oponente", modalidad);
+                    tablero.Iniciar(temp);
                 }
                 else
                 {
                     if (ficha_inicial == "negro")
                     {
-                        tablero = new Tablero(8, 8, "negro", Globals.usuario_activo);
-                        tablero.Iniciar();
+                        tablero = new Tablero(8, 8, "negro", Globals.usuario_activo, modalidad);
+                        tablero.Iniciar(temp);
                     }
                     else
                     {
@@ -153,13 +146,13 @@ namespace IPC2_P1.Controllers
 
                         if (num < 0.5)
                         {
-                            tablero = new Tablero(8, 8, "negro", Globals.usuario_activo);
-                            tablero.Iniciar();
+                            tablero = new Tablero(8, 8, "negro", Globals.usuario_activo, modalidad);
+                            tablero.Iniciar(temp);
                         }
                         else
                         {
-                            tablero = new Tablero(8, 8, "negro", "Oponente");
-                            tablero.Iniciar();
+                            tablero = new Tablero(8, 8, "negro", "Oponente", modalidad);
+                            tablero.Iniciar(temp);
                         }
                     }
                 }
@@ -177,13 +170,10 @@ namespace IPC2_P1.Controllers
 
 
         //LÓGICA DEL TABLERO
+
         [HttpPost]
         public ActionResult Solo(Tablero tablero)
         {
-            int index = -1;
-            int num1 = tablero.movimientos;
-            int num2 = tablero.movimientos_oponente;
-
             string usuario = tablero.usuario, usuario_opuesto = "";
 
             if (usuario == Globals.usuario_activo)
@@ -199,269 +189,180 @@ namespace IPC2_P1.Controllers
             else
                 color_opuesto = "blanco";
 
+            
+            int index = Juego.Ficha_seleccionada(tablero);
 
-            // RECONOCIMIENTO DE LA FICHA SELECCIONADA
-
-            int acc = 0;
-            foreach (Ficha ficha in tablero.fichas)
+            //APERTURA PERSONALIZADA
+            if (tablero.apertura_personalizada == "true")
             {
-                if (ficha.presionado=="true")
+                if (tablero.Apertura(index))
                 {
-                    index = acc;
-                }
+                    Juego.Reemplazar(tablero, index, color);
 
-                acc++;
+                    if (Juego.Celdas_ocupadas(tablero).Count == 4)
+                    {
+                        ViewBag.MessageType = "success-message";
+                        ViewBag.Message = "¡Apertura personalizada finalizada!";
+                        tablero.apertura_personalizada = "false";
+                        tablero.cronometro_agotado = "false";
+                    }
+                    else
+                    {
+                        Juego.Movimiento_cpu_apertura(tablero, color_opuesto);
+
+                        if (Juego.Celdas_ocupadas(tablero).Count == 4)
+                        {
+                            ViewBag.MessageType = "success-message";
+                            ViewBag.Message = "¡Apertura personalizada finalizada!";
+                            tablero.apertura_personalizada = "false";
+                            tablero.cronometro_agotado = "false";                            
+                        }
+                        else
+                        {
+                            ViewBag.MessageType = "neutral-message";
+                            ViewBag.Message = "Apertura personalizada en progreso, faltan " + (4 - Juego.Celdas_ocupadas(tablero).Count) + " fichas para finalizar";
+                        }
+                        
+                    }
+
+                    return View(tablero);
+                }
+                else
+                {
+                    ViewBag.MessageType = "error-message";
+                    ViewBag.Message = "¡Posición de apertura no válida!";
+                    Juego.Reemplazar(tablero, index, "");
+
+                    return View(tablero);
+                }
             }
 
+            //CRONOMETRO AGOTADO
+            if (tablero.cronometro_agotado == "true")
+            {
+                //EJECUTANDO CAMBIOS DEL CPU    
+                Juego.Movimiento_cpu(tablero, color_opuesto, color);
+                tablero.Actualizar(color, usuario, tablero.movimientos, tablero.movimientos_oponente + 1);
+                tablero.cronometro_agotado = "false";
+                               
+                List<int> celdas_validas = Juego.Celdas_validas(tablero, color, color_opuesto);
 
-            // VALIDANDO SI EL TIRO ES VÁLIDO
+                bool salir = true;
+                if (celdas_validas.Count == 0)
+                {
+                    salir = false;
+                }
 
-            List<int> lista = Flanquear(tablero, index, color, color_opuesto);
+                while (salir == false)
+                {
+                    celdas_validas = Juego.Celdas_validas(tablero, color_opuesto, color);
+
+                    if (celdas_validas.Count > 0)
+                    {
+                        //EJECUTANDO CAMBIOS DEL CPU
+                        Juego.Movimiento_cpu(tablero, color_opuesto, color);
+                        tablero.Actualizar(color, usuario, tablero.movimientos, tablero.movimientos_oponente + 1);
+
+                        celdas_validas = Juego.Celdas_validas(tablero, color, color_opuesto);
+
+                        if (celdas_validas.Count > 0)
+                        {
+                            salir = true;
+                        }
+                    }
+                    else
+                    {
+                        //JUEGO TERMINADO
+                        ViewBag.MessageType = "success-message";
+                        ViewBag.Message = Juego.Juego_terminado(tablero, color_opuesto);
+                        return View(tablero);
+                    }
+                }
+
+                return View(tablero);
+            }            
+            List<int> lista = Juego.Flanquear(tablero, index, color, color_opuesto);
 
             if (lista.Count > 0)
             {
-                // EJECUTANDO CAMBIOS
+                Juego.Reemplazar_lista(tablero, lista, color);
+                    
+                List<int> celdas_validas = Juego.Celdas_validas(tablero, color_opuesto, color);
 
-                Reemplazar_lista(tablero, lista, color);
-
-                // VALIDANDO SI HAY TIROS VALIDOS EN EL SIGUIENTE TURNO
-
-                List<int> lista_temp = new List<int>();
-                List<int> celdas_vacias = new List<int>();
-                List<int> celdas_validas = new List<int>();
-
-                acc = 0;
-                foreach (Ficha ficha in tablero.fichas) //reconociendo celdas vacias
-                {
-                    if (ficha.color==null)
-                        celdas_vacias.Add(acc);
-
-                    acc++;
-                }
-                
-                foreach (int celda in celdas_vacias) //iterando en las celdas vacias, para ver si son celdas validas (generan cambios)
-                {
-                    lista_temp = Flanquear(tablero, celda, color_opuesto, color);
-
-                    if (lista_temp.Count > 0)
-                    {
-                        celdas_validas.Add(celda);
-                    }
-                }
-
-                if (celdas_validas.Count > 0) //si existen celdas validas en el turno siguiente
+                if (celdas_validas.Count > 0)
                 {
                     //EJECUTANDO CAMBIOS DEL CPU    
+                    Juego.Movimiento_cpu(tablero, color_opuesto, color);
+                    tablero.Actualizar(color, usuario, tablero.movimientos + 1, tablero.movimientos_oponente + 1);
 
-                    Random random = new Random();
-                    int num = random.Next(celdas_validas.Count);
+                    celdas_validas = Juego.Celdas_validas(tablero, color, color_opuesto);
 
-                    Reemplazar(tablero, celdas_validas[num], color_opuesto);
-                    lista_temp=Flanquear(tablero, celdas_validas[num], color_opuesto, color);
+                    bool salir=true;
+                    if (celdas_validas.Count == 0)
+                    {
+                        salir = false;
+                    }
 
-                    Reemplazar_lista(tablero, lista_temp, color_opuesto);
+                    while (salir == false)
+                    {
+                        celdas_validas = Juego.Celdas_validas(tablero, color_opuesto, color);
 
-                    tablero.movimientos += 1;
-                    tablero.movimientos_oponente += 1;
+                        if (celdas_validas.Count > 0)
+                        {
+                            //EJECUTANDO CAMBIOS DEL CPU
+                            Juego.Movimiento_cpu(tablero, color_opuesto, color);
+                            tablero.Actualizar(color, usuario, tablero.movimientos, tablero.movimientos_oponente + 1);
+
+                            celdas_validas = Juego.Celdas_validas(tablero, color, color_opuesto);
+                                
+                            if (celdas_validas.Count > 0)
+                            {
+                                salir = true;
+                            }
+                        }
+                        else
+                        {
+                            //JUEGO TERMINADO
+                            ViewBag.MessageType = "success-message";
+                            ViewBag.Message = Juego.Juego_terminado(tablero, color_opuesto);
+                            return View(tablero);
+                        }
+                    }
+
+                    return View(tablero);
+
                 }
-                else //no hay celdas validas en el siguiente turno
+                else
                 {
-                    if (celdas_vacias.Count > 0) //si todavia hay celdas vacias
+                    celdas_validas = Juego.Celdas_validas(tablero, color, color_opuesto);
+
+                    if (celdas_validas.Count > 0)
                     {
+                        ViewBag.Message = usuario_opuesto + " no tiene movimientos válidos";
+                        ViewBag.MessageType = "error-message";
 
-                        // VALIDANDO SI HAY TIROS VÁLIDOS EN EL SIGUIENTE SIGUIENTE TURNO
-
-                        lista_temp = new List<int>();
-                        celdas_validas = new List<int>();
-
-                        foreach (int celda in celdas_vacias) //iterando en las celdas vacias, para ver si son celdas validas (generan cambios)
-                        {
-                            lista_temp = Flanquear(tablero, celda, color, color_opuesto);
-                            if (lista_temp.Count > 0)
-                                celdas_validas.Add(celda);
-                        }
-
-                        if (celdas_validas.Count > 0) //SI HAY TIROS VALIDOS EN El TURNO SIGUIENTE, SIGUIENTE
-                        {
-
-                            ViewBag.Message = usuario_opuesto + " no tiene movimientos válidos";
-                            ViewBag.MessageType = "error-message";
-
-                        }
-                        else //NO HAY TIROS VALIDOS EN LOS DOS TURNOS SIGUIENTES (SE TERMINA LA PARTIDA)
-                        {
-                            con.Open();
-
-                            int count = 0, count2 = 0;
-
-                            foreach (Ficha ficha in tablero.fichas) //CONTANDO LAS FICHAS
-                            {
-                                if (usuario == Globals.usuario_activo)
-                                {
-                                    if (ficha.color == color) //usuario                                    
-                                        count++;
-                                    else //oponente                                    
-                                        if (ficha.color == color_opuesto)
-                                        count2++;
-                                }
-                                else
-                                {
-                                    if (ficha.color == color) //oponente                                    
-                                        count2++;
-                                    else //usuario                                    
-                                        if (ficha.color == color_opuesto)
-                                        count++;
-                                }
-                            }
-
-                            string txt = "";
-                            SqlCommand cmd = null;
-                            SqlDataReader dr = null;
-
-                            ViewBag.MessageType = "neutral-message";
-                            if (count > count2) //usuario gano
-                            {
-                                ViewBag.Message = "¡No hay movimientos válidos!, el ganador es: " + Globals.usuario_activo + " con " + count + " fichas";
-                                txt = "select partidas_ganadas from Reporte where username='" + Globals.usuario_activo + "'";
-                            }
-                            else
-                            {
-                                if (count < count2) //usuario perdio
-                                {
-                                    ViewBag.Message = "¡No hay movimientos válidos!, el ganador es Oponente con " + count2 + " fichas";
-                                    txt = "select partidas_perdidas from Reporte where username='" + Globals.usuario_activo + "'";
-                                }
-                                else //usuario empato
-                                {
-                                    ViewBag.Message = "¡No hay movimientos válidos!, hubo un empate con " + count + " fichas";
-                                    txt = "select partidas_empatadas from Reporte where username='" + Globals.usuario_activo + "'";
-                                }
-                            }
-
-                            cmd = new SqlCommand(txt, con);
-                            dr = cmd.ExecuteReader();
-                            dr.Read();
-                            int num = dr.GetInt32(0) + 1;
-                            dr.Close();
-
-                            if (count > count2) //usuario gano
-                            {
-                                txt = "update Reporte set partidas_ganadas=" + num + " where username='" + Globals.usuario_activo + "'";
-                            }
-                            else
-                            {
-                                if (count < count2) //usuario perdio
-                                {
-                                    txt = "update Reporte set partidas_perdidas=" + num + " where username='" + Globals.usuario_activo + "'";
-                                }
-                                else //usuario empato
-                                {
-                                    txt = "update Reporte set partidas_empatadas=" + num + " where username='" + Globals.usuario_activo + "'";
-                                }
-                            }
-
-                            cmd = new SqlCommand(txt, con);
-                            dr = cmd.ExecuteReader();
-                            dr.Close();
-
-                        }
-
+                            return View(tablero);
                     }
-                    else //si ya no quedan celdas
+                    else
                     {
-
-                        con.Open();
-
-                        int count = 0, count2 = 0;
-
-                        foreach (Ficha ficha in tablero.fichas) //CONTANDO LAS FICHAS
-                        {
-                            if (usuario == Globals.usuario_activo)
-                            {
-                                if (ficha.color == color) //usuario                                    
-                                    count++;
-                                else //oponente                                    
-                                    if (ficha.color == color_opuesto)
-                                    count2++;
-                            }
-                            else
-                            {
-                                if (ficha.color == color) //oponente                                    
-                                    count2++;
-                                else //usuario                                    
-                                    if (ficha.color == color_opuesto)
-                                    count++;
-                            }
-                        }
-
-                        string txt = "";
-                        SqlCommand cmd = null;
-                        SqlDataReader dr = null;
-
+                        //JUEGO TERMINADO
                         ViewBag.MessageType = "success-message";
-                        if (count > count2) //usuario gano
-                        {
-                            ViewBag.Message = "¡El juego ha terminado!, el ganador es: " + Globals.usuario_activo + " con " + count + " fichas";
-                            txt = "select partidas_ganadas from Reporte where username='" + Globals.usuario_activo + "'";
-                        }
-                        else
-                        {
-                            if (count < count2) //usuario perdio
-                            {
-                                ViewBag.Message = "¡El juego ha terminado!, el ganador es Oponente con " + count2 + " fichas";
-                                txt = "select partidas_perdidas from Reporte where username='" + Globals.usuario_activo + "'";
-                            }
-                            else //usuario empato
-                            {
-                                ViewBag.Message = "¡¡El juego ha terminado!, hubo un empate con " + count + " fichas";
-                                txt = "select partidas_empatadas from Reporte where username='" + Globals.usuario_activo + "'";
-                            }
-                        }
-
-                        cmd = new SqlCommand(txt, con);
-                        dr = cmd.ExecuteReader();
-                        dr.Read();
-                        int num = dr.GetInt32(0) + 1;
-                        dr.Close();
-                        System.Diagnostics.Debug.WriteLine("NUM " + num);
-
-                        if (count > count2) //usuario gano
-                        {
-                            txt = "update Reporte set partidas_ganadas=" + num + " where username='" + Globals.usuario_activo + "'";
-                        }
-                        else
-                        {
-                            if (count < count2) //usuario perdio
-                            {
-                                txt = "update Reporte set partidas_perdidas=" + num + " where username='" + Globals.usuario_activo + "'";
-                            }
-                            else //usuario empato
-                            {
-                                txt = "update Reporte set partidas_empatadas=" + num + " where username='" + Globals.usuario_activo + "'";
-                            }
-                        }
-
-                        cmd = new SqlCommand(txt, con);
-                        dr = cmd.ExecuteReader();
-                        dr.Close();
-                    }
-                }
-
-                return View(tablero);
+                        ViewBag.Message = Juego.Juego_terminado(tablero, color_opuesto);
+                        return View(tablero);
+                    }                            
+                }                
             }
             else
             {
-                Reemplazar(tablero, index, "");
+                Juego.Reemplazar(tablero, index, "");
                 return View(tablero);
-            }
+            }            
         }
 
         [HttpPost]
         public ActionResult Versus(Tablero tablero)
         {
-            int index = -1;
-            int num1 = tablero.movimientos;
-            int num2 = tablero.movimientos_oponente;
+
 
             string usuario = tablero.usuario, usuario_opuesto = "";
 
@@ -477,652 +378,111 @@ namespace IPC2_P1.Controllers
                 color_opuesto = "negro";
             else
                 color_opuesto = "blanco";
+            
 
+            int index = Juego.Ficha_seleccionada(tablero);
 
-            // RECONOCIMIENTO DE LA FICHA SELECCIONADA
-
-            int acc = 0;
-            foreach (Ficha ficha in tablero.fichas)
+            //APERTURA PERSONALIZADA
+            if (tablero.apertura_personalizada == "true")
             {
-                if (ficha.presionado == "true")
+                if (tablero.Apertura(index))
                 {
-                    index = acc;
-                }
+                    Juego.Reemplazar(tablero, index, color);
+                    tablero.Actualizar(color_opuesto, usuario_opuesto, 0, 0);
 
-                acc++;
+                    if (Juego.Celdas_ocupadas(tablero).Count == 4)
+                    {
+                        ViewBag.MessageType = "success-message";
+                        ViewBag.Message = "¡Apertura personalizada finalizada!";
+                        tablero.apertura_personalizada = "false";
+                        tablero.cronometro_agotado = "false";
+                    }
+                    else
+                    {
+                        ViewBag.MessageType = "neutral-message";
+                        ViewBag.Message = "Apertura personalizada en progreso, faltan " + (4 - Juego.Celdas_ocupadas(tablero).Count) + " fichas para finalizar";
+                    }
+
+                    return View(tablero);
+                }
+                else
+                {
+                    ViewBag.MessageType = "error-message";
+                    ViewBag.Message = "¡Posición de apertura no válida!";
+                    Juego.Reemplazar(tablero, index, "");
+
+                    return View(tablero);
+                }
             }
 
+            //CRONOMETRO AGOTADO
+            if (tablero.cronometro_agotado == "true")
+            {
+                tablero.cronometro_agotado = "false";
+                tablero.Actualizar(color_opuesto, usuario_opuesto, tablero.movimientos, tablero.movimientos_oponente);
 
-            // VALIDANDO SI EL TIRO ES VÁLIDO
-
-            List<int> lista = Flanquear(tablero, index, color, color_opuesto);
+                return View(tablero);
+            }
+            List<int> lista = Juego.Flanquear(tablero, index, color, color_opuesto);
 
             if (lista.Count > 0)
             {
-                // EJECUTANDO CAMBIOS
+                Juego.Reemplazar_lista(tablero, lista, color);
+                    
+                List<int> celdas_validas = Juego.Celdas_validas(tablero, color_opuesto, color);
 
-                Reemplazar_lista(tablero, lista, color);
-
-                // VALIDANDO SI HAY TIROS VALIDOS EN EL SIGUIENTE TURNO
-
-                List<int> lista_temp = new List<int>();
-                List<int> celdas_vacias = new List<int>();
-                List<int> celdas_validas = new List<int>();
-
-                acc = 0;
-                foreach (Ficha ficha in tablero.fichas) //reconociendo celdas vacias
-                {
-                    if (ficha.color==null)
-                        celdas_vacias.Add(acc);
-
-                    acc++;
-                }
-
-                foreach (int celda in celdas_vacias) //iterando en las celdas vacias, para ver si son celdas validas (generan cambios)
-                {
-                    lista_temp = Flanquear(tablero, celda, color_opuesto, color);
-                    if (lista_temp.Count > 0)
-                        celdas_validas.Add(celda);
-                }
-
-                if (celdas_validas.Count > 0) //si existen celdas validas en el turno siguiente
+                if (celdas_validas.Count > 0)
                 {
                     if (usuario == "Oponente")
-                        tablero.Actualizar(color_opuesto, Globals.usuario_activo, num1, num2 + 1);
+                        tablero.Actualizar(color_opuesto, Globals.usuario_activo, tablero.movimientos, tablero.movimientos_oponente + 1);
                     else
-                        tablero.Actualizar(color_opuesto, "Oponente", num1+1, num2);
+                        tablero.Actualizar(color_opuesto, "Oponente", tablero.movimientos + 1, tablero.movimientos_oponente);
+
+                    return View(tablero);
                 }
-                else //no hay celdas validas en el siguiente turno
-                {
-                    if (celdas_vacias.Count > 0) //si todavia hay celdas vacias
+                else
+                {      
+                    celdas_validas = Juego.Celdas_validas(tablero, color, color_opuesto);                            
+
+                    if (celdas_validas.Count > 0)
                     {
 
-                        // VALIDANDO SI HAY TIROS VÁLIDOS EN EL SIGUIENTE SIGUIENTE TURNO
+                        ViewBag.Message = usuario_opuesto + " no tiene movimientos válidos";
+                        ViewBag.MessageType = "error-message";
 
-                        lista_temp = new List<int>();
-                        celdas_validas = new List<int>();
-
-                        foreach (int celda in celdas_vacias) //iterando en las celdas vacias, para ver si son celdas validas (generan cambios)
-                        {
-                            lista_temp = Flanquear(tablero, celda, color, color_opuesto);
-                            if (lista_temp.Count > 0)
-                                celdas_validas.Add(celda);
-                        }
-
-                        if (celdas_validas.Count > 0) //SI HAY TIROS VALIDOS EN El TURNO SIGUIENTE, SIGUIENTE
-                        {
-
-                            ViewBag.Message = usuario_opuesto + " no tiene movimientos válidos";
-                            ViewBag.MessageType = "error-message";
-
-                        }
-                        else //NO HAY TIROS VALIDOS EN LOS DOS TURNOS SIGUIENTES (SE TERMINA LA PARTIDA)
-                        {
-                            con.Open();
-
-                            int count = 0, count2 = 0;
-
-                            foreach (Ficha ficha in tablero.fichas) //CONTANDO LAS FICHAS
-                            {
-                                if (usuario == Globals.usuario_activo)
-                                {
-                                    if (ficha.color == color) //usuario                                    
-                                        count++;
-                                    else //oponente                                    
-                                        if (ficha.color == color_opuesto)
-                                        count2++;
-                                }
-                                else
-                                {
-                                    if (ficha.color == color) //oponente                                    
-                                        count2++;
-                                    else //usuario                                    
-                                        if (ficha.color == color_opuesto)
-                                        count++;
-                                }
-                            }
-
-                            string txt = "";
-                            SqlCommand cmd = null;
-                            SqlDataReader dr = null;
-
-                            ViewBag.MessageType = "neutral-message";
-                            if (count > count2) //usuario gano
-                            {
-                                ViewBag.Message = "¡No hay movimientos válidos!, el ganador es: " + Globals.usuario_activo + " con " + count + " fichas";
-                                txt = "select partidas_ganadas from Reporte where username='" + Globals.usuario_activo + "'";
-                            }
-                            else
-                            {
-                                if (count < count2) //usuario perdio
-                                {
-                                    ViewBag.Message = "¡No hay movimientos válidos!, el ganador es Oponente con " + count2 + " fichas";
-                                    txt = "select partidas_perdidas from Reporte where username='" + Globals.usuario_activo + "'";
-                                }
-                                else //usuario empato
-                                {
-                                    ViewBag.Message = "¡No hay movimientos válidos!, hubo un empate con " + count + " fichas";
-                                    txt = "select partidas_empatadas from Reporte where username='" + Globals.usuario_activo + "'";
-                                }
-                            }
-
-                            cmd = new SqlCommand(txt, con);
-                            dr = cmd.ExecuteReader();
-                            dr.Read();
-                            int num = dr.GetInt32(0) + 1;
-                            dr.Close();
-
-                            if (count > count2) //usuario gano
-                            {
-                                txt = "update Reporte set partidas_ganadas=" + num + " where username='" + Globals.usuario_activo + "'";
-                            }
-                            else
-                            {
-                                if (count < count2) //usuario perdio
-                                {
-                                    txt = "update Reporte set partidas_perdidas=" + num + " where username='" + Globals.usuario_activo + "'";
-                                }
-                                else //usuario empato
-                                {
-                                    txt = "update Reporte set partidas_empatadas=" + num + " where username='" + Globals.usuario_activo + "'";
-                                }
-                            }
-
-                            cmd = new SqlCommand(txt, con);
-                            dr = cmd.ExecuteReader();
-                            dr.Close();
-
-                        }
+                        return View(tablero);
 
                     }
-                    else //si ya no quedan celdas
+                    else
                     {
-
-                        con.Open();
-
-                        int count = 0, count2 = 0;
-
-                        foreach (Ficha ficha in tablero.fichas) //CONTANDO LAS FICHAS
-                        {
-                            if (usuario == Globals.usuario_activo)
-                            {
-                                if (ficha.color == color) //usuario                                    
-                                    count++;
-                                else //oponente                                    
-                                    if (ficha.color == color_opuesto)
-                                    count2++;
-                            }
-                            else
-                            {
-                                if (ficha.color == color) //oponente                                    
-                                    count2++;
-                                else //usuario                                    
-                                    if (ficha.color == color_opuesto)
-                                    count++;
-                            }
-                        }
-
-                        string txt = "";
-                        SqlCommand cmd = null;
-                        SqlDataReader dr = null;
-
+                        //JUEGO TERMINADO
                         ViewBag.MessageType = "success-message";
-                        if (count > count2) //usuario gano
-                        {
-                            ViewBag.Message = "¡El juego ha terminado!, el ganador es: " + Globals.usuario_activo + " con " + count + " fichas";
-                            txt = "select partidas_ganadas from Reporte where username='" + Globals.usuario_activo + "'";
-                        }
-                        else
-                        {
-                            if (count < count2) //usuario perdio
-                            {
-                                ViewBag.Message = "¡El juego ha terminado!, el ganador es Oponente con " + count2 + " fichas";
-                                txt = "select partidas_perdidas from Reporte where username='" + Globals.usuario_activo + "'";
-                            }
-                            else //usuario empato
-                            {
-                                ViewBag.Message = "¡¡El juego ha terminado!, hubo un empate con " + count + " fichas";
-                                txt = "select partidas_empatadas from Reporte where username='" + Globals.usuario_activo + "'";
-                            }
-                        }
-
-                        cmd = new SqlCommand(txt, con);
-                        dr = cmd.ExecuteReader();
-                        dr.Read();
-                        int num = dr.GetInt32(0) + 1;
-                        dr.Close();
-                        System.Diagnostics.Debug.WriteLine("NUM " + num);
-
-                        if (count > count2) //usuario gano
-                        {
-                            txt = "update Reporte set partidas_ganadas=" + num + " where username='" + Globals.usuario_activo + "'";
-                        }
-                        else
-                        {
-                            if (count < count2) //usuario perdio
-                            {
-                                txt = "update Reporte set partidas_perdidas=" + num + " where username='" + Globals.usuario_activo + "'";
-                            }
-                            else //usuario empato
-                            {
-                                txt = "update Reporte set partidas_empatadas=" + num + " where username='" + Globals.usuario_activo + "'";
-                            }
-                        }
-
-                        cmd = new SqlCommand(txt, con);
-                        dr = cmd.ExecuteReader();
-                        dr.Close();
-                        System.Diagnostics.Debug.WriteLine("TODO FINE BBGG BD");
+                        ViewBag.Message = Juego.Juego_terminado(tablero, color_opuesto);
+                        return View(tablero);
                     }
                 }
-
-                return View(tablero);
             }
             else
             {
-                System.Diagnostics.Debug.WriteLine("NO SE HICIERON CAMBIOS");
-                Reemplazar(tablero, index, "");
+                Juego.Reemplazar(tablero, index, "");
                 return View(tablero);
-            }
+            }            
         }
 
-
-        public List<int> Flanquear(Tablero tablero, int index, string color, string color_opuesto)
-        {
-            List<int> lista = new List<int>();
-
-            bool izq_f = (index - 1 >= 0) && (index / 8 == (index - 1) / 8);
-            bool der_f = (index + 1 < 64) && (index / 8 == (index + 1) / 8);
-            bool sup_f = (index - 8 >= 0);
-            bool inf_f = (index + 8 < 64);
-
-
-            // CAMBIANDO FICHAS ENCERRADAS
-
-            if (index >= 0)
-            {                
-
-                // FICHAS A LA IZQUIERDA
-                if (izq_f)
-                {
-                    if (tablero.fichas[index - 1].color == color_opuesto)
-                    {
-                        int acc = -2;
-                        List<int> lista_temp = new List<int>();
-                        lista_temp.Add(index - 1);
-
-                        bool salir = false;
-                        while (salir == false)
-                        {
-                            bool izq = (index + acc >= 0) && (index / 8 == (index + acc) / 8);
-                            if (izq)
-                            {
-                                if (tablero.fichas[index + acc].color == color_opuesto)
-                                {
-                                    lista_temp.Add(index + acc);
-
-                                }
-                                else
-                                {
-                                    if (tablero.fichas[index + acc].color == color)
-                                    {
-                                        lista.AddRange(lista_temp);
-                                    }
-                                    else
-                                    {
-                                        salir = true;
-                                    }
-                                }
-                            }
-                            else
-                            {
-                                salir = true;
-                            }
-
-                            acc -= 1;
-                        }
-                    }
-                }
-
-                // FICHAS A LA DERECHA
-                if (der_f)
-                {
-                    if (tablero.fichas[index + 1].color == color_opuesto)
-                    {
-                        int acc = 2;
-                        List<int> lista_temp = new List<int>();
-                        lista_temp.Add(index + 1);
-
-                        bool salir = false;
-                        while (salir == false)
-                        {
-                            bool der = (index + acc < 64) && (index / 8 == (index + acc) / 8);
-                            if (der)
-                            {
-                                if (tablero.fichas[index + acc].color == color_opuesto)
-                                {
-                                    lista_temp.Add(index + acc);
-
-                                }
-                                else
-                                {
-                                    if (tablero.fichas[index + acc].color == color)
-                                    {
-                                        lista.AddRange(lista_temp);
-                                    }
-                                    else
-                                    {
-                                        salir = true;
-                                    }
-                                }
-                            }
-                            else
-                            {
-                                salir = true;
-                            }
-
-                            acc += 1;
-                        }
-                    }
-                }
-
-                // FICHAS SUPERIOR
-                if (sup_f)
-                {
-                    if (tablero.fichas[index - 8].color == color_opuesto)
-                    {
-                        int acc = -16;
-                        List<int> lista_temp = new List<int>();
-                        lista_temp.Add(index - 8);
-
-                        bool salir = false;
-                        while (salir == false)
-                        {
-                            bool sup = (index + acc >= 0);
-                            if (sup)
-                            {
-                                if (tablero.fichas[index + acc].color == color_opuesto)
-                                {
-                                    lista_temp.Add(index + acc);
-
-                                }
-                                else
-                                {
-                                    if (tablero.fichas[index + acc].color == color)
-                                    {
-                                        lista.AddRange(lista_temp);
-                                    }
-                                    else
-                                    {
-                                        salir = true;
-                                    }
-                                }
-                            }
-                            else
-                            {
-                                salir = true;
-                            }
-
-                            acc -= 8;
-                        }
-                    }
-                }
-
-                // FICHAS INFERIOR
-                if (inf_f)
-                {
-                    if (tablero.fichas[index + 8].color == color_opuesto)
-                    {
-                        int acc = 16;
-                        List<int> lista_temp = new List<int>();
-                        lista_temp.Add(index + 8);
-
-                        bool salir = false;
-                        while (salir == false)
-                        {
-                            bool inf = (index + acc < 64);
-                            if (inf)
-                            {
-                                if (tablero.fichas[index + acc].color == color_opuesto)
-                                {
-                                    lista_temp.Add(index + acc);
-
-                                }
-                                else
-                                {
-                                    if (tablero.fichas[index + acc].color == color)
-                                    {
-                                        lista.AddRange(lista_temp);
-                                    }
-                                    else
-                                    {
-                                        salir = true;
-                                    }
-                                }
-                            }
-                            else
-                            {
-                                salir = true;
-                            }
-
-                            acc += 8;
-                        }
-                    }
-                }
-
-                // FICHAS IZQ SUP
-                if (izq_f && sup_f)
-                {
-                    if (tablero.fichas[index - 9].color == color_opuesto)
-                    {
-                        int acc = -2; //izq
-                        int acc2 = -16; //sup
-                        List<int> lista_temp = new List<int>();
-                        lista_temp.Add(index - 9);
-
-                        bool salir = false;
-                        while (salir == false)
-                        {
-                            bool izq = (index + acc >= 0) && (index / 8 == (index + acc) / 8);
-                            bool sup = (index + acc2 >= 0);
-
-                            if (izq && sup)
-                            {
-                                if (tablero.fichas[index + acc + acc2].color == color_opuesto)
-                                {
-                                    lista_temp.Add(index + acc + acc2);
-
-                                }
-                                else
-                                {
-                                    if (tablero.fichas[index + acc + acc2].color == color)
-                                    {
-                                        lista.AddRange(lista_temp);
-                                    }
-                                    else
-                                    {
-                                        salir = true;
-                                    }
-                                }
-                            }
-                            else
-                            {
-                                salir = true;
-                            }
-
-                            acc -= 1;
-                            acc2 -= 8;
-                        }
-                    }
-                }
-
-                // FICHAS DER SUP
-                if (der_f && sup_f)
-                {
-                    if (tablero.fichas[index - 7].color == color_opuesto)
-                    {
-                        int acc = 2; //der
-                        int acc2 = -16; //sup
-                        List<int> lista_temp = new List<int>();
-                        lista_temp.Add(index - 7);
-
-                        bool salir = false;
-                        while (salir == false)
-                        {
-                            bool der = (index + acc < 64) && (index / 8 == (index + acc) / 8);
-                            bool sup = (index + acc2 >= 0);
-
-                            if (der && sup)
-                            {
-                                if (tablero.fichas[index + acc + acc2].color == color_opuesto)
-                                {
-                                    lista_temp.Add(index + acc + acc2);
-                                }
-                                else
-                                {
-                                    if (tablero.fichas[index + acc + acc2].color == color)
-                                    {
-                                        lista.AddRange(lista_temp);
-                                    }
-                                    else
-                                    {
-                                        salir = true;
-                                    }
-                                }
-                            }
-                            else
-                            {
-                                salir = true;
-                            }
-
-                            acc += 1;
-                            acc2 -= 8;
-                        }
-                    }
-                }
-
-                // FICHAS IZQ INF
-                if (izq_f && inf_f)
-                {
-                    if (tablero.fichas[index + 7].color == color_opuesto)
-                    {
-                        int acc = -2; //izq
-                        int acc2 = 16; //inf
-                        List<int> lista_temp = new List<int>();
-                        lista_temp.Add(index + 7);
-
-                        bool salir = false;
-                        while (salir == false)
-                        {
-                            bool izq = (index + acc >= 0) && (index / 8 == (index + acc) / 8);
-                            bool inf = (index + acc2 < 64);
-
-                            if (izq && inf)
-                            {
-                                if (tablero.fichas[index + acc + acc2].color == color_opuesto)
-                                {
-                                    lista_temp.Add(index + acc + acc2);
-                                }
-                                else
-                                {
-                                    if (tablero.fichas[index + acc + acc2].color == color)
-                                    {
-                                        lista.AddRange(lista_temp);
-                                    }
-                                    else
-                                    {
-                                        salir = true;
-                                    }
-                                }
-                            }
-                            else
-                            {
-                                salir = true;
-                            }
-
-                            acc -= 1;
-                            acc2 += 8;
-                        }
-                    }
-                }
-
-                // FICHAS DER INF
-                if (der_f && inf_f)
-                {
-                    if (tablero.fichas[index + 9].color == color_opuesto)
-                    {
-                        int acc = 2; //der
-                        int acc2 = 16; //inf
-                        List<int> lista_temp = new List<int>();
-                        lista_temp.Add(index + 9);
-
-                        bool salir = false;
-                        while (salir == false)
-                        {
-                            bool der = (index + acc < 64) && (index / 8 == (index + acc) / 8);
-                            bool inf = (index + acc2 < 64);
-
-                            if (der && inf)
-                            {
-                                if (tablero.fichas[index + acc + acc2].color == color_opuesto)
-                                {
-                                    lista_temp.Add(index + acc + acc2);
-                                }
-                                else
-                                {
-                                    if (tablero.fichas[index + acc + acc2].color == color)
-                                    {
-                                        lista.AddRange(lista_temp);
-                                    }
-                                    else
-                                    {
-                                        salir = true;
-                                    }
-                                }
-                            }
-                            else
-                            {
-                                salir = true;
-                            }
-
-                            acc += 1;
-                            acc2 += 8;
-                        }
-                    }
-                }
-                
-            }
-
-            return lista;
-        }
-
-        public void Reemplazar(Tablero tablero, int pos, string valor)
-        {
-            if (pos >= 0)            
-                tablero.fichas[pos].color = valor;            
-        }
-
-        public void Reemplazar_lista(Tablero tablero, List<int> pos_list, string valor)
-        {
-            foreach (int pos in pos_list)
-                if(pos>=0)
-                    tablero.fichas[pos].color = valor;
-            
-        }
-        
 
         //CARGAR TABLERO
 
         [HttpPost]
-        public ActionResult Load(HttpPostedFileBase archivo, string color_temp, string usuario_temp, string action)
+        public ActionResult Cargar(HttpPostedFileBase archivo, string color_temp, string usuario_temp, string tablero_variable, string action)
         {
             if (archivo != null)
             {
-                Tablero tablero = ReadXML(archivo, color_temp, usuario_temp);
-
-                int num1 = tablero.movimientos;
-                int num2 = tablero.movimientos_oponente;
-
+                Tablero tablero;
+                if(tablero_variable=="true")
+                    tablero = Conversor.XReadXML(archivo, color_temp, usuario_temp);
+                else
+                    tablero = Conversor.ReadXML(archivo, color_temp, usuario_temp);
+                
                 string usuario = tablero.usuario, usuario_opuesto = "";
 
                 if (usuario == Globals.usuario_activo)
@@ -1157,7 +517,7 @@ namespace IPC2_P1.Controllers
 
                 foreach (int celda in celdas_vacias) //iterando en las celdas vacias, para ver si son celdas validas (generan cambios)
                 {
-                    lista_temp = Flanquear(tablero, celda, color, color_opuesto);
+                    lista_temp = Juego.Flanquear(tablero, celda, color, color_opuesto);
                     if (lista_temp.Count > 0)
                         celdas_validas.Add(celda);
                 }
@@ -1167,9 +527,9 @@ namespace IPC2_P1.Controllers
                 {
 
                     if (usuario == "Oponente")
-                        tablero.Actualizar(color_opuesto, Globals.usuario_activo, num1, num2 + 1);
+                        tablero.Actualizar(color_opuesto, Globals.usuario_activo, tablero.movimientos, tablero.movimientos_oponente + 1);
                     else
-                        tablero.Actualizar(color_opuesto, "Oponente", num1+1, num2);
+                        tablero.Actualizar(color_opuesto, "Oponente", tablero.movimientos+1, tablero.movimientos_oponente);
 
 
                     if (celdas_vacias.Count > 0) //si todavia hay celdas vacias
@@ -1182,7 +542,7 @@ namespace IPC2_P1.Controllers
 
                         foreach (int celda in celdas_vacias) //iterando en las celdas vacias, para ver si son celdas validas (generan cambios)
                         {
-                            lista_temp = Flanquear(tablero, celda, color_opuesto, color);
+                            lista_temp = Juego.Flanquear(tablero, celda, color_opuesto, color);
                             if (lista_temp.Count > 0)
                                 celdas_validas.Add(celda);
                         }
@@ -1197,7 +557,7 @@ namespace IPC2_P1.Controllers
                         {
                             ViewBag.Message = "El tablero cargado no es válido";
                             ViewBag.MessageType = "error-message";
-                            return View(action, new Tablero(8, 8, color_temp, usuario_temp));
+                            return View(action, new Tablero(8, 8, color_temp, usuario_temp,"Normal"));
                         }
 
                     }
@@ -1206,7 +566,7 @@ namespace IPC2_P1.Controllers
                         ViewBag.Message = "El tablero cargado está lleno";
                         ViewBag.MessageType = "error-message";
 
-                        return View(action, new Tablero(8, 8, color_temp, usuario_temp));
+                        return View(action, new Tablero(8, 8, color_temp, usuario_temp, "Normal"));
                     }
                 }
                 else
@@ -1218,126 +578,7 @@ namespace IPC2_P1.Controllers
                 
             } //no se cargó un archivo
             else
-                return View(action, new Tablero(8, 8, color_temp, usuario_temp));
-        }
-
-        public Tablero ReadXML(HttpPostedFileBase archivo, string color, string usuario)
-        {
-            string result = "";
-            using (BinaryReader b = new BinaryReader(archivo.InputStream))   // FUENTE: https://stackoverflow.com/questions/16030034/asp-net-mvc-read-file-from-httppostedfilebase-without-save/16030326
-            {
-                byte[] binData = b.ReadBytes(archivo.ContentLength);
-                result = System.Text.Encoding.UTF8.GetString(binData);
-            }
-
-            XmlDocument doc = new XmlDocument();
-            doc.LoadXml(result);
-
-            int tam = 64; // Para diferentes tamaños de tablero
-            int lado = Convert.ToInt32(Math.Sqrt(tam));
-
-            Tablero tablero_cargado = new Tablero(lado, lado, "", "");
-            
-            
-            foreach(XmlNode nodo in doc.SelectNodes("tablero")[0].SelectNodes("ficha"))
-            {
-                int pos=-1;
-                string color_temp = nodo.ChildNodes[0].InnerText;
-
-                switch (nodo.ChildNodes[2].InnerText)
-                {
-                    case "1":
-                        pos = lado*0;
-                        break;
-
-                    case "2":
-                        pos = lado * 1;
-                        break;
-
-                    case "3":
-                        pos = lado * 2;
-                        break;
-
-                    case "4":
-                        pos = lado * 3;
-                        break;
-
-                    case "5":
-                        pos = lado * 4;
-                        break;
-
-                    case "6":
-                        pos = lado * 5;
-                        break;
-
-                    case "7":
-                        pos = lado * 6;
-                        break;
-
-                    case "8":
-                        pos = lado * 7;
-                        break;
-
-                }
-                switch (nodo.ChildNodes[1].InnerText)
-                {
-                    case "A":
-                        break;
-
-                    case "B":
-                        pos += 1;
-                        break;
-
-                    case "C":
-                        pos += 2;
-                        break;
-
-                    case "D":
-                        pos += 3;
-                        break;
-
-                    case "E":
-                        pos += 4;
-                        break;
-
-                    case "F":
-                        pos += 5;
-                        break;
-
-                    case "G":
-                        pos += 6;
-                        break;
-
-                    case "H":
-                        pos += 7;
-                        break;
-
-                }
-                
-                Reemplazar(tablero_cargado, pos, color_temp);
-            }
-
-            int count = 0;
-
-            foreach (Ficha ficha in tablero_cargado.fichas)
-            {
-                if (ficha.color != null)
-                    count++;
-            }
-
-            string color_temp2 = doc.SelectNodes("tablero")[0].SelectNodes("siguienteTiro")[0].InnerText;
-
-            if (color != color_temp2)
-            {
-                if (usuario == Globals.usuario_activo)
-                    usuario = "Oponente";
-                else
-                    usuario = Globals.usuario_activo;
-            }
-
-            tablero_cargado.Actualizar(color_temp2, usuario, count / 2-2, count / 2-2);
-
-            return tablero_cargado;
+                return View(action, new Tablero(8, 8, color_temp, usuario_temp, "Normal"));
         }
 
 
@@ -1346,57 +587,9 @@ namespace IPC2_P1.Controllers
         [HttpPost]
         public ActionResult Descargar(Tablero tablero)
         {
-
-            WriteXML(tablero);
+            Conversor.WriteXML(tablero,Server.MapPath("../temp.xml"));
             return File("../temp.xml", "text/xml", "partida.xml");
         }
-
-        public void WriteXML(Tablero tablero)
-        {
-            var ruta = Server.MapPath("../temp.xml");
-
-            XmlTextWriter writer = null;            
-            writer = new XmlTextWriter(ruta, null);
-
-            writer.WriteStartDocument();
-            writer.Formatting = Formatting.Indented;
-            writer.Indentation = 3;
-
-            writer.WriteStartElement("tablero");
-
-            int acc = 0;
-            for (int i = 0; i < tablero.filas; i++)
-            {
-                for (int j = 0; j < tablero.columnas; j++)
-                {
-                    if (tablero.fichas[acc].color != null)
-                    {
-                        writer.WriteStartElement("ficha");
-                        writer.WriteStartElement("color");
-                        writer.WriteString(tablero.fichas[acc].color); //COLOR
-                        writer.WriteEndElement();
-                        writer.WriteStartElement("columna");
-                        writer.WriteString(Globals.columnas[j]);//COLUMNA
-                        writer.WriteEndElement();
-                        writer.WriteStartElement("fila");
-                        writer.WriteString(Globals.filas[i]);//FILA
-                        writer.WriteEndElement();
-                        writer.WriteEndElement();
-                    }
-
-                    acc++;
-                }
-            }
-
-            writer.WriteStartElement("siguienteTiro"); //Poner el siguiente tiro
-            writer.WriteStartElement("color");
-            writer.WriteString(tablero.color);
-            writer.WriteEndElement();
-            writer.WriteEndElement();
-
-            writer.WriteEndDocument();
-            writer.Close();
-        }
-                
+   
     }
 }
