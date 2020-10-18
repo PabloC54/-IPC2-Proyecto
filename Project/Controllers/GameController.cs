@@ -12,8 +12,8 @@ namespace IPC2_P1.Controllers
     // System.Diagnostics.Debug.WriteLine("PRUEBA: ");
     public class GameController : Controller
     {
-        public Conversor Conversor = new Conversor();
-        public Othello Juego = new Othello();
+        private Conversor Conversor = new Conversor();
+        private Othello Juego = new Othello();
 
 
         // I N I C I O

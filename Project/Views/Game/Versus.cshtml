@@ -38,7 +38,7 @@
 
             if (@juego_terminado==false && @Model.cronometro_agotado==false) {
                 contador = setInterval(cronometro, 1000);
-                segundos = 30;
+                segundos = 10;
             }
             else {
                 document.getElementById("cronometro").innerHTML = "-----------------------------------";

@@ -7,7 +7,7 @@ namespace IPC2_P1.Controllers
     public class Othello
     {
         public static string sql = "Data Source=PCP-PC;Initial Catalog=Othello_db;User ID=pabloc54;Password=pablo125";
-        public SqlConnection con = new SqlConnection(sql);
+        private SqlConnection con = new SqlConnection(sql);
 
         public List<int> Flanquear(Tablero tablero, int index, string color, string color_opuesto)
         {
@@ -531,19 +531,19 @@ namespace IPC2_P1.Controllers
                 if (count > count2) //usuario gano
                 {
                     mensaje = "¡El juego ha terminado! El ganador es: " + Globals.usuario_activo + " con " + count + " fichas";
-                    txt = "select partidas_ganadas from Reporte where username='" + Globals.usuario_activo + "'";
+                    txt = "select partidas_ganadas from Estadisticas where username='" + Globals.usuario_activo + "'";
                 }
                 else
                 {
                     if (count < count2) //usuario perdio
                     {
                         mensaje = "¡El juego ha terminado! El ganador es Oponente con " + count2 + " fichas";
-                        txt = "select partidas_perdidas from Reporte where username='" + Globals.usuario_activo + "'";
+                        txt = "select partidas_perdidas from Estadisticas where username='" + Globals.usuario_activo + "'";
                     }
                     else //usuario empato
                     {
                         mensaje = "¡¡El juego ha terminado! Hubo un empate con " + count + " fichas";
-                        txt = "select partidas_empatadas from Reporte where username='" + Globals.usuario_activo + "'";
+                        txt = "select partidas_empatadas from Estadisticas where username='" + Globals.usuario_activo + "'";
                     }
                 }
 
@@ -553,19 +553,19 @@ namespace IPC2_P1.Controllers
                 if (count < count2) //usuario gano
                 {
                     mensaje = "¡El juego ha terminado! El ganador es: " + Globals.usuario_activo + " con " + count + " fichas";
-                    txt = "select partidas_ganadas from Reporte where username='" + Globals.usuario_activo + "'";
+                    txt = "select partidas_ganadas from Estadisticas where username='" + Globals.usuario_activo + "'";
                 }
                 else
                 {
                     if (count > count2) //usuario perdio
                     {
                         mensaje = "¡El juego ha terminado! El ganador es Oponente con " + count2 + " fichas";
-                        txt = "select partidas_perdidas from Reporte where username='" + Globals.usuario_activo + "'";
+                        txt = "select partidas_perdidas from Estadisticas where username='" + Globals.usuario_activo + "'";
                     }
                     else //usuario empato
                     {
                         mensaje = "¡¡El juego ha terminado! Hubo un empate con " + count + " fichas";
-                        txt = "select partidas_empatadas from Reporte where username='" + Globals.usuario_activo + "'";
+                        txt = "select partidas_empatadas from Estadisticas where username='" + Globals.usuario_activo + "'";
                     }
                 }
             }
@@ -580,17 +580,17 @@ namespace IPC2_P1.Controllers
             {
                 if (count > count2) //usuario gano
                 {
-                    txt = "update Reporte set partidas_ganadas=" + num + " where username='" + Globals.usuario_activo + "'";
+                    txt = "update Estadisticas set partidas_ganadas=" + num + " where username='" + Globals.usuario_activo + "'";
                 }
                 else
                 {
                     if (count < count2) //usuario perdio
                     {
-                        txt = "update Reporte set partidas_perdidas=" + num + " where username='" + Globals.usuario_activo + "'";
+                        txt = "update Estadisticas set partidas_perdidas=" + num + " where username='" + Globals.usuario_activo + "'";
                     }
                     else //usuario empato
                     {
-                        txt = "update Reporte set partidas_empatadas=" + num + " where username='" + Globals.usuario_activo + "'";
+                        txt = "update Estadisticas set partidas_empatadas=" + num + " where username='" + Globals.usuario_activo + "'";
                     }
                 }
             }
@@ -598,17 +598,17 @@ namespace IPC2_P1.Controllers
             {
                 if (count < count2) //usuario gano
                 {
-                    txt = "update Reporte set partidas_ganadas=" + num + " where username='" + Globals.usuario_activo + "'";
+                    txt = "update Estadisticas set partidas_ganadas=" + num + " where username='" + Globals.usuario_activo + "'";
                 }
                 else
                 {
                     if (count > count2) //usuario perdio
                     {
-                        txt = "update Reporte set partidas_perdidas=" + num + " where username='" + Globals.usuario_activo + "'";
+                        txt = "update Estadisticas set partidas_perdidas=" + num + " where username='" + Globals.usuario_activo + "'";
                     }
                     else //usuario empato
                     {
-                        txt = "update Reporte set partidas_empatadas=" + num + " where username='" + Globals.usuario_activo + "'";
+                        txt = "update Estadisticas set partidas_empatadas=" + num + " where username='" + Globals.usuario_activo + "'";
                     }
                 }
             }
