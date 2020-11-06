@@ -1,13 +1,14 @@
 ﻿@model IPC2_P1.Models.Tablero
 @{
-    ViewBag.Title = "Solo";
+    ViewBag.Title = "Xtream";
     Layout = "~/Views/Shared/_Layout_no_nav.cshtml";
 
     string juego_terminado = "false";
-    string width = (50 * Model.columnas).ToString() + "px";
-    string height = (50 * Model.filas).ToString() + "px";
-    string celda_w = ((50 * Model.columnas - 70) / Model.columnas).ToString() + "px";
-    string celda_h = ((50 * Model.filas - 70) / Model.filas).ToString() + "px";
+    string width = (50 * Model.columnas).ToString()+"px";
+    string height = (50 * Model.filas).ToString()+"px";
+    string celda_w = ((50 * Model.columnas - 70) / Model.columnas).ToString()+"px";
+    string celda_h = ((50 * Model.filas - 70) / Model.filas).ToString()+"px";
+
 
     string cronometro = "";
     if (Model.usuario == Globals.usuario_activo)
@@ -135,18 +136,20 @@
     <section id="Game">
 
         <asp:UpdatePanel ID="OrdersPanel" UpdateMode="Conditional" runat="server">
-            @using (Html.BeginForm("Solo", "Game", FormMethod.Post))
+            @using (Html.BeginForm("Xtream", "Game", FormMethod.Post))
             {
                 <div id="turno">
-                    El turno es de @Model.usuario <br />
+                    El turno es de @Model.usuario <br/>
                     @Globals.usuario_activo: @Model.movimientos movimientos<br />
                     Oponente: @Model.movimientos_oponente movimientos<br />
                     <span id="cronometro">-----------------------------------</span>
+
                 </div>
 
+
                 <div class="row">
-                    <div id="GameBoard" class="col-xs-12 col-sm-12 col-md-12 col-lg-12 col-xl-12" style="width:@width; height:@height">
-                        <div id="GameTable">
+                    <div id="XGameBoard" class="col-xs-12 col-sm-12 col-md-12 col-lg-12 col-xl-12" style="width:@width; height:@height">
+                        <div id="XGameTable">
 
                             @using IPC2_P1.Models
                             @{
@@ -170,14 +173,28 @@
                                 <input type="number" id="cronometro1" name="cronometro" value="@Model.cronometro" style="display:none" />
                                 <input type="number" id="cronometro2" name="cronometro_oponente" value="@Model.cronometro_oponente" style="display:none" />
 
+                                <select name="colores" style="display:none" multiple>
+                                    @foreach (string color in Model.colores)
+                                    {
+                                        <option value="@color" selected>@color</option>
+                                    }
+                                </select>
+                                <select name="colores_oponente" style="display:none" multiple>
+                                    @foreach (string color in Model.colores_oponente)
+                                    {
+                                        <option value="@color" selected>@color</option>
+                                    }
+                                </select>
+
+                                <input type="text" name="color" value="@Model.color" style="display:none" />
                                 <input type="text" name="columnas" value="@Model.columnas" style="display:none" />
                                 <input type="text" name="filas" value="@Model.filas" style="display:none" />
-                                <input type="text" name="color" value="@Model.color" style="display:none" />
                                 <input type="text" name="usuario" value="@Model.usuario" style="display:none" />
                                 <input type="text" name="movimientos" value="@Model.movimientos" style="display:none" />
                                 <input type="text" name="movimientos_oponente" value="@Model.movimientos_oponente" style="display:none" />
                                 <input type="text" name="modalidad" value="@Model.modalidad" style="display:none" />
                                 <input type="text" name="apertura_personalizada" value="@Model.apertura_personalizada" style="display:none" />
+                                <input type="text" name="action" value="Xtream" style="display:none" />
                             }
                         </div>
                     </div>
@@ -192,20 +209,21 @@
             }
         </asp:UpdatePanel>
 
-        @using (Html.BeginForm("Cargar", "Game", FormMethod.Post, new { enctype = "multipart/form-data" }))
-        {
-            <div class="row xml-load-row">
-                <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 col-xl-12">
-                    <input class="xmlbtn" type="file" name="archivo" accept=".xml">
-                    <button class="xmlbtn" id="xml-cargar" type="submit">  Cargar archivo XML.. </button>
-                    <input type="text" name="color" value="@Model.color" style="display:none" />
-                    <input type="text" name="usuario" value="@Model.usuario" style="display:none" />
-                    <input type="text" name="tablero_variable" value="false" style="display:none" />
-                    <input type="text" name="action" value="Solo" style="display:none" />
+            @using (Html.BeginForm("Cargar", "Game", FormMethod.Post, new { enctype = "multipart/form-data" }))
+            {
+                <div class="row xml-load-row">
+                    <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 col-xl-12">
+                        <input class="xmlbtn" type="file" name="archivo" accept=".xml">
+                        <button class="xmlbtn" id="xml-cargar" type="submit">  Cargar archivo XML.. </button>
+                        <input type="text" name="color" value="@Model.color" style="display:none" />
+                        <input type="text" name="usuario" value="@Model.usuario" style="display:none" />
+                        <input type="text" name="tablero_variable" value="false" style="display:none" />
+                        <input type="text" name="action" value="Xtream" style="display:none" />
+                    </div>
                 </div>
-            </div>
-        }
+            }
 
-    </section>
+            <!-- FIN DE AREA DE JUEGO -->
+        </section>
 </body>
 </html>

@@ -1,24 +1,24 @@
-﻿@model IPC2_P1.Models.Tablero
+﻿@model IPC2_P1.Models.Partida
 @{
-    ViewBag.Title = "Solo";
+    ViewBag.Title = "Juego";
     Layout = "~/Views/Shared/_Layout_no_nav.cshtml";
 
     string juego_terminado = "false";
-    string width = (50 * Model.columnas).ToString() + "px";
-    string height = (50 * Model.filas).ToString() + "px";
-    string celda_w = ((50 * Model.columnas - 70) / Model.columnas).ToString() + "px";
-    string celda_h = ((50 * Model.filas - 70) / Model.filas).ToString() + "px";
+    string width = (50 * Model.tablero.columnas).ToString() + "px";
+    string height = (50 * Model.tablero.filas).ToString() + "px";
+    string celda_w = ((50 * Model.tablero.columnas - 70) / Model.tablero.columnas).ToString() + "px";
+    string celda_h = ((50 * Model.tablero.filas - 70) / Model.tablero.filas).ToString() + "px";
 
     string cronometro = "";
-    if (Model.usuario == Globals.usuario_activo)
+    if (Model.tablero.usuario == Model.Jugador1)
     {
-        cronometro = Model.cronometro.ToString();
+        cronometro = Model.tablero.cronometro.ToString();
     }
     else
     {
-        cronometro = Model.cronometro_oponente.ToString();
+        cronometro = Model.tablero.cronometro_oponente.ToString();
     }
-
+    
     try
     {
         if (ViewBag.Message.StartsWith("¡El juego ha terminado!") == true)
@@ -43,8 +43,8 @@
         var filas = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20"];
         var ids = [];
 
-        for (i = 0; i < @Model.filas; i++)
-            for (j = 0; j < @Model.columnas; j++)
+        for (i = 0; i < @Model.tablero.filas; i++)
+            for (j = 0; j < @Model.tablero.columnas; j++)
                 ids.push(columnas[j] + filas[i]);
 
         function init() {
@@ -119,7 +119,7 @@
                 actualizar(id);
             }
 
-            if ("@Model.usuario" == "@Globals.usuario_activo") {
+            if ("@Model.tablero.usuario" == "@Model.Jugador1") {
                 document.getElementById("cronometro1").value = segundos;
             }
             else {
@@ -135,12 +135,12 @@
     <section id="Game">
 
         <asp:UpdatePanel ID="OrdersPanel" UpdateMode="Conditional" runat="server">
-            @using (Html.BeginForm("Solo", "Game", FormMethod.Post))
+            @using (Html.BeginForm("Juego", "Torneo", FormMethod.Post))
             {
                 <div id="turno">
-                    El turno es de @Model.usuario <br />
-                    @Globals.usuario_activo: @Model.movimientos movimientos<br />
-                    Oponente: @Model.movimientos_oponente movimientos<br />
+                    El turno es de @Model.tablero.usuario <br />
+                    @Model.Jugador1: @Model.tablero.movimientos movimientos<br />
+                    @Model.Jugador2: @Model.tablero.movimientos_oponente movimientos<br />
                     <span id="cronometro">-----------------------------------</span>
                 </div>
 
@@ -152,60 +152,71 @@
                             @{
                                 int count = 0;
 
-                                for (int i = 0; i < Model.filas; i++)
+                                for (int i = 0; i < Model.tablero.filas; i++)
                                 {
                                     <div class='row fila'>
 
-                                        @for (int j = 0; j < Model.columnas; j++)
+                                        @for (int j = 0; j < Model.tablero.columnas; j++)
                                         {
-                                            <input type='submit' style="width: @celda_w; height: @celda_h" value="" class='col-xs-1 col-sm-1 col-md-1 col-lg-1 col-xl-1 celda' id='@Globals.columnas[j]@Globals.filas[i]' onclick='fichaColocada("@Globals.columnas[j]@Globals.filas[i]", "@Model.color")' />
-                                            <input type='text' name="fichas[@count].color" id='I_@Globals.columnas[j]@Globals.filas[i]' value='@Model.fichas[count].color' />
-                                            <input type="text" name="fichas[@count].presionado" id='R_@Globals.columnas[j]@Globals.filas[i]' value="false" style="display:none" />
+                                            <input type='submit' style="width: @celda_w; height: @celda_h" value="" class='col-xs-1 col-sm-1 col-md-1 col-lg-1 col-xl-1 celda' id='@Globals.columnas[j]@Globals.filas[i]' onclick='fichaColocada("@Globals.columnas[j]@Globals.filas[i]", "@Model.tablero.color")' />
+                                            <input type='text' name="tablero.fichas[@count].color" id='I_@Globals.columnas[j]@Globals.filas[i]' value='@Model.tablero.fichas[count].color' />
+                                            <input type="text" name="tablero.fichas[@count].presionado" id='R_@Globals.columnas[j]@Globals.filas[i]' value="false" style="display:none" />
                                             count += 1;
                                         }
 
                                     </div>
                                 }
 
-                                <input type="number" id="cronometro1" name="cronometro" value="@Model.cronometro" style="display:none" />
-                                <input type="number" id="cronometro2" name="cronometro_oponente" value="@Model.cronometro_oponente" style="display:none" />
+                                if (juego_terminado == "true")
+                                {
+                                    <input type="submit" value="Salir" formaction="" />
+                                }
 
-                                <input type="text" name="columnas" value="@Model.columnas" style="display:none" />
-                                <input type="text" name="filas" value="@Model.filas" style="display:none" />
-                                <input type="text" name="color" value="@Model.color" style="display:none" />
-                                <input type="text" name="usuario" value="@Model.usuario" style="display:none" />
-                                <input type="text" name="movimientos" value="@Model.movimientos" style="display:none" />
-                                <input type="text" name="movimientos_oponente" value="@Model.movimientos_oponente" style="display:none" />
-                                <input type="text" name="modalidad" value="@Model.modalidad" style="display:none" />
-                                <input type="text" name="apertura_personalizada" value="@Model.apertura_personalizada" style="display:none" />
+                                <input type="text" name="Jugador1" value="@Model.Jugador1" style="display:none" />
+                                <input type="text" name="Jugador2" value="@Model.Jugador2" style="display:none" />
+
+                                <input type="number" id="cronometro1" name="tablero.cronometro" value="@Model.tablero.cronometro" style="display:none" />
+                                <input type="number" id="cronometro2" name="tablero.cronometro_oponente" value="@Model.tablero.cronometro_oponente" style="display:none" />
+
+                                <input type="text" name="tablero.columnas" value="@Model.tablero.columnas" style="display:none" />
+                                <input type="text" name="tablero.filas" value="@Model.tablero.filas" style="display:none" />
+                                <input type="text" name="tablero.color" value="@Model.tablero.color" style="display:none" />
+                                <input type="text" name="tablero.usuario" value="@Model.tablero.usuario" style="display:none" />
+                                <input type="text" name="tablero.movimientos" value="@Model.tablero.movimientos" style="display:none" />
+                                <input type="text" name="tablero.movimientos_oponente" value="@Model.tablero.movimientos_oponente" style="display:none" />
+                                <input type="text" name="tablero.modalidad" value="@Model.tablero.modalidad" style="display:none" />
+                                <input type="text" name="tablero.apertura_personalizada" value="@Model.tablero.apertura_personalizada" style="display:none" />
                             }
                         </div>
                     </div>
                 </div>
 
+                <!--
                 <div class="row xml-save-row">
                     <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 col-xl-12">
                         <button formaction="Descargar" class="xmlbtn" id="xml-guardar" type="submit">  Guardar archivo XML.. </button>
                     </div>
                 </div>
+                    -->
 
             }
         </asp:UpdatePanel>
-
+        <!--
         @using (Html.BeginForm("Cargar", "Game", FormMethod.Post, new { enctype = "multipart/form-data" }))
         {
             <div class="row xml-load-row">
                 <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 col-xl-12">
                     <input class="xmlbtn" type="file" name="archivo" accept=".xml">
                     <button class="xmlbtn" id="xml-cargar" type="submit">  Cargar archivo XML.. </button>
-                    <input type="text" name="color" value="@Model.color" style="display:none" />
-                    <input type="text" name="usuario" value="@Model.usuario" style="display:none" />
+                    <input type="text" name="color" value="@Model.tablero.color" style="display:none" />
+                    <input type="text" name="usuario" value="@Model.tablero.usuario" style="display:none" />
                     <input type="text" name="tablero_variable" value="false" style="display:none" />
-                    <input type="text" name="action" value="Solo" style="display:none" />
+                    <input type="text" name="action" value="Versus" style="display:none" />
                 </div>
             </div>
         }
-
+            -->
+        
     </section>
 </body>
 </html>

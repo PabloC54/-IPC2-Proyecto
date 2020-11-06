@@ -72,24 +72,24 @@
             <div class="@ViewBag.MessageType" id="message" style="display:@message_display">@Html.Raw(ViewBag.Message) <i class="fa fa-arrow-right" aria-hidden="true" onclick="hide_message()"></i></div>
             <div class="container">
                 <div class="row">
-                    <div class="col-xs-12 col-sm-12 col-md-12 col-lg-4 col-xl-4">
+                    <div class="col-xs-12 col-sm-12 col-md-12 col-lg-2 col-xl-2">
                         <div class="logo">
                             <a href="~/Home/Menu" class="logo">Othello</a>
                         </div>
                     </div>
 
-                    <div class="col-xs-4 col-sm-4 col-md-4 col-lg-2 col-xl-2 op">
+                    <div class="col-xs-2 col-sm-2 col-md-2 col-lg-2 col-xl-2 op">
                         <a href="#" onclick="toggle_menu('Menu_solo')"><i class="fa fa-arrow-right" aria-hidden="true"></i>     Solo</a>
                         <div id="Menu_solo">
                             <ul>
-                                <li id="f_b">@Html.ActionLink("Ficha blanca","Index","Game",new {go_to="Solo", ficha_inicial="blanco" }, new { @class="subop" })</li>
+                                <li id="f_b">@Html.ActionLink("Ficha blanca", "Index", "Game", new { go_to = "Solo", ficha_inicial = "blanco" }, new { @class = "subop" })</li>
                                 <li id="f_n">@Html.ActionLink("Ficha negra", "Index", "Game", new { go_to = "Solo", ficha_inicial = "negro" }, new { @class = "subop" })</li>
                                 <li id="f_a">@Html.ActionLink("Ficha aleatoria", "Index", "Game", new { go_to = "Solo", ficha_inicial = "aleatoria" }, new { @class = "subop" })</li>
                             </ul>
                         </div>
                     </div>
 
-                    <div class="col-xs-4 col-sm-4 col-md-4 col-lg-2 col-xl-2 op">
+                    <div class="col-xs-2 col-sm-2 col-md-2 col-lg-2 col-xl-2 op">
                         <a href="#" onclick="toggle_menu('Menu_versus')"><i class="fa fa-arrow-right" aria-hidden="true"></i>     Versus</a>
                         <div id="Menu_versus">
                             <ul>
@@ -100,19 +100,16 @@
                         </div>
                     </div>
 
-                    <div class="col-xs-4 col-sm-4 col-md-4 col-lg-2 col-xl-2 op">
-                        <a href="#" onclick="toggle_menu('Menu_torneos')"><i class="fa fa-arrow-right" aria-hidden="true"></i>     Torneo</a>
-                        <div id="Menu_torneos">
-                            <ul>
-                                <li id="f_b">@Html.ActionLink("Ficha blanca", "Index", "Game", new { go_to = "Torneos", ficha_inicial = "blanco" }, new { @class = "subop" })</li>
-                                <li id="f_n">@Html.ActionLink("Ficha negra", "Index", "Game", new { go_to = "Torneos", ficha_inicial = "negro" }, new { @class = "subop" })</li>
-                                <li id="f_a">@Html.ActionLink("Ficha aleatoria", "Index", "Game", new { go_to = "Torneos", ficha_inicial = "aleatoria" }, new { @class = "subop" })</li>
-                            </ul>
-                        </div>
+                    <div class="col-xs-2 col-sm-2 col-md-2 col-lg-2 col-xl-2 op">
+                        <a href="~/Game/XIndex"><i class="fa fa-arrow-right" aria-hidden="true"></i>     Xtream</a>
                     </div>
 
-                    <div class="col-xs-4 col-sm-4 col-md-4 col-lg-2 col-xl-2 op user-logged">
-                        <a href="#">  @Globals.usuario_activo</a>
+                    <div class="col-xs-2 col-sm-2 col-md-2 col-lg-2 col-xl-2 op">
+                        <a href="~/Torneo/Index"><i class="fa fa-arrow-right" aria-hidden="true"></i>     Torneo</a>
+                    </div>
+
+                    <div class="col-xs-2 col-sm-2 col-md-2 col-lg-2 col-xl-2 op user-logged">
+                        <a href="~/Home/Perfil">  @Globals.usuario_activo</a>
                     </div>
                 </div>
             </div>

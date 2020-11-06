@@ -1,8 +1,7 @@
 ﻿using IPC2_P1.Models;
-using IPC2_P1.Controllers;
 using System;
 using System.Collections.Generic;
-using System.Data.SqlClient;
+using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 
@@ -15,19 +14,85 @@ namespace IPC2_P1.Controllers
         private Conversor Conversor = new Conversor();
         private Othello Juego = new Othello();
 
-
         // I N I C I O
 
         public ActionResult Index(string go_to, string ficha_inicial)
         {
-            string[] temp = { go_to, ficha_inicial };
-            return View(temp);
+            if (Globals.logged_in == true)
+            {
+                string[] temp = { go_to, ficha_inicial };
+                return View(temp);
+            }
+            else
+            {
+                string message = "Primero debes iniciar sesión";
+                string messagetype = "error-message";
+
+                return RedirectToAction("Login", "Home", new { message, messagetype });
+            }
+        }
+
+        public ActionResult XIndex()
+        {
+            if (Globals.logged_in == true)
+            {
+                return View();
+            }
+            else
+            {
+                string message = "Primero debes iniciar sesión";
+                string messagetype = "error-message";
+
+                return RedirectToAction("Login", "Home", new { message, messagetype });
+            }
+        }
+
+        public ActionResult Torneo()
+        {
+            return View();
         }
 
         [HttpPost]
         public RedirectToRouteResult Index(string go_to, string ficha_inicial, string apertura, string modalidad)
         {
-            return RedirectToAction(go_to, new {ficha_inicial, apertura, modalidad });
+            return RedirectToAction(go_to, new { ficha_inicial, apertura, modalidad });
+        }
+
+        [HttpPost]
+        public ActionResult XIndex(string apertura, string modalidad, int filas, int columnas, List<string> colores, List<string> colores2)
+        {
+            try
+            {
+                if (colores.Count == colores2.Count)
+                {
+
+                    string colores_temp = "", colores2_temp = "";
+
+                    foreach(string color in colores)
+                    {
+                        colores_temp += color+",";
+                    }
+
+                    foreach (string color in colores2)
+                    {
+                        colores2_temp += color + ",";
+                    }
+
+                    return RedirectToAction("Xtream", new { apertura, modalidad, filas, columnas, colores_temp, colores2_temp });
+                }
+                else
+                {
+                    ViewBag.Message = "Los dos jugadores deben tener la misma cantidad de colores";
+                    ViewBag.MessageType = "error-message";
+                    return View();
+                }
+            }
+            catch
+            {
+                ViewBag.Message = "Se debe seleccionar mínimo un color por jugador";
+                ViewBag.MessageType = "error-message";
+                return View();
+            }
         }
 
 
@@ -48,7 +113,7 @@ namespace IPC2_P1.Controllers
 
                 if (ficha_inicial == "blanco")
                 {
-                    tablero = new Tablero(8,8, "blanco", Globals.usuario_activo, modalidad);
+                    tablero = new Tablero(8, 8, "blanco", Globals.usuario_activo, modalidad);
                     tablero.Iniciar(temp);
 
                     ViewBag.MessageType = "neutral-message";
@@ -100,15 +165,15 @@ namespace IPC2_P1.Controllers
                         }
                     }
                 }
-                
+
                 return View(tablero);
             }
             else
             {
-                ViewBag.Message = "Primero debes iniciar sesión";
-                ViewBag.MessageType = "error-message";
+                string message = "Primero debes iniciar sesión";
+                string messagetype = "error-message";
 
-                return RedirectToAction("Login", "Home");
+                return RedirectToAction("Login", "Home", new { message, messagetype });
             }
         }
 
@@ -117,7 +182,7 @@ namespace IPC2_P1.Controllers
             if (Globals.logged_in == true)
             {
                 Tablero tablero;
-                bool temp=false;
+                bool temp = false;
 
                 if (apertura == "Personalizada")
                 {
@@ -126,7 +191,7 @@ namespace IPC2_P1.Controllers
                     ViewBag.Message = "Apertura personalizada en progreso, faltan 4 fichas por colocar";
 
                 }
-                
+
                 if (ficha_inicial == "blanco")
                 {
                     tablero = new Tablero(8, 8, "negro", "Oponente", modalidad);
@@ -161,10 +226,46 @@ namespace IPC2_P1.Controllers
             }
             else
             {
-                ViewBag.Message = "Primero debes iniciar sesión";
-                ViewBag.MessageType = "error-message";
+                string message = "Primero debes iniciar sesión";
+                string messagetype = "error-message";
 
-                return RedirectToAction("Login", "Home");
+                return RedirectToAction("Login", "Home", new { message, messagetype });
+            }
+        }
+
+        public ActionResult Xtream(string apertura, string modalidad, int filas, int columnas, string colores_temp, string colores2_temp)
+        {
+            if (Globals.logged_in == true)
+            {
+                Tablero tablero;
+                bool temp = false;
+                
+                if (apertura == "Personalizada")
+                {
+                    temp = true;
+                    ViewBag.Message = "Apertura personalizada en progreso, faltan 4 fichas por colocar";
+                    ViewBag.MessageType = "neutral-message";
+                }
+
+                List<string> colores = colores_temp.Split(',').ToList();
+                colores.Remove("");
+                List<string> colores2 = colores2_temp.Split(',').ToList();
+                colores2.Remove("");
+                
+                tablero = new Tablero(filas, columnas, colores[0], Globals.usuario_activo, modalidad);
+                
+                tablero.colores = colores;
+                tablero.colores_oponente = colores2;
+                tablero.XIniciar(temp);
+
+                return View(tablero);
+            }
+            else
+            {
+                string message = "Primero debes iniciar sesión";
+                string messagetype = "error-message";
+
+                return RedirectToAction("Login", "Home", new { message, messagetype });
             }
         }
 
@@ -204,7 +305,6 @@ namespace IPC2_P1.Controllers
                         ViewBag.MessageType = "success-message";
                         ViewBag.Message = "¡Apertura personalizada finalizada!";
                         tablero.apertura_personalizada = "false";
-                        tablero.cronometro_agotado = "false";
                     }
                     else
                     {
@@ -214,8 +314,7 @@ namespace IPC2_P1.Controllers
                         {
                             ViewBag.MessageType = "success-message";
                             ViewBag.Message = "¡Apertura personalizada finalizada!";
-                            tablero.apertura_personalizada = "false";
-                            tablero.cronometro_agotado = "false";                            
+                            tablero.apertura_personalizada = "false";                  
                         }
                         else
                         {
@@ -236,51 +335,7 @@ namespace IPC2_P1.Controllers
                     return View(tablero);
                 }
             }
-
-            //CRONOMETRO AGOTADO
-            if (tablero.cronometro_agotado == "true")
-            {
-                //EJECUTANDO CAMBIOS DEL CPU    
-                Juego.Movimiento_cpu(tablero, color_opuesto, color);
-                tablero.Actualizar(color, usuario, tablero.movimientos, tablero.movimientos_oponente + 1);
-                tablero.cronometro_agotado = "false";
-                               
-                List<int> celdas_validas = Juego.Celdas_validas(tablero, color, color_opuesto);
-
-                bool salir = true;
-                if (celdas_validas.Count == 0)
-                {
-                    salir = false;
-                }
-
-                while (salir == false)
-                {
-                    celdas_validas = Juego.Celdas_validas(tablero, color_opuesto, color);
-
-                    if (celdas_validas.Count > 0)
-                    {
-                        //EJECUTANDO CAMBIOS DEL CPU
-                        Juego.Movimiento_cpu(tablero, color_opuesto, color);
-                        tablero.Actualizar(color, usuario, tablero.movimientos, tablero.movimientos_oponente + 1);
-
-                        celdas_validas = Juego.Celdas_validas(tablero, color, color_opuesto);
-
-                        if (celdas_validas.Count > 0)
-                        {
-                            salir = true;
-                        }
-                    }
-                    else
-                    {
-                        //JUEGO TERMINADO
-                        ViewBag.MessageType = "success-message";
-                        ViewBag.Message = Juego.Juego_terminado(tablero, color_opuesto);
-                        return View(tablero);
-                    }
-                }
-
-                return View(tablero);
-            }            
+           
             List<int> lista = Juego.Flanquear(tablero, index, color, color_opuesto);
 
             if (lista.Count > 0)
@@ -362,8 +417,6 @@ namespace IPC2_P1.Controllers
         [HttpPost]
         public ActionResult Versus(Tablero tablero)
         {
-
-
             string usuario = tablero.usuario, usuario_opuesto = "";
 
             if (usuario == Globals.usuario_activo)
@@ -395,7 +448,6 @@ namespace IPC2_P1.Controllers
                         ViewBag.MessageType = "success-message";
                         ViewBag.Message = "¡Apertura personalizada finalizada!";
                         tablero.apertura_personalizada = "false";
-                        tablero.cronometro_agotado = "false";
                     }
                     else
                     {
@@ -414,15 +466,7 @@ namespace IPC2_P1.Controllers
                     return View(tablero);
                 }
             }
-
-            //CRONOMETRO AGOTADO
-            if (tablero.cronometro_agotado == "true")
-            {
-                tablero.cronometro_agotado = "false";
-                tablero.Actualizar(color_opuesto, usuario_opuesto, tablero.movimientos, tablero.movimientos_oponente);
-
-                return View(tablero);
-            }
+            
             List<int> lista = Juego.Flanquear(tablero, index, color, color_opuesto);
 
             if (lista.Count > 0)
@@ -468,126 +512,266 @@ namespace IPC2_P1.Controllers
                 return View(tablero);
             }            
         }
+        
+        [HttpPost]
+        public ActionResult Xtream(Tablero tablero)
+        {
+            string usuario = tablero.usuario, usuario_opuesto = "";
+
+            if (usuario == Globals.usuario_activo)
+                usuario_opuesto = "Oponente";
+            else
+                usuario_opuesto = Globals.usuario_activo;
+
+
+            string color = tablero.color;
+
+            int index = Juego.Ficha_seleccionada(tablero);
+
+            //APERTURA PERSONALIZADA
+            if (tablero.apertura_personalizada == "true")
+            {
+                if (tablero.Apertura(index))
+                {
+                    Juego.Reemplazar(tablero, index, color);
+                    tablero.XActualizar(usuario_opuesto, 0, 0);
+
+                    if (Juego.Celdas_ocupadas(tablero).Count == 4)
+                    {
+                        ViewBag.MessageType = "success-message";
+                        ViewBag.Message = "¡Apertura personalizada finalizada!";
+                        tablero.apertura_personalizada = "false";
+                    }
+                    else
+                    {
+                        ViewBag.MessageType = "neutral-message";
+                        ViewBag.Message = "Apertura personalizada en progreso, faltan " + (4 - Juego.Celdas_ocupadas(tablero).Count) + " fichas para finalizar";
+                    }
+
+                    return View(tablero);
+                }
+                else
+                {
+                    ViewBag.MessageType = "error-message";
+                    ViewBag.Message = "¡Posición de apertura no válida!";
+                    Juego.Reemplazar(tablero, index, "");
+
+                    return View(tablero);
+                }
+            }
+
+            List<int> lista = Juego.XFlanquear(tablero, index, color); //ARREGLAR
+
+            if (lista.Count > 0)
+            {
+                Juego.Reemplazar_lista(tablero, lista, color);
+
+                List<int> celdas_validas;
+
+                if (usuario == "Oponente")
+                {
+                    tablero.XActualizar(Globals.usuario_activo, tablero.movimientos, tablero.movimientos_oponente + 1);
+                    celdas_validas = Juego.XCeldas_validas(tablero);
+                }
+                else
+                {
+                    tablero.XActualizar("Oponente", tablero.movimientos + 1, tablero.movimientos_oponente);
+                    celdas_validas = Juego.XCeldas_validas(tablero);
+                }
+            
+
+                if (celdas_validas.Count > 0)
+                {
+                    return View(tablero);
+                }
+                else
+                {
+                    if (tablero.usuario == "Oponente")
+                    {
+                        tablero.XActualizar(Globals.usuario_activo, tablero.movimientos, tablero.movimientos_oponente);
+                        celdas_validas = Juego.XCeldas_validas(tablero);
+                    }
+                    else
+                    {
+                        tablero.XActualizar("Oponente", tablero.movimientos, tablero.movimientos_oponente);
+                        celdas_validas = Juego.XCeldas_validas(tablero);
+                    }
+
+                    if (celdas_validas.Count > 0)
+                    {
+
+                        ViewBag.Message = usuario_opuesto + " no tiene movimientos válidos";
+                        ViewBag.MessageType = "error-message";
+
+                        return View(tablero);
+
+                    }
+                    else
+                    {
+                        //JUEGO TERMINADO
+                        ViewBag.MessageType = "success-message";
+                        ViewBag.Message = Juego.XJuego_terminado(tablero);
+                        return View(tablero);
+                    }
+                }
+            }
+            else
+            {
+                Juego.Reemplazar(tablero, index, "");
+                return View(tablero);
+            }
+        }
 
 
         //CARGAR TABLERO
 
         [HttpPost]
-        public ActionResult Cargar(HttpPostedFileBase archivo, string color_temp, string usuario_temp, string tablero_variable, string action)
+        public ActionResult Cargar(HttpPostedFileBase archivo, string action)
         {
             if (archivo != null)
             {
                 Tablero tablero;
-                if(tablero_variable=="true")
-                    tablero = Conversor.XReadXML(archivo, color_temp, usuario_temp);
-                else
-                    tablero = Conversor.ReadXML(archivo, color_temp, usuario_temp);
-                
-                string usuario = tablero.usuario, usuario_opuesto = "";
-
-                if (usuario == Globals.usuario_activo)
-                    usuario_opuesto = "Oponente";
-                else
-                    usuario_opuesto = Globals.usuario_activo;
-
-
-                string color = tablero.color, color_opuesto = "";
-
-                if (color == "blanco")
-                    color_opuesto = "negro";
-                else
-                    color_opuesto = "blanco";
-
-
-             
-                // VALIDANDO SI HAY TIROS VALIDOS EN EL SIGUIENTE TURNO
-
-                List<int> lista_temp = new List<int>();
-                List<int> celdas_vacias = new List<int>();
-                List<int> celdas_validas = new List<int>();
-
-                int acc = 0;
-                foreach (Ficha ficha in tablero.fichas) //reconociendo celdas vacias
+                if (action == "Xtream")
                 {
-                    if (ficha.color== null)
-                        celdas_vacias.Add(acc);
+                    tablero = Conversor.XReadXML(archivo);
 
-                    acc++;
-                }
+                    string usuario = tablero.usuario, usuario_opuesto = "";
 
-                foreach (int celda in celdas_vacias) //iterando en las celdas vacias, para ver si son celdas validas (generan cambios)
-                {
-                    lista_temp = Juego.Flanquear(tablero, celda, color, color_opuesto);
-                    if (lista_temp.Count > 0)
-                        celdas_validas.Add(celda);
-                }
-                
-
-                if (celdas_validas.Count == 0)  //no hay celdas validas en el siguiente turno
-                {
-
-                    if (usuario == "Oponente")
-                        tablero.Actualizar(color_opuesto, Globals.usuario_activo, tablero.movimientos, tablero.movimientos_oponente + 1);
+                    if (usuario == Globals.usuario_activo)
+                        usuario_opuesto = "Oponente";
                     else
-                        tablero.Actualizar(color_opuesto, "Oponente", tablero.movimientos+1, tablero.movimientos_oponente);
+                        usuario_opuesto = Globals.usuario_activo;
 
-
-                    if (celdas_vacias.Count > 0) //si todavia hay celdas vacias
+                    string color = tablero.color;
+                    if (!tablero.colores.Contains(color) && !tablero.colores_oponente.Contains(color))
                     {
+                        Tablero tablero_temp = new Tablero(8, 8, "blanco", Globals.usuario_activo, "Normal");
+                        tablero_temp.colores = new List<string> { "blanco", "rojo" };
+                        tablero_temp.colores_oponente = new List<string> { "negro", "violeta" };
+                        tablero_temp.XIniciar(false);
 
-                        // VALIDANDO SI HAY TIROS VÁLIDOS EN EL SIGUIENTE SIGUIENTE TURNO
+                        ViewBag.Message = "Tablero cargado no válido";
+                        ViewBag.MessageType = "error-message";
 
-                        lista_temp = new List<int>();
-                        celdas_validas = new List<int>();
+                        return View(action,tablero_temp);
+                    }
+                    
+                    List<int> celdas_validas = Juego.XCeldas_validas(tablero);
 
-                        foreach (int celda in celdas_vacias) //iterando en las celdas vacias, para ver si son celdas validas (generan cambios)
+                    if (celdas_validas.Count > 0)
+                    {
+                        ViewBag.Message = "Tablero cargado con éxito";
+                        ViewBag.MessageType = "success-message";
+
+                        return View(action,tablero);
+                    }
+                    else
+                    {
+                        if (usuario == "Oponente")
                         {
-                            lista_temp = Juego.Flanquear(tablero, celda, color_opuesto, color);
-                            if (lista_temp.Count > 0)
-                                celdas_validas.Add(celda);
+                            tablero.XActualizar(Globals.usuario_activo, tablero.movimientos, tablero.movimientos_oponente + 1);
+                            celdas_validas = Juego.XCeldas_validas(tablero);
+                        }
+                        else
+                        {
+                            tablero.XActualizar("Oponente", tablero.movimientos + 1, tablero.movimientos_oponente);
+                            celdas_validas = Juego.XCeldas_validas(tablero);
                         }
 
-                        if (celdas_validas.Count > 0) //SI HAY TIROS VALIDOS EN El TURNO SIGUIENTE, SIGUIENTE
+                        if (celdas_validas.Count > 0)
                         {
                             ViewBag.Message = usuario + " no tiene movimientos válidos";
                             ViewBag.MessageType = "error-message";
-                            return View(action, tablero);
+
+                            return View(action,tablero);
                         }
-                        else //NO HAY TIROS VALIDOS EN LOS DOS TURNOS SIGUIENTES (SE TERMINA LA PARTIDA)
+                        else
                         {
-                            ViewBag.Message = "El tablero cargado no es válido";
-                            ViewBag.MessageType = "error-message";
-                            return View(action, new Tablero(8, 8, color_temp, usuario_temp,"Normal"));
+                            //JUEGO TERMINADO
+                            ViewBag.Message = Juego.Juego_terminado(tablero, color);
+                            ViewBag.MessageType = "success-message";
+
+                            return View(action,tablero);
                         }
-
-                    }
-                    else //si ya no quedan celdas
-                    {
-                        ViewBag.Message = "El tablero cargado está lleno";
-                        ViewBag.MessageType = "error-message";
-
-                        return View(action, new Tablero(8, 8, color_temp, usuario_temp, "Normal"));
                     }
                 }
                 else
                 {
-                    ViewBag.Message = "Tablero cargado exitosamente";
-                    ViewBag.MessageType = "neutral-message";
-                    return View(action, tablero);
+                    tablero = Conversor.ReadXML(archivo);
+
+                    string color = tablero.color, color_opuesto="";
+                                                         
+                    if (color == "blanco")
+                        color_opuesto = "negro";
+                    else                    
+                        color_opuesto = "blanco";
+
+
+                    string usuario = tablero.usuario, usuario_opuesto="";
+
+                    if (usuario == Globals.usuario_activo)
+                        usuario_opuesto = "Oponente";
+                    else
+                        usuario_opuesto = Globals.usuario_activo;
+
+
+
+                    List<int> celdas_validas = Juego.Celdas_validas(tablero, color, color_opuesto);
+
+                    if (celdas_validas.Count > 0)
+                    {
+                        ViewBag.Message = "Tablero cargado con éxito";
+                        ViewBag.MessageType = "success-message";
+
+                        return View(tablero);
+                    }
+                    else
+                    {
+                        celdas_validas = Juego.Celdas_validas(tablero, color_opuesto, color);
+
+                        if (celdas_validas.Count > 0)
+                        {
+                            ViewBag.Message = usuario + " no tiene movimientos válidos";
+                            ViewBag.MessageType = "error-message";
+
+                            return View(tablero);
+                        }
+                        else
+                        {
+                            //JUEGO TERMINADO
+                            ViewBag.Message = Juego.Juego_terminado(tablero, color);
+                            ViewBag.MessageType = "success-message";
+
+                            return View(tablero);
+                        }
+                    }
                 }
-                
-            } //no se cargó un archivo
-            else
-                return View(action, new Tablero(8, 8, color_temp, usuario_temp, "Normal"));
+            } 
+            else //no se cargó un archivo
+            {
+                Tablero tablero_temp = new Tablero(8, 8, "blanco", Globals.usuario_activo, "Normal");
+                tablero_temp.colores = new List<string> { "blanco" };
+                tablero_temp.colores_oponente = new List<string> { "negro" };
+                tablero_temp.XIniciar(false);
+
+                ViewBag.Message = "No se cargó un archivo";
+                ViewBag.MessageType = "error-message";
+
+                return View(action, tablero_temp);
+            }
         }
 
 
         //GUARDAR TABLERO        
 
         [HttpPost]
-        public ActionResult Descargar(Tablero tablero)
+        public ActionResult Descargar(Tablero tablero, string action)
         {
-            Conversor.WriteXML(tablero,Server.MapPath("../temp.xml"));
+            if(action=="Xtream")
+                Conversor.XWriteXML(tablero,Server.MapPath("../temp.xml"));
+            else
+                Conversor.WriteXML(tablero, Server.MapPath("../temp.xml"));
+
             return File("../temp.xml", "text/xml", "partida.xml");
         }
    

@@ -1,0 +1,56 @@
+﻿@model List<string>
+@{ 
+    ViewBag.Title = "Perfil";
+    Layout = "~/Views/Shared/_Layout_logged_in.cshtml";
+}
+
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta http-equiv="“X-UA-Compatible”" content="'IE' ='edge'" />
+</head>
+
+  <body>
+      <!-- OPCIONES -->
+      <section id="Gain">
+          <div class="container">
+              <div class="title text-center">
+                  <h3><b>@Globals.usuario_activo</b></h3>
+                  <div style="background-color:rgba(0, 0, 0, 0.75); color:white; border-radius:15px">
+                      <hr />
+                      <h2>Tus datos de registro</h2>
+                      <hr />
+                      <ul>Nombres: @Model[0]</ul>
+                      <ul>Apellidos: @Model[1]</ul>
+                      <hr />
+                      <ul>Correo electrónico: @Model[2]</ul>
+                      <hr />
+                      <ul>Fecha de nacimiento: @Model[3]</ul>
+                      <ul>País: @Model[4]</ul>
+                      <hr />
+                  </div>
+              </div>
+          </div>
+          <div class="container">
+              <div class="title text-center">
+                  <div style="background-color:rgba(0, 0, 0, 0.75); color:white; border-radius:15px">
+                      <hr />
+                      <h2>Tus estadísticas de Othello</h2>
+                      <hr />
+                      <ul>Partidas ganadas: @Model[5]</ul>
+                      <ul>Partidas perdidas: @Model[6]</ul>
+                      <ul>Partidas empatadas: @Model[7]</ul>
+                      <hr />
+                      <ul>Campeonatos jugados: @Model[8]</ul>
+                      <ul>Campeonatos ganados: @Model[9]</ul>
+                      <ul>Puntos de campeonatos: @Model[10]</ul>
+                      <hr />
+                  </div>
+              </div>
+          </div>
+      </section>
+      <!-- FIN DE OPCIONES -->
+  </body>
+</html>

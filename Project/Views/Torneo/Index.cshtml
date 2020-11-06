@@ -1,0 +1,86 @@
+﻿@model List<string>
+@{ 
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout_logged_in.cshtml";
+}
+
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta http-equiv="“X-UA-Compatible”" content="'IE' ='edge'" />
+</head>
+
+  <body>
+      <section id="Gain">
+          @using (Html.BeginForm("CrearEquipo", "Torneo", FormMethod.Post))
+          {
+              <div class="container">
+                  <div class="title text-center">
+                      <div style="background-color:rgba(0, 0, 0, 0.75); color:white; border-radius:15px">
+                          <hr />
+                          <h2>Crear un equipo</h2>
+                          <hr />
+                          <label for="nombre_equipo">Nombre del equipo:</label>
+                          <input type="text" name="nombre_equipo" required maxlength="10" placeholder="Nombre" />
+                          <hr />
+                          <label for="j1">Integrantes del equipo:</label>
+                          <input type="text" name="j1" required maxlength="20" placeholder="Jugador 1" value="@Globals.usuario_activo" />
+                          <input type="text" name="j2" required maxlength="20" placeholder="Jugador 2" />
+                          <input type="text" name="j3" required maxlength="20" placeholder="Jugador 3" />
+                          <hr />
+                          <input type="submit" value="Crear equipo" />
+                          <hr />
+                      </div>
+                  </div>
+              </div>
+          }
+
+          @using (Html.BeginForm("Index", "Torneo", FormMethod.Post))
+          {
+              <div class="container">
+                  <div class="title text-center">
+                      <div style="background-color:rgba(0, 0, 0, 0.75); color:white; border-radius:15px">
+                          <hr />
+                          <h2>Crear campeonato</h2>
+                          <hr />
+                          <label for="nombre_campeonato">Nombre del campeonato:</label>
+                          <input type="text" name="nombre_campeonato" required maxlength="10" placeholder="Nombre" />
+                          <hr />
+                          <label for="cars">Número de equipos:</label>
+                          <select name="num_equipos">
+                              <option value="4">4 equipos</option>
+                              <option value="8">8 equipos</option>
+                              <option value="16">16 equipos</option>
+                          </select>
+                          <hr />
+                          <input type="submit" value="Crear campeonato" />
+                          <hr />
+                      </div>
+                  </div>
+              </div>
+          }
+
+          @using (Html.BeginForm("Index", "Torneo", FormMethod.Post))
+          {
+              <div class="container">
+                  <div class="title text-center">
+                      <div style="background-color:rgba(0, 0, 0, 0.75); color:white; border-radius:15px">
+                          <hr />
+                          <h2>Cargar un campeonato</h2>
+                          <hr />
+                          <ul>Archivo XML del campeonato:</ul>
+                          <hr />
+                          <input type="file" name="archivo" accept=".xml">
+                          <hr />
+                          <input type="submit" value="Cargar campeonato" />
+                          <hr />
+                      </div>
+                  </div>
+              </div>
+          }
+
+      </section>
+  </body>
+</html>

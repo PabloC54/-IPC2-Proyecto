@@ -1,0 +1,175 @@
+﻿@{
+    ViewBag.Title = "XIndex";
+    Layout = "~/Views/Shared/_Layout_no_nav.cshtml";
+    
+}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta http-equiv="“X-UA-Compatible”" content="'IE' ='edge'" />
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script>
+
+        function quitarColor(color, lista_temp) {
+            var lista = document.getElementById('Colores');
+            var lista2 = document.getElementById('Colores2');
+            var lista_temp;
+
+            if (lista_temp == 'Colores')
+                lista_temp=document.getElementById('I_Colores');
+            else
+                lista_temp = document.getElementById('I_Colores2');
+
+            if (lista_temp.length < 5) {
+                for (var i = 0; i < lista.length; i++) {
+
+                    if (lista.options[i].value == color) {
+                        lista.remove(i);
+                        lista2.remove(i);
+
+                        var option = document.createElement('option');
+                        option.text = color;
+                        option.value = color;
+                        lista_temp.add(option);
+
+                        for (var i = 0; i < lista_temp.options.length; i++) {
+                            lista_temp.options[i].selected = true;
+                        }
+                    }
+                }
+            }
+        }
+
+        function selectAllOptions(obj) {
+            if (hasOptions(obj)) {
+                for (var i = 0; i < obj.options.length; i++) {
+                    obj.options[i].selected = true;
+                }
+            }
+        }
+        
+    </script>
+</head>
+
+<body>
+
+    <section id="XGIndex">
+
+        <div>
+            @using (Html.BeginForm("XIndex", "Game", FormMethod.Post))
+            {
+                <div class="subform">
+                    <div class="row">
+                        <h4 class="col-12">Tipo de apertura</h4>
+                    </div>
+                    <div class="row">
+                        <span class="col-6">
+                            <input type="radio" name="apertura" id="Automática" value="Automática" checked />
+                            <label for="Automática">Automática</label>
+                        </span>
+                        <span class="col-6">
+                            <input type="radio" name="apertura" id="Personalizada" value="Personalizada" />
+                            <label for="Personalizada">Personalizada</label>
+                        </span>
+                    </div>
+                </div>
+
+                <div class="subform">
+                    <div class="row">
+                        <h4 class="col-12">Modalidad de juego</h4>
+                    </div>
+                    <div class="row">
+                        <span class="col-6">
+                            <input type="radio" name="modalidad" id="Normal" value="Normal" checked />
+                            <label for="Normal">Normal</label>
+                        </span>
+                        <span class="col-6">
+                            <input type="radio" name="modalidad" id="Inversa" value="Inversa" />
+                            <label for="Inversa">Inversa</label>
+                        </span>
+                    </div>
+                </div>
+
+                <div class="subform">
+                    <div class="row">
+                        <h4 class="col-12">Tamaño del tablero</h4>
+                        <p>Puede ser desde 6x6 hasta 20x20</p>
+                    </div>
+                    <div class="row">
+                        <span class="col-6">
+                            <input type="number" name="filas" id="Filas" value="8" min="6" max="20" step="2" />
+                            <label for="filas">Filas</label>
+                        </span>
+                        <span class="col-6">
+                            <input type="number" name="columnas" id="Columnas" value="8" min="6" max="20" step="2" />
+                            <label for="columnas">Columnas</label>
+                        </span>
+                    </div>
+                </div>
+
+                <div class="subform">
+                    <div class="row">
+                        <h4 class="col-12">Colores J1</h4>
+                    </div>
+                    <div class="row">
+                        <span class="col-6">
+                            <select id="Colores" multiple size="5" >
+                                <option class="rojo" onclick="quitarColor('rojo','Colores')" value="rojo">Rojo</option>
+                                <option class="amarillo" onclick="quitarColor('amarillo','Colores')" value="amarillo">Amarillo</option>
+                                <option class="azul" onclick="quitarColor('azul','Colores')" value="azul">Azul</option>
+                                <option class="anaranjado" onclick="quitarColor('anaranjado','Colores')" value="anaranjado">Anaranjado</option>
+                                <option class="verde" onclick="quitarColor('verde','Colores')" value="verde">Verde</option>
+                                <option class="violeta" onclick="quitarColor('violeta','Colores')" value="violeta">Violeta</option>
+                                <option class="blanco" onclick="quitarColor('blanco','Colores')" value="blanco">Blanco</option>
+                                <option class="negro" onclick="quitarColor('negro','Colores')" value="negro">Negro</option>
+                                <option class="celeste" onclick="quitarColor('celeste','Colores')" value="celeste">Celeste</option>
+                                <option class="gris" onclick="quitarColor('gris','Colores')" value="gris">Gris</option>
+                            </select>
+                        </span>
+                        <span class="col-6">
+                            <select name="colores" id="I_Colores" multiple size="5" ></select>
+                        </span>
+                    </div>
+                </div>
+
+                <div class="subform">
+                    <div class="row">
+                        <h4 class="col-12">Colores J2</h4>
+                    </div>
+                    <div class="row">
+                        <span class="col-6">
+                            <select id="Colores2" multiple size="5" >
+                                <option class="rojo" onclick="quitarColor('rojo','Colores2')" value="rojo">Rojo</option>
+                                <option class="amarillo" onclick="quitarColor('amarillo','Colores2')" value="amarillo">Amarillo</option>
+                                <option class="azul" onclick="quitarColor('azul','Colores2')" value="azul">Azul</option>
+                                <option class="anaranjado" onclick="quitarColor('anaranjado','Colores2')" value="anaranjado">Anaranjado</option>
+                                <option class="verde" onclick="quitarColor('verde','Colores2')" value="verde">Verde</option>
+                                <option class="violeta" onclick="quitarColor('violeta','Colores2')" value="violeta">Violeta</option>
+                                <option class="blanco" onclick="quitarColor('blanco','Colores2')" value="blanco">Blanco</option>
+                                <option class="negro" onclick="quitarColor('negro','Colores2')" value="negro">Negro</option>
+                                <option class="celeste" onclick="quitarColor('celeste','Colores2')" value="celeste">Celeste</option>
+                                <option class="gris" onclick="quitarColor('gris','Colores2')" value="gris">Gris</option>
+                            </select>
+                        </span>
+                        <span class="col-6">
+                            <select name="colores2" id="I_Colores2" multiple size="5" ></select>
+                        </span>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-12">
+                        <input type="submit" value="Continuar" />
+                    </div>
+                </div>
+                
+            }
+        </div>
+
+    </section>
+
+</body>
+</html>

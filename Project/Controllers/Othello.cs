@@ -378,6 +378,399 @@ namespace IPC2_P1.Controllers
             return lista;
         }
 
+        public List<int> XFlanquear(Tablero tablero, int index, string color)
+        {
+            List<int> lista = new List<int>();
+            List<string> colores = new List<string>(), colores_oponente = new List<string>();
+            int y = tablero.filas;
+            int x = tablero.columnas;
+            int tam = y*x;
+
+            if (tablero.usuario == Globals.usuario_activo) {
+                colores = tablero.colores;
+                colores_oponente = tablero.colores_oponente;
+            }
+            else
+            {
+                colores = tablero.colores_oponente;
+                colores_oponente = tablero.colores;
+            }
+
+
+            bool izq_f = (index - 1 >= 0) && (index / x == (index - 1) / x);
+            bool der_f = (index + 1 < tam) && (index / x == (index + 1) / x);
+            bool sup_f = (index - x >= 0);
+            bool inf_f = (index + x < tam);
+
+
+            // CAMBIANDO FICHAS ENCERRADAS
+
+            if (index >= 0)
+            {
+                System.Diagnostics.Debug.WriteLine("INDEX " +index );
+
+                // FICHAS A LA IZQUIERDA
+                if (izq_f)
+                {
+                    if (colores_oponente.Contains(tablero.fichas[index - 1].color))
+                    {
+                        int acc = -2;
+                        List<int> lista_temp = new List<int>();
+                        lista_temp.Add(index - 1);
+
+                        bool salir = false;
+                        while (salir == false)
+                        {
+                            bool izq = (index + acc >= 0) && (index / x == (index + acc) / x);
+                            if (izq)
+                            {
+                                if (colores_oponente.Contains(tablero.fichas[index + acc].color))
+                                {
+                                    lista_temp.Add(index + acc);
+
+                                }
+                                else
+                                {
+                                    if (colores.Contains(tablero.fichas[index + acc].color))
+                                    {
+                                        lista.AddRange(lista_temp);
+                                        System.Diagnostics.Debug.WriteLine("izq "+(index+acc));
+                                    }
+                                    else
+                                    {
+                                        salir = true;
+                                    }
+                                }
+                            }
+                            else
+                            {
+                                salir = true;
+                            }
+
+                            acc -= 1;
+                        }
+                    }
+                }
+
+                // FICHAS A LA DERECHA
+                if (der_f)
+                {
+                    if (colores_oponente.Contains(tablero.fichas[index + 1].color))
+                    {
+                        int acc = 2;
+                        List<int> lista_temp = new List<int>();
+                        lista_temp.Add(index + 1);
+
+                        bool salir = false;
+                        while (salir == false)
+                        {
+                            bool der = (index + acc < tam) && (index / x == (index + acc) / x);
+                            if (der)
+                            {
+                                if (colores_oponente.Contains(tablero.fichas[index +acc].color))
+                                {
+                                    lista_temp.Add(index + acc);
+
+                                }
+                                else
+                                {
+                                    if (colores.Contains(tablero.fichas[index + acc].color))
+                                    {
+                                        lista.AddRange(lista_temp);
+                                        System.Diagnostics.Debug.WriteLine("der " + (index + acc));
+                                    }
+                                    else
+                                    {
+                                        salir = true;
+                                    }
+                                }
+                            }
+                            else
+                            {
+                                salir = true;
+                            }
+
+                            acc += 1;
+                        }
+                    }
+                }
+
+                // FICHAS SUPERIOR
+                if (sup_f)
+                {
+                    if (colores_oponente.Contains(tablero.fichas[index - x].color))
+                    {
+                        int acc = -2*x;
+                        List<int> lista_temp = new List<int>();
+                        lista_temp.Add(index - x);
+
+                        bool salir = false;
+                        while (salir == false)
+                        {
+                            bool sup = (index + acc >= 0);
+                            if (sup)
+                            {
+                                if (colores_oponente.Contains(tablero.fichas[index + acc].color))
+                                {
+                                    lista_temp.Add(index + acc);
+
+                                }
+                                else
+                                {
+                                    if (colores.Contains(tablero.fichas[index + acc].color))
+                                    {
+                                        lista.AddRange(lista_temp);
+                                        System.Diagnostics.Debug.WriteLine("sup " + (index + acc));
+                                    }
+                                    else
+                                    {
+                                        salir = true;
+                                    }
+                                }
+                            }
+                            else
+                            {
+                                salir = true;
+                            }
+
+                            acc -= x;
+                        }
+                    }
+                }
+
+                // FICHAS INFERIOR
+                if (inf_f)
+                {
+                    if (colores_oponente.Contains(tablero.fichas[index +x].color))
+                    {
+                        int acc = 2*x;
+                        List<int> lista_temp = new List<int>();
+                        lista_temp.Add(index + x);
+
+                        bool salir = false;
+                        while (salir == false)
+                        {
+                            bool inf = (index + acc < tam);
+                            if (inf)
+                            {
+                                if (colores_oponente.Contains(tablero.fichas[index + acc].color))
+                                {
+                                    lista_temp.Add(index + acc);
+
+                                }
+                                else
+                                {
+                                    if (colores.Contains(tablero.fichas[index + acc].color))
+                                    {
+                                        lista.AddRange(lista_temp);
+                                        System.Diagnostics.Debug.WriteLine("inf " + (index + acc));
+                                    }
+                                    else
+                                    {
+                                        salir = true;
+                                    }
+                                }
+                            }
+                            else
+                            {
+                                salir = true;
+                            }
+
+                            acc += x;
+                        }
+                    }
+                }
+
+                // FICHAS IZQ SUP
+                if (izq_f && sup_f)
+                {
+                    if (colores_oponente.Contains(tablero.fichas[index - x-1].color))
+                    {
+                        int acc = -2; //izq
+                        int acc2 = -2*x; //sup
+                        List<int> lista_temp = new List<int>();
+                        lista_temp.Add(index - x-1);
+
+                        bool salir = false;
+                        while (salir == false)
+                        {
+                            bool izq = (index + acc >= 0) && (index / x == (index + acc) / x);
+                            bool sup = (index + acc2 >= 0);
+
+                            if (izq && sup)
+                            {
+                                if (colores_oponente.Contains(tablero.fichas[index + acc+acc2].color))
+                                {
+                                    lista_temp.Add(index + acc + acc2);
+
+                                }
+                                else
+                                {
+                                    if (colores.Contains(tablero.fichas[index + acc+acc2].color))
+                                    {
+                                        lista.AddRange(lista_temp);
+                                        System.Diagnostics.Debug.WriteLine("izq sup " + (index + acc + acc2));
+                                    }
+                                    else
+                                    {
+                                        salir = true;
+                                    }
+                                }
+                            }
+                            else
+                            {
+                                salir = true;
+                            }
+
+                            acc -= 1;
+                            acc2 -= x;
+                        }
+                    }
+                }
+
+                // FICHAS DER SUP
+                if (der_f && sup_f)
+                {
+                    if (colores_oponente.Contains(tablero.fichas[index - x+1].color))
+                    {
+                        int acc = 2; //der
+                        int acc2 = -2*x; //sup
+                        List<int> lista_temp = new List<int>();
+                        lista_temp.Add(index - x+1);
+
+                        bool salir = false;
+                        while (salir == false)
+                        {
+                            bool der = (index + acc < tam) && (index / x == (index + acc) / x);
+                            bool sup = (index + acc2 >= 0);
+
+                            if (der && sup)
+                            {
+                                if (colores_oponente.Contains(tablero.fichas[index + acc+acc2].color))
+                                {
+                                    lista_temp.Add(index + acc + acc2);
+                                }
+                                else
+                                {
+                                    if (colores.Contains(tablero.fichas[index +acc+acc2].color))
+                                    {
+                                        lista.AddRange(lista_temp);
+                                        System.Diagnostics.Debug.WriteLine("der sup " + (index + acc + acc2));
+                                    }
+                                    else
+                                    {
+                                        salir = true;
+                                    }
+                                }
+                            }
+                            else
+                            {
+                                salir = true;
+                            }
+
+                            acc += 1;
+                            acc2 -= x;
+                        }
+                    }
+                }
+
+                // FICHAS IZQ INF
+                if (izq_f && inf_f)
+                {
+                    if (colores_oponente.Contains(tablero.fichas[index + x-1].color))
+                    {
+                        int acc = -2; //izq
+                        int acc2 = 2*x; //inf
+                        List<int> lista_temp = new List<int>();
+                        lista_temp.Add(index + x-1);
+
+                        bool salir = false;
+                        while (salir == false)
+                        {
+                            bool izq = (index + acc >= 0) && (index / x == (index + acc) / x);
+                            bool inf = (index + acc2 < tam);
+
+                            if (izq && inf)
+                            {
+                                if (colores_oponente.Contains(tablero.fichas[index + acc+acc2].color))
+                                {
+                                    lista_temp.Add(index + acc + acc2);
+                                }
+                                else
+                                {
+                                    if (colores.Contains(tablero.fichas[index + acc+acc2].color))
+                                    {
+                                        lista.AddRange(lista_temp);
+                                        System.Diagnostics.Debug.WriteLine("izq inf " + (index + acc + acc2));
+                                    }
+                                    else
+                                    {
+                                        salir = true;
+                                    }
+                                }
+                            }
+                            else
+                            {
+                                salir = true;
+                            }
+
+                            acc -= 1;
+                            acc2 += x;
+                        }
+                    }
+                }
+
+                // FICHAS DER INF
+                if (der_f && inf_f)
+                {
+                    if (colores_oponente.Contains(tablero.fichas[index + x+1].color))
+                    {
+                        int acc = 2; //der
+                        int acc2 = 2*x; //inf
+                        List<int> lista_temp = new List<int>();
+                        lista_temp.Add(index + 9);
+
+                        bool salir = false;
+                        while (salir == false)
+                        {
+                            bool der = (index + acc < tam) && (index / x == (index + acc) / x);
+                            bool inf = (index + acc2 < tam);
+
+                            if (der && inf)
+                            {
+                                if (colores_oponente.Contains(tablero.fichas[index + acc + acc2].color))
+                                {
+                                    lista_temp.Add(index + acc + acc2);
+                                }
+                                else
+                                {
+                                    if (colores.Contains(tablero.fichas[index + acc+acc2].color))
+                                    {
+                                        lista.AddRange(lista_temp);
+                                        System.Diagnostics.Debug.WriteLine("der inf " + (index + acc + acc2));
+                                    }
+                                    else
+                                    {
+                                        salir = true;
+                                    }
+                                }
+                            }
+                            else
+                            {
+                                salir = true;
+                            }
+
+                            acc += 1;
+                            acc2 += x;
+                        }
+                    }
+                }
+
+            }
+
+            return lista;
+        }
+
         public void Reemplazar(Tablero tablero, int pos, string valor)
         {
             if (pos >= 0)
@@ -394,7 +787,7 @@ namespace IPC2_P1.Controllers
 
         public int Ficha_seleccionada(Tablero tablero)
         {
-            int index = 0, acc = 0;
+            int index = -1, acc = 0;
             
             foreach (Ficha ficha in tablero.fichas)
             {
@@ -423,7 +816,24 @@ namespace IPC2_P1.Controllers
 
             return celdas_validas;
         }
-        
+
+        public List<int> XCeldas_validas(Tablero tablero)
+        {
+            List<int> celdas_vacias = Celdas_vacias(tablero);
+
+            List<int> lista_temp = new List<int>();
+            List<int> celdas_validas = new List<int>();
+
+            foreach (int celda in celdas_vacias) //iterando en las celdas vacias, para ver si son celdas validas (generan cambios)
+            {
+                lista_temp = XFlanquear(tablero, celda, tablero.color);
+                if (lista_temp.Count > 0)
+                    celdas_validas.Add(celda);
+            }
+
+            return celdas_validas;
+        }
+
         public List<int> Celdas_vacias(Tablero tablero)
         {
             List<int> celdas_vacias = new List<int>();
@@ -519,102 +929,235 @@ namespace IPC2_P1.Controllers
                         count++;
                 }
             }
+            
+
+            string resultado = "", mensaje = "";
+
+            if (tablero.modalidad == "Normal")
+            {
+                if (count > count2) //usuario gano
+                {
+                    mensaje = "¡El juego ha terminado! El ganador es: " + Globals.usuario_activo + " con " + count + " fichas";
+                    resultado = "victoria";
+                }
+                else
+                {
+                    if (count < count2) //usuario perdio
+                    {
+                        mensaje = "¡El juego ha terminado! El ganador es Oponente con " + count2 + " fichas";
+                        resultado = "derrota";
+                    }
+                    else //usuario empato
+                    {
+                        mensaje = "¡¡El juego ha terminado! Hubo un empate con " + count + " fichas";
+                        resultado = "empate";
+                    }
+                }
+
+            }
+            else //modalidad inversa
+            {
+                if (count < count2) //usuario gano
+                {
+                    mensaje = "¡El juego ha terminado! El ganador es: " + Globals.usuario_activo + " con " + count + " fichas";
+                    resultado = "victoria";
+                }
+                else
+                {
+                    if (count > count2) //usuario perdio
+                    {
+                        mensaje = "¡El juego ha terminado! El ganador es Oponente con " + count2 + " fichas";
+                        resultado = "derrota";
+                    }
+                    else //usuario empato
+                    {
+                        mensaje = "¡¡El juego ha terminado! Hubo un empate con " + count + " fichas";
+                        resultado = "empate";
+                    }
+                }
+            }
+
+            string txt = "insert into Partida(modalidad, resultado, username) values ('"+tablero.modalidad+"','" + resultado + "','" + Globals.usuario_activo + "')";
 
             con.Open();
+            SqlCommand cmd = new SqlCommand(txt, con);
+            SqlDataReader dr = cmd.ExecuteReader();
 
-            string txt = "", mensaje = "";
-            SqlCommand cmd = null;
-            SqlDataReader dr = null;
+            dr.Read();
+
+            dr.Close();            
+            con.Close();
+
+            return mensaje;
+        }
+
+        public string XJuego_terminado(Tablero tablero)
+        {
+            int count = 0, count2 = 0;
+
+            foreach (Ficha ficha in tablero.fichas) //CONTANDO LAS FICHAS
+            {
+                if (tablero.colores.Contains(ficha.color)) //usuario                                    
+                    count++;
+                else                                    
+                    if (tablero.colores_oponente.Contains(ficha.color))
+                    count2++;
+            }
+
+
+            string resultado = "", mensaje = "";
 
             if (tablero.modalidad == "Normal")
             {
                 if (count > count2) //usuario gano
                 {
                     mensaje = "¡El juego ha terminado! El ganador es: " + Globals.usuario_activo + " con " + count + " fichas";
-                    txt = "select partidas_ganadas from Estadisticas where username='" + Globals.usuario_activo + "'";
+                    resultado = "victoria";
                 }
                 else
                 {
                     if (count < count2) //usuario perdio
                     {
                         mensaje = "¡El juego ha terminado! El ganador es Oponente con " + count2 + " fichas";
-                        txt = "select partidas_perdidas from Estadisticas where username='" + Globals.usuario_activo + "'";
+                        resultado = "derrota";
                     }
                     else //usuario empato
                     {
                         mensaje = "¡¡El juego ha terminado! Hubo un empate con " + count + " fichas";
-                        txt = "select partidas_empatadas from Estadisticas where username='" + Globals.usuario_activo + "'";
+                        resultado = "empate";
                     }
                 }
 
             }
-            else
+            else //modalidad inversa
             {
                 if (count < count2) //usuario gano
                 {
                     mensaje = "¡El juego ha terminado! El ganador es: " + Globals.usuario_activo + " con " + count + " fichas";
-                    txt = "select partidas_ganadas from Estadisticas where username='" + Globals.usuario_activo + "'";
+                    resultado = "victoria";
                 }
                 else
                 {
                     if (count > count2) //usuario perdio
                     {
                         mensaje = "¡El juego ha terminado! El ganador es Oponente con " + count2 + " fichas";
-                        txt = "select partidas_perdidas from Estadisticas where username='" + Globals.usuario_activo + "'";
+                        resultado = "derrota";
                     }
                     else //usuario empato
                     {
                         mensaje = "¡¡El juego ha terminado! Hubo un empate con " + count + " fichas";
-                        txt = "select partidas_empatadas from Estadisticas where username='" + Globals.usuario_activo + "'";
+                        resultado = "empate";
                     }
                 }
             }
 
-            cmd = new SqlCommand(txt, con);
-            dr = cmd.ExecuteReader();
+            string txt = "insert into Partida(modalidad, resultado, username) values ('" + tablero.modalidad + "','" + resultado + "','" + Globals.usuario_activo + "')";
+
+            con.Open();
+            SqlCommand cmd = new SqlCommand(txt, con);
+            SqlDataReader dr = cmd.ExecuteReader();
             dr.Read();
-            int num = dr.GetInt32(0) + 1;
+
+            dr.Close();
+            con.Close();
+
+            return mensaje;
+        }
+
+        public string TJuego_terminado(Partida partida, string color_opuesto)
+        {
+            int count = 0, count2 = 0;
+
+            Tablero tablero = partida.tablero;
+
+            foreach (Ficha ficha in tablero.fichas) //CONTANDO LAS FICHAS
+            {
+                //JUGADOR1 count
+                //JUGADOR2 count2
+
+                if (tablero.usuario == partida.Jugador1)
+                {
+                    if (ficha.color == tablero.color) //usuario                                    
+                        count++;
+                    else //oponente                                    
+                        if (ficha.color == color_opuesto)
+                        count2++;
+                }
+                else
+                {
+                    if (ficha.color == tablero.color) //oponente                                    
+                        count2++;
+                    else //usuario                                    
+                        if (ficha.color == color_opuesto)
+                        count++;
+                }
+            }
+
+
+            string resultado = "", resultado2, mensaje = "";
+
+            //if (tablero.modalidad == "Normal"){
+            if (count > count2)
+            {
+                mensaje = "¡El juego ha terminado! El ganador es: " + partida.Jugador1 + " con " + count + " fichas";
+                resultado = "victoria";
+                resultado2 = "derrota";
+                partida.Ganador = partida.Jugador1;
+            }
+            else if (count < count2)
+            {
+                mensaje = "¡El juego ha terminado! El ganador es: " + partida.Jugador2 + " con " + count + " fichas";
+                resultado = "derrota";
+                resultado2 = "victoria";
+                partida.Ganador = partida.Jugador1;
+            }
+            else
+            {
+                mensaje = "¡¡El juego ha terminado! Hubo un empate con " + count + " fichas";
+                resultado = "empate";
+                resultado2 = "empate";
+                // pendiente
+            }
+            
+
+            //}
+            /*
+            else //modalidad inversa
+            {
+                if (count < count2) //usuario gano
+                {
+                    mensaje = "¡El juego ha terminado! El ganador es: " + Globals.usuario_activo + " con " + count + " fichas";
+                    resultado = "victoria";
+                }
+                else
+                {
+                    if (count > count2) //usuario perdio
+                    {
+                        mensaje = "¡El juego ha terminado! El ganador es Oponente con " + count2 + " fichas";
+                        resultado = "derrota";
+                    }
+                    else //usuario empato
+                    {
+                        mensaje = "¡¡El juego ha terminado! Hubo un empate con " + count + " fichas";
+                        resultado = "empate";
+                    }
+                }
+            }
+            */
+
+            string txt = "insert into Partida(modalidad, resultado, username) values ('" + tablero.modalidad + "','" + resultado + "','" + partida.Jugador1 + "')";
+            string txt2 = "insert into Partida(modalidad, resultado, username) values ('" + tablero.modalidad + "','" + resultado2 + "','" + partida.Jugador2 + "')";
+
+            con.Open();
+            SqlCommand cmd = new SqlCommand(txt, con);
+            SqlDataReader dr = cmd.ExecuteReader();
+            dr.Read();
             dr.Close();
 
-            if (tablero.modalidad == "Normal")
-            {
-                if (count > count2) //usuario gano
-                {
-                    txt = "update Estadisticas set partidas_ganadas=" + num + " where username='" + Globals.usuario_activo + "'";
-                }
-                else
-                {
-                    if (count < count2) //usuario perdio
-                    {
-                        txt = "update Estadisticas set partidas_perdidas=" + num + " where username='" + Globals.usuario_activo + "'";
-                    }
-                    else //usuario empato
-                    {
-                        txt = "update Estadisticas set partidas_empatadas=" + num + " where username='" + Globals.usuario_activo + "'";
-                    }
-                }
-            }
-            else
-            {
-                if (count < count2) //usuario gano
-                {
-                    txt = "update Estadisticas set partidas_ganadas=" + num + " where username='" + Globals.usuario_activo + "'";
-                }
-                else
-                {
-                    if (count > count2) //usuario perdio
-                    {
-                        txt = "update Estadisticas set partidas_perdidas=" + num + " where username='" + Globals.usuario_activo + "'";
-                    }
-                    else //usuario empato
-                    {
-                        txt = "update Estadisticas set partidas_empatadas=" + num + " where username='" + Globals.usuario_activo + "'";
-                    }
-                }
-            }
-
-            cmd = new SqlCommand(txt, con);
+            cmd = new SqlCommand(txt2, con);
             dr = cmd.ExecuteReader();
+            dr.Read();
+
             dr.Close();
             con.Close();
 

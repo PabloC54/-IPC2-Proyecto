@@ -131,27 +131,43 @@
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="Controllers\Conversor.cs" />
     <Compile Include="Controllers\GameController.cs" />
+    <Compile Include="Controllers\TorneoController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\Othello.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Models\Partida.cs" />
+    <Compile Include="Models\Ronda.cs" />
+    <Compile Include="Models\Equipo.cs" />
     <Compile Include="Models\Tablero.cs" />
     <Compile Include="Models\Ficha.cs" />
+    <Compile Include="Models\Campeonato.cs" />
     <Compile Include="Models\Usuario.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="fonts\glyphicons-halflings-regular.svg" />
     <Content Include="Global.asax" />
     <Content Include="Scripts\all-plugins.js" />
     <Content Include="Scripts\jquery-3.2.1.min.js" />
     <Content Include="Scripts\plugin-active.js" />
     <Content Include="wwwroot\images\board.png" />
+    <Content Include="wwwroot\images\campeonato_16.png" />
+    <Content Include="wwwroot\images\campeonato_2.png" />
+    <Content Include="wwwroot\images\campeonato_4.png" />
+    <Content Include="wwwroot\images\campeonato_8.png" />
     <Content Include="wwwroot\images\favicons\favicon-16x16.png" />
     <Content Include="wwwroot\images\favicons\favicon-32x32.png" />
-    <Content Include="wwwroot\images\ficha_b.jpg" />
-    <Content Include="wwwroot\images\ficha_n.jpg" />
+    <Content Include="wwwroot\images\ficha_amarillo.jpg" />
+    <Content Include="wwwroot\images\ficha_anaranjado.jpg" />
+    <Content Include="wwwroot\images\ficha_azul.jpg" />
+    <Content Include="wwwroot\images\ficha_blanco.jpg" />
+    <Content Include="wwwroot\images\ficha_celeste.jpg" />
+    <Content Include="wwwroot\images\ficha_gris.jpg" />
+    <Content Include="wwwroot\images\ficha_negro.jpg" />
+    <Content Include="wwwroot\images\ficha_rojo.jpg" />
+    <Content Include="wwwroot\images\ficha_verde.jpg" />
+    <Content Include="wwwroot\images\ficha_violeta.jpg" />
     <Content Include="wwwroot\images\game_bg.jpg" />
     <Content Include="wwwroot\images\login-bg.jpg" />
     <Content Include="wwwroot\images\menu-bg.jpg" />
@@ -179,20 +195,22 @@
     <Content Include="Views\Game\Solo.cshtml" />
     <Content Include="Views\Home\Login.cshtml" />
     <Content Include="Views\Home\Registro.cshtml" />
-    <Content Include="Views\Shared\_Layout_logged_in_no_nav.cshtml" />
     <Content Include="Views\Shared\_Layout_logged_in.cshtml" />
     <Content Include="wwwroot\xml\anchor" />
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>
-    <Content Include="fonts\glyphicons-halflings-regular.woff2" />
-    <Content Include="fonts\glyphicons-halflings-regular.woff" />
-    <Content Include="fonts\glyphicons-halflings-regular.ttf" />
-    <Content Include="fonts\glyphicons-halflings-regular.eot" />
     <None Include="packages.config" />
     <Content Include="Views\Shared\_Layout_no_nav.cshtml" />
     <Content Include="Views\Game\Versus.cshtml" />
     <Content Include="Views\Game\Index.cshtml" />
+    <Content Include="Views\Game\XIndex.cshtml" />
+    <Content Include="Views\Game\Xtream.cshtml" />
+    <Content Include="Views\Home\Perfil.cshtml" />
+    <Content Include="Views\Torneo\Sala.cshtml" />
+    <Content Include="Views\Torneo\Index.cshtml" />
+    <Content Include="Views\Torneo\CrearCampeonato.cshtml" />
+    <Content Include="Views\Torneo\Juego.cshtml" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

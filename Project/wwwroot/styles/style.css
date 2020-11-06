@@ -602,7 +602,7 @@ pre {
 
 @media (min-width: 1200px) {
     .container {
-        max-width: 1140px;
+        max-width: 1200px;
     }
 }
 
@@ -11472,7 +11472,7 @@ body.menu-active #Header .logo {
 /*Footer style end*/
 
 #Header a.logo {
-    font-size: 55px;
+    font-size: 45px;
     font-family: "Russo One", sans-serif;
     font-weight: bold;
     color: #007bff;
@@ -11481,6 +11481,7 @@ body.menu-active #Header .logo {
 }
 
 #Header .op {
+    text-align: center;
     padding: 20px;
     margin: 0;
 }
@@ -11493,7 +11494,6 @@ body.menu-active #Header .logo {
 #Header .login_btn {
     padding: 20px 10px;
     border: 2px double white;
-    text-align-last: center;
 }
 
 #Header .user-logged {
@@ -11512,22 +11512,29 @@ body.menu-active #Header .logo {
     color: lightblue;
 }
 
-#GIndex {
+#GIndex {  
     background-image: url(../images/game_bg.jpg);
     height: 600px;
     width: 100%;
     color:white;
 }
 
-    #GIndex > div {
+#XGIndex {
+    background-image: url(../images/game_bg.jpg);
+    height: 1300px;
+    width: 100%;
+    color: white;
+}
+
+    #GIndex > div, #XGIndex>div {
         padding: 100px 350px;
     }
 
-    #GIndex h4 {
+    #GIndex h4, #XGIndex h4 {
         padding-left:20px;
         padding-bottom:30px;
     }
-    #GIndex span {
+    #GIndex span, #XGIndex span {
         text-align: center;
     }
 
@@ -11536,19 +11543,23 @@ body.menu-active #Header .logo {
     padding: 40px 0;
 }
 
+.subform select {
+    width: 150px;
+}
+
 #Game {
     background-image: url(../images/game_bg.jpg);
-    height: 850px;
+    height: 1455px;
     width: 100%;
 }
 
 .xml-save-row {
-    margin: 720px 28%;
+    margin: 1350px 28%;
     position: absolute;
 }
 
 .xml-load-row {
-    margin: 750px 28%;
+    margin: 1378px 28% 0;
     position: absolute;
 }
 
@@ -11556,8 +11567,14 @@ body.menu-active #Header .logo {
     background-image: url(../images/board.png);
     background-repeat: no-repeat;
     background-size: contain;
-    height: 400px;
-    width: 400px;
+    max-width: none;
+    position: absolute;
+    padding: 35px;
+    margin: 300px 30%;
+}
+
+#XGameBoard {
+    background-color: beige;
     max-width: none;
     position: absolute;
     padding: 35px;
@@ -11565,31 +11582,30 @@ body.menu-active #Header .logo {
 }
 
 #GameTable {
-    background-image: url(../images/table.png);
-    background-repeat: no-repeat;
-    background-size: contain;
+    background-color:black;
+    height: 100%;
+    width: 100%;
+}
+
+#XGameTable {
+    background-color: black;
     height: 100%;
     width: 100%;
 }
 
 .fila {
-    height: 41px;
-    width: 100%;
     margin: 0;
 }
 
 .celda {
-    height: 90%;
-    width: 11%;
     padding: 0;
-    margin: 0.68% 0.75%;
     flex: none;
     max-width: none;
     background-image: none;
     background-repeat: no-repeat;
     background-size: contain;
-    background-color: unset;
-    border: thick;
+    background-color: green;
+    border: 2px solid black;
 }
 
     .celda + input {
@@ -11597,7 +11613,14 @@ body.menu-active #Header .logo {
     }
 
     .celda:hover {
-        background-color: rgba(0, 0, 0, 0.2);
+        background-color: rgb(0, 113,0);
+        border-style:dotted;
+        cursor: pointer;
+    }
+
+    .celda:focus {
+        background-color: rgb(0, 98,0);
+        border-style: initial;
         cursor: pointer;
     }
 
@@ -11691,3 +11714,22 @@ body.menu-active #Header .logo {
         color: white;
         font-size: 17px;
     }
+
+.torneo {
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    width: 1000px;
+    height: 450px;
+    border: black 5px solid;
+}
+
+.equipo {
+    background: none;
+    border: none;
+    position: relative;
+    width: 180px;
+    display: inline-block;
+    font-weight: 700;
+    font-size: 14px;
+}

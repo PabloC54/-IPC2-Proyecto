@@ -1,4 +1,5 @@
-﻿@{
+﻿@model IPC2_P1.Models.Usuario
+@{
     ViewBag.Title = "Registro";
     Layout = "~/Views/Shared/_Layout_no_nav.cshtml";
 }
@@ -311,7 +312,7 @@
                                                    required
                                                    maxlength="30"
                                                    class="floating-input"
-                                                   name="password" />
+                                                   name="confirmar_contraseña" />
                                             <label for="password">Confirmar contraseña</label>
                                         </div>
                                         <div class="fname floating-label">
@@ -331,7 +332,7 @@
 
                                         <div class="bannet-cta">
                                             <div class="cta-1">
-                                                <input type="submit" value="Registrarse" /> <div class="success-message">@Html.Raw(ViewBag.Message)</div>
+                                                <input type="submit" value="Registrarse" />
                                             </div>
                                         </div>
                                     </div>

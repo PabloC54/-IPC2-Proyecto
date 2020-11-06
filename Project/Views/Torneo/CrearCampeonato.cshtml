@@ -1,0 +1,51 @@
+﻿@model IPC2_P1.Models.Campeonato
+@{ 
+    ViewBag.Title = "Crear campeonato";
+    Layout = "~/Views/Shared/_Layout_no_nav.cshtml";
+}
+
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta http-equiv="“X-UA-Compatible”" content="'IE' ='edge'" />
+</head>
+
+  <body>
+      <section id="Gain">
+
+          @using (Html.BeginForm("CrearCampeonato", "Torneo", FormMethod.Post))
+          {
+              <div class="container">
+                  <div class="title text-center">
+                      <div style="background-color:rgba(0, 0, 0, 0.75); color:white; border-radius:15px">
+                          <hr />
+                          <h2>Ingresa los equipos</h2>
+                          <hr />
+                          <h2>@Model.Nombre_campeonato</h2>
+                          <hr />
+
+                          @for (int i = 0; i < Model.Numero_equipos; i++)
+                          {
+                              <label for="Equipos[@i].Nombre_equipo">Nombre del equipo @(i + 1):</label>
+                              <input type="text" name="Equipos[@i].Nombre_equipo" required maxlength="10" placeholder="Nombre" />
+                              <hr />
+                          }
+
+                          <div style="display:none">
+                                <input type="text" name="Nombre_campeonato" value="@Model.Nombre_campeonato" />
+                                <input type="number" name="Numero_equipos" value="@Model.Numero_equipos" />
+                                <input type="number" name="Numero_rondas" value="@Model.Numero_rondas" />
+                          </div>
+
+                          <input type="submit" value="Crear equipo" />
+                          <hr />
+                      </div>
+                  </div>
+              </div>
+          }
+
+      </section>
+  </body>
+</html>

@@ -1,6 +1,7 @@
 ﻿using IPC2_P1.Models;
 using System.Web.Mvc;
 using System.Data.SqlClient;
+using System.Collections.Generic;
 
 namespace IPC2_P1.Controllers
 {
@@ -11,27 +12,41 @@ namespace IPC2_P1.Controllers
 
         public ActionResult Index()
         {
-            return RedirectToAction("Menu","Home");
+            if (Globals.logged_in == false)
+            {
+                string message = "Inicia sesión para jugar Othello";
+                string messagetype = "neutral-message";
+                return RedirectToAction("Menu", "Home", new { message, messagetype });
+            }
+            else
+            {
+                return RedirectToAction("Menu", "Home");
+            }
         }
 
-        public ActionResult Menu()
-        {                
+        public ActionResult Menu(string message, string messagetype)
+        {
+            ViewBag.Message = message;
+            ViewBag.MessageType = messagetype;
             return View();
         }
 
         /*LOGIN*/
-
-        [HttpGet]
-        public ActionResult Login()
+        
+        public ActionResult Login(string message, string messagetype)
         {
             if (Globals.logged_in == true)
             {
-                ViewBag.Message = "Sesión iniciada como <b>" + Globals.usuario_activo + "</b>";
-                ViewBag.MessageType = "neutral-message";
-                return RedirectToAction("Menu", "Home");
+                message = "Sesión iniciada como " + Globals.usuario_activo;
+                messagetype = "neutral-message";
+
+                return RedirectToAction("Menu", "Home", new { message, messagetype });
             }
             else
             {
+                ViewBag.Message = message;
+                ViewBag.MessageType = messagetype;
+
                 return View();
             }
         }
@@ -41,7 +56,7 @@ namespace IPC2_P1.Controllers
         {
             con.Open();
 
-            string txt = "select * from Usuario where username='"+user.Username+"' and contraseña='"+user.Contraseña+"'";
+            string txt = "select * from Usuario where username='" + user.Username + "' and contraseña='" + user.Contraseña + "'";
             SqlCommand cmd = new SqlCommand(txt, con);
             SqlDataReader dr = cmd.ExecuteReader();
 
@@ -52,11 +67,12 @@ namespace IPC2_P1.Controllers
                     Globals.logged_in = true;
                     Globals.usuario_activo = user.Username;
 
-                    ViewBag.Message = "¡Inicio de sesión exitoso!";
-                    ViewBag.MessageType = "neutral-message";
-
                     con.Close();
-                    return RedirectToAction("Menu", "Home");
+
+                    string message = "¡Inicio de sesión exitoso!";
+                    string messagetype = "neutral-message";
+
+                    return RedirectToAction("Menu", "Home", new { message, messagetype });
                 }
                 else
                 {
@@ -74,55 +90,179 @@ namespace IPC2_P1.Controllers
 
                 con.Close();
                 return View();
-            }            
+            }
         }
 
         /*REGISTRO*/
 
         public ActionResult Registro()
-        {           
-                return View();
+        {
+            return View();
         }
 
         [HttpPost]
-        public ActionResult Registro(Usuario user)
+        public ActionResult Registro(Usuario usuario, string confirmar_contraseña)
         {// código de https://www.youtube.com/watch?v=1FB_X3adKpQ 
 
-            con.Open();
-
-            string txt= "insert into Usuario values ('" + user.Username + "','" + user.Nombres + "','" + user.Apellidos + "','" + user.Email + "','" + user.Contraseña + "','"+user.Fecha_Nacimiento.ToString("yyyy-MM-dd")+"','" + user.Pais + "',1); insert into Estadisticas values ('" + user.Username + "', 0, 0, 0, 0, 0, 0)";
-            SqlCommand cmd = new SqlCommand(txt,con);
-
-            int n = cmd.ExecuteNonQuery();
-
-            try
+            if (usuario.Contraseña == confirmar_contraseña)
             {
-                if (n > 0)
-                {
-                    ViewBag.Message = "¡Registro exitoso!";
-                    ViewBag.MessageType = "success-message";
+                con.Open();
 
-                    con.Close();
-                    return RedirectToAction("Menu", "Home");
-                }
-                else
+                string txt = "insert into Usuario values ('" + usuario.Username + "','" + usuario.Nombres + "','" + usuario.Apellidos + "','" + usuario.Email + "','" + usuario.Contraseña + "','" + usuario.Fecha_Nacimiento.ToString("yyyy-MM-dd") + "','" + usuario.Pais + "',1)";
+                SqlCommand cmd = new SqlCommand(txt, con);
+
+                try
                 {
-                    ViewBag.Message = "¡Ocurrió un error!";
+                    int n = cmd.ExecuteNonQuery();
+
+                    if (n > 0)
+                    {
+                        con.Close();
+                        string message = "¡Registro exitoso!";
+                        string messagetype = "success-message";
+
+                        return RedirectToAction("Login", "Home", new { message, messagetype });
+                    }
+                    else
+                    {
+                        ViewBag.Message = "Usuario ya registrado";
+                        ViewBag.MessageType = "error-message";
+
+                        con.Close();
+                        return View(usuario);
+                    }
+                }
+                catch
+                {
+                    ViewBag.Message = "Se produjo un error";
                     ViewBag.MessageType = "error-message";
 
                     con.Close();
                     return View();
                 }
             }
-            catch
+            else //contraseñas no coinciden
             {
-                ViewBag.Message = "Se produjo un error";
+                ViewBag.Message = "Las contraseñas no coinciden";
                 ViewBag.MessageType = "error-message";
-
-                con.Close();
-                return View();
+                
+                return View(usuario);
             }
         }
-        
+
+        /*PERFIL*/
+
+        public ActionResult Perfil()
+        {
+            if (Globals.logged_in == true)
+            {
+                con.Open();
+                
+                string txt = "select nombres, apellidos, correo_electronico, fecha_nacimiento, pais from Usuario where username='" + Globals.usuario_activo + "'";
+
+                SqlCommand cmd = new SqlCommand(txt, con);
+                SqlDataReader dr = cmd.ExecuteReader();
+
+                dr.Read();
+
+                string nombres = dr.GetString(0), apellidos = dr.GetString(1), correo = dr.GetString(2), fecha = dr.GetDateTime(3).ToString("dd-MM-yyyy"), pais = dr.GetString(4);
+                
+                dr.Close();
+
+
+                txt = "select resultado from Partida where username='" + Globals.usuario_activo +"'";
+
+                cmd = new SqlCommand(txt, con);
+                dr = cmd.ExecuteReader();
+                
+                int victorias = 0, derrotas = 0, empates = 0;
+
+                while (dr.Read())
+                {
+                    string resultado = dr.GetString(0);
+
+                    if (resultado == "victoria")
+                        victorias++;
+                    else if (resultado == "derrota")
+                        derrotas++;
+                    else if (resultado == "empate")
+                        empates++;
+                }
+
+                dr.Close();
+
+                
+                txt = "select nombre_equipo from Equipo where username='" + Globals.usuario_activo + "' or username2='"+Globals.usuario_activo+"' or username3='"+Globals.usuario_activo+"'";
+
+                cmd = new SqlCommand(txt, con);
+                dr = cmd.ExecuteReader();
+
+                List<string> equipos = new List<string>();
+                while (dr.Read())
+                {
+                    equipos.Add(dr.GetString(0));
+                }
+
+                List<string> campeonatos = new List<string>();
+                foreach(string equipo in equipos)
+                {
+                    txt = "select idCampeonato from Registro_Campeonato where nombre_equipo='" + equipo + "'";
+
+                    cmd = new SqlCommand(txt, con);
+                    dr = cmd.ExecuteReader();
+
+                    while (dr.Read())
+                    {
+                        campeonatos.Add(dr.GetString(0));
+                    }
+
+                }
+
+                int victorias_c = 0, derrotas_c = 0, empates_c = 0;
+
+                foreach (string campeonato in campeonatos)
+                {
+                    txt = "select resultado from Campeonato where idCampeonato='" + campeonato + "'";
+
+                    dr.Read();
+                    string resultado = dr.GetString(0);
+
+                    if (resultado == "victoria")
+                        victorias_c++;
+                    else if (resultado == "derrota")
+                        derrotas_c++;
+                    else if (resultado == "empate")
+                        empates_c++;
+
+                }
+
+                dr.Close();
+
+                List<string> temp = new List<string>
+                {
+                    nombres,
+                    apellidos,
+                    correo,
+                    fecha,
+                    pais,
+                    victorias.ToString(),
+                    derrotas.ToString(),
+                    empates.ToString(),
+                    victorias_c.ToString(),
+                    derrotas_c.ToString(),
+                    empates_c.ToString()
+                };
+                
+                return View(temp);                             
+            }
+            else
+            {
+                string message = "Primero debes iniciar sesión";
+                string messagetype = "error-message";
+
+                return RedirectToAction("Login", "Home", new { message, messagetype });
+            }
+        }
+
     }
 }
