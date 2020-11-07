@@ -1,10 +1,10 @@
-﻿@model IPC2_P1.Models.Campeonato
+﻿@model IPC2_P1.Models.Ronda
 @{
     ViewBag.Title = "Sala";
     Layout = "~/Views/Shared/_Layout_no_nav.cshtml";
 
     string[] top = new string[16], left = new string[16];
-    if (Model.Ronda_actual.Numero_equipos == 2)
+    if (Model.Numero_equipos == 2)
     {
         System.Diagnostics.Debug.WriteLine("PRUEBA: 2");
         top = new string[]
@@ -19,7 +19,7 @@
 "368px"
         };
     }
-    else if (Model.Ronda_actual.Numero_equipos == 4)
+    else if (Model.Numero_equipos == 4)
     {
         top = new string[]
         {
@@ -37,7 +37,7 @@
 "80px"
         };
     }
-    else if (Model.Ronda_actual.Numero_equipos == 8)
+    else if (Model.Numero_equipos == 8)
     {
         top = new string[]
         {
@@ -63,7 +63,7 @@
 "332px"
         };
     }
-    else if (Model.Ronda_actual.Numero_equipos == 16)
+    else if (Model.Numero_equipos == 16)
     {
         top = new string[]
         {
@@ -113,45 +113,55 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta http-equiv="“X-UA-Compatible”" content="'IE' ='edge'" />
+    <script>
+        function Pasar(text) {
+            document.getElementById('ganador').value = text;
+        }
+    </script>
 </head>
 
 <body>
     <section id="Gain">
 
+        <div class="container">
+            <div class="title text-center">
+                <h2>@Model.Nombre_campeonato</h2>
+            </div>
+        </div>
 
-        @if (Model.Ronda_actual.Numero_equipos == 2)
+        @if (Model.Numero_equipos == 2)
         {
             <div class="torneo" style="background: url('../wwwroot/images/campeonato_2.png')">
-                @for (int i = 0; i < Model.Ronda_actual.Numero_equipos; i++)
+                @for (int i = 0; i < Model.Numero_equipos; i++)
                 {
-                <span class="equipo" style="top: @top[i]; left: @left[i]">@Model.Ronda_actual.Equipos[i].Nombre_equipo</span>
+                    <span class="equipo" style="top: @top[i]; left: @left[i]">@Model.Equipos[i].Nombre_equipo</span>
                 }
             </div>
         }
-        else if (Model.Ronda_actual.Numero_equipos == 4)
+        else if (Model.Numero_equipos == 4)
         {
             <div class="torneo" style="background: url('../wwwroot/images/campeonato_4.png')">
-                @for (int i = 0; i < Model.Ronda_actual.Numero_equipos; i++)
+                @for (int i = 0; i < Model.Numero_equipos; i++)
                 {
-                    <span class="equipo" style="top: @top[i]; left: @left[i]">@Model.Ronda_actual.Equipos[i].Nombre_equipo</span>
+                    <span class="equipo" style="top: @top[i]; left: @left[i]">@Model.Equipos[i].Nombre_equipo</span>
                 }
             </div>
         }
-        else if (Model.Ronda_actual.Numero_equipos == 8)
+        else if (Model.Numero_equipos == 8)
         {
             <div class="torneo" style="background: url('../wwwroot/images/campeonato_8.png')">
-                @for (int i = 0; i < Model.Ronda_actual.Numero_equipos; i++)
+                @for (int i = 0; i < Model.Numero_equipos; i++)
                 {
-                    <span class="equipo" style="top: @top[i]; left: @left[i]">@Model.Ronda_actual.Equipos[i].Nombre_equipo</span>
+                    <span class="equipo" style="top: @top[i]; left: @left[i]">@Model.Equipos[i].Nombre_equipo</span>
                 }
             </div>
         }
-        else if (Model.Ronda_actual.Numero_equipos == 16)
+        else if (Model.Numero_equipos == 16)
         {
             <div class="torneo" style="background: url('../wwwroot/images/campeonato_16.png')">
-                @for (int i = 0; i < Model.Ronda_actual.Numero_equipos; i++)
+                @for (int i = 0; i < Model.Numero_equipos; i++)
                 {
-                    <span class="equipo" style="top: @top[i]; left: @left[i]">@Model.Ronda_actual.Equipos[i].Nombre_equipo</span>
+                    <span class="equipo" style="top: @top[i]; left: @left[i]">@Model.Equipos[i].Nombre_equipo</span>
                 }
             </div>
         }
@@ -162,82 +172,47 @@
             <div style="display:none">
                 <input type="text" name="Nombre_campeonato" value="@Model.Nombre_campeonato" />
                 <input type="number" name="Numero_equipos" value="@Model.Numero_equipos" />
-                <input type="number" name="Numero_rondas" value="@Model.Numero_rondas" />
+                <input type="number" name="Numero_partidas" value="@Model.Numero_partidas" />
 
-                @for (int i = 0; i < Model.Numero_equipos; i++)
+                <input type="number" name="index" value="@Model.index" />
+
+                @for (int j = 0; j < Model.Numero_equipos; j++)
                 {
-                    <input type="text" name="Equipos[@i].Nombre_equipo" value="@Model.Equipos[i].Nombre_equipo" />
-                    <input type="text" name="Equipos[@i].j1" value="@Model.Equipos[i].j1" />
-                    <input type="text" name="Equipos[@i].j2" value="@Model.Equipos[i].j2" />
-                    <input type="text" name="Equipos[@i].j3" value="@Model.Equipos[i].j3" />
+                    <input type="text" name="Equipos[@j].Nombre_equipo" value="@Model.Equipos[j].Nombre_equipo" />
+                    <input type="text" name="Equipos[@j].j1" value="@Model.Equipos[j].j1" />
+                    <input type="text" name="Equipos[@j].j2" value="@Model.Equipos[j].j2" />
+                    <input type="text" name="Equipos[@j].j3" value="@Model.Equipos[j].j3" />
+                    <input type="text" name="Equipos[@j].puntos" value="@Model.Equipos[j].puntos" />
                 }
 
-                @for (int i = 0; i < Model.Rondas.Count; i++)
+                <input type="text" name="Equipo1.Nombre_equipo" value="@Model.Equipo1.Nombre_equipo" />
+                <input type="text" name="Equipo1.j1" value="@Model.Equipo1.j1" />
+                <input type="text" name="Equipo1.j2" value="@Model.Equipo1.j2" />
+                <input type="text" name="Equipo1.j3" value="@Model.Equipo1.j3" />
+
+                <input type="text" name="Equipo2.Nombre_equipo" value="@Model.Equipo2.Nombre_equipo" />
+                <input type="text" name="Equipo2.j1" value="@Model.Equipo2.j1" />
+                <input type="text" name="Equipo2.j2" value="@Model.Equipo2.j2" />
+                <input type="text" name="Equipo2.j3" value="@Model.Equipo2.j3" />
+
+                @for (int j = 0; j < Model.Partidas.Count; j++)
                 {
-                    <input type="number" name="Rondas[@i].Numero_ronda" value="@Model.Rondas[i].Numero_ronda" />
-                    <input type="number" name="Rondas[@i].Numero_equipos" value="@Model.Rondas[i].Numero_equipos" />
+                    <input type="text" name="Partidas[@j].Jugador1" value="@Model.Partidas[j].Jugador1" />
+                    <input type="text" name="Partidas[@j].Jugador2" value="@Model.Partidas[j].Jugador2" />
+                    <input type="number" name="Partidas[@j].Puntos1" value="@Model.Partidas[j].Puntos1" />
+                    <input type="text" name="Partidas[@j].Puntos2" value="@Model.Partidas[j].Puntos2" />
+                    <input type="text" name="Partidas[@j].Ganador" value="@Model.Partidas[j].Ganador" />
 
-                    for (int j = 0; j < Model.Rondas[i].Numero_equipos; j++)
-                    {
-                        <input type="text" name="Rondas[@i].Equipos[@j].Nombre_equipo" value="@Model.Rondas[i].Equipos[j].Nombre_equipo" />
-                        <input type="text" name="Rondas[@i].Equipos[@j].j1" value="@Model.Rondas[i].Equipos[j].j1" />
-                        <input type="text" name="Rondas[@i].Equipos[@j].j2" value="@Model.Rondas[i].Equipos[j].j2" />
-                        <input type="text" name="Rondas[@i].Equipos[@j].j3" value="@Model.Rondas[i].Equipos[j].j3" />
-                    }
-
-                    <input type="text" name="Rondas[@i].Equipo1.Nombre_equipo" value="@Model.Rondas[i].Equipo1.Nombre_equipo" />
-                    <input type="text" name="Rondas[@i].Equipo1.j1" value="@Model.Rondas[i].Equipo1.j1" />
-                    <input type="text" name="Rondas[@i].Equipo1.j2" value="@Model.Rondas[i].Equipo1.j2" />
-                    <input type="text" name="Rondas[@i].Equipo1.j3" value="@Model.Rondas[i].Equipo1.j3" />
-
-                    <input type="text" name="Rondas[@i].Equipo2.Nombre_equipo" value="@Model.Rondas[i].Equipo2.Nombre_equipo" />
-                    <input type="text" name="Rondas[@i].Equipo2.j1" value="@Model.Rondas[i].Equipo2.j1" />
-                    <input type="text" name="Rondas[@i].Equipo2.j2" value="@Model.Rondas[i].Equipo2.j2" />
-                    <input type="text" name="Rondas[@i].Equipo2.j3" value="@Model.Rondas[i].Equipo2.j3" />
-
-                    for (int j = 0; j < Model.Rondas[i].Partidas.Count; j++)
-                    {
-                        <input type="text" name="Rondas[@i].Partidas[@j].Jugador1" value="@Model.Rondas[i].Partidas[j].Jugador1" />
-                        <input type="text" name="Rondas[@i].Partidas[@j].Jugador2" value="@Model.Rondas[i].Partidas[j].Jugador2" />
-                        <input type="text" name="Rondas[@i].Partidas[@j].Ganador" value="@Model.Rondas[i].Partidas[j].Ganador" />
-                    }
-
-                    <input type="text" name="Rondas[@i].Partida_siguiente.Jugador1" value="@Model.Rondas[i].Partida_siguiente.Jugador1" />
-                    <input type="text" name="Rondas[@i].Partida_siguiente.Jugador2" value="@Model.Rondas[i].Partida_siguiente.Jugador2" />
-                    <input type="text" name="Rondas[@i].Partida_siguiente.Ganador" value="@Model.Rondas[i].Partida_siguiente.Ganador" />
+                    <input type="number" name="Partidas[@j].index" value="@Model.Partidas[j].index" />
                 }
 
-                <input type="number" name="Ronda_actual.Numero_ronda" value="@Model.Ronda_actual.Numero_ronda" />
-                <input type="number" name="Ronda_actual.Numero_equipos" value="@Model.Ronda_actual.Numero_equipos" />
+                <input type="text" name="Partida_actual.Jugador1" value="@Model.Partida_actual.Jugador1" />
+                <input type="text" name="Partida_actual.Jugador2" value="@Model.Partida_actual.Jugador2" />
+                <input type="number" name="Partida_actual.Puntos1" value="@Model.Partida_actual.Puntos1" />
+                <input type="text" name="Partida_actual.Puntos2" value="@Model.Partida_actual.Puntos2" />
+                <input type="text" name="Partida_actual.Ganador" value="@Model.Partida_actual.Ganador" />
 
-                @for (int j = 0; j < Model.Ronda_actual.Numero_equipos; j++)
-                {
-                <input type="text" name="Ronda_actual.Equipos[@j].Nombre_equipo" value="@Model.Ronda_actual.Equipos[j].Nombre_equipo" />
-                <input type="text" name="Ronda_actual.Equipos[@j].j1" value="@Model.Ronda_actual.Equipos[j].j1" />
-                <input type="text" name="Ronda_actual.Equipos[@j].j2" value="@Model.Ronda_actual.Equipos[j].j2" />
-                <input type="text" name="Ronda_actual.Equipos[@j].j3" value="@Model.Ronda_actual.Equipos[j].j3" />
-                }
-
-                <input type="text" name="Ronda_actual.Equipo1.Nombre_equipo" value="@Model.Ronda_actual.Equipo1.Nombre_equipo" />
-                <input type="text" name="Ronda_actual.Equipo1.j1" value="@Model.Ronda_actual.Equipo1.j1" />
-                <input type="text" name="Ronda_actual.Equipo1.j2" value="@Model.Ronda_actual.Equipo1.j2" />
-                <input type="text" name="Ronda_actual.Equipo1.j3" value="@Model.Ronda_actual.Equipo1.j3" />
-
-                <input type="text" name="Ronda_actual.Equipo2.Nombre_equipo" value="@Model.Ronda_actual.Equipo2.Nombre_equipo" />
-                <input type="text" name="Ronda_actual.Equipo2.j1" value="@Model.Ronda_actual.Equipo2.j1" />
-                <input type="text" name="Ronda_actual.Equipo2.j2" value="@Model.Ronda_actual.Equipo2.j2" />
-                <input type="text" name="Ronda_actual.Equipo2.j3" value="@Model.Ronda_actual.Equipo2.j3" />
-
-                @for (int j = 0; j < Model.Ronda_actual.Partidas.Count; j++)
-                {
-                <input type="text" name="Ronda_actual.Partidas[@j].Jugador1" value="@Model.Ronda_actual.Partidas[j].Jugador1" />
-                <input type="text" name="Ronda_actual.Partidas[@j].Jugador2" value="@Model.Ronda_actual.Partidas[j].Jugador2" />
-                <input type="text" name="Ronda_actual.Partidas[@j].Ganador" value="@Model.Ronda_actual.Partidas[j].Ganador" />
-                }
-
-                <input type="text" name="Ronda_actual.Partida_siguiente.Jugador1" value="@Model.Ronda_actual.Partida_siguiente.Jugador1" />
-                <input type="text" name="Ronda_actual.Partida_siguiente.Jugador2" value="@Model.Ronda_actual.Partida_siguiente.Jugador2" />
-                <input type="text" name="Ronda_actual.Partida_siguiente.Ganador" value="@Model.Ronda_actual.Partida_siguiente.Ganador" />
+                <input type="number" name="Partida_actual.index" value="@Model.Partida_actual.index" />
 
             </div>
 
@@ -245,13 +220,14 @@
                 <div class="title text-center">
                     <div style="background-color:rgba(0, 0, 0, 0.75); color:white; border-radius:15px">
                         <hr />
-                        <p>Ronda @Model.Ronda_actual.Numero_ronda: @Model.Ronda_actual.Equipo1.Nombre_equipo VS @Model.Ronda_actual.Equipo2.Nombre_equipo</p>
-                        <p>Siguiente partida: @Model.Ronda_actual.Partida_siguiente.Jugador1 VS @Model.Ronda_actual.Partida_siguiente.Jugador2</p>
+                        <p>Ronda @(Model.index + 1): @Model.Equipo1.Nombre_equipo VS @Model.Equipo2.Nombre_equipo</p>
+                        <p>Partida @(Model.Partida_actual.index + 1): @Model.Partida_actual.Jugador1 VS @Model.Partida_actual.Jugador2</p>
                         <hr />
                         <input type="submit" value="Iniciar partida" />
                         <hr />
-                        <input type="submit" value="Gana @Model.Ronda_actual.Partida_siguiente.Jugador1" />
-                        <input type="submit" value="Gana @Model.Ronda_actual.Partida_siguiente.Jugador2" />
+                        <input type="submit" value="Gana @Model.Partida_actual.Jugador1" formaction="Pasar" onclick="Pasar('1')"/>
+                        <input type="submit" value="Gana @Model.Partida_actual.Jugador2" formaction="Pasar" onclick="Pasar('2')"/>
+                        <input type="text" value="" id="ganador" name="ganador" />
                         <hr />
                     </div>
                 </div>
@@ -262,9 +238,9 @@
             <div class="title text-center">
                 <div style="background-color:rgba(0, 0, 0, 0.75); color:white; border-radius:15px">
                     <hr />
-                    <p>Equipo @(Model.Equipos.FindIndex(x => x == Model.Ronda_actual.Equipo1) + 1): @Model.Ronda_actual.Equipo1.Nombre_equipo</p>
+                    <p>Equipo @(Model.Equipos.FindIndex(x => x == Model.Equipo1) + 1): @Model.Equipo1.Nombre_equipo</p>
                     <p>Integrantes:</p>
-                    <p>@Model.Ronda_actual.Equipo1.j1<br />@Model.Ronda_actual.Equipo1.j2<br />@Model.Ronda_actual.Equipo1.j3</p>
+                    <p>@Model.Equipo1.j1<br />@Model.Equipo1.j2<br />@Model.Equipo1.j3</p>
                     <hr />
                 </div>
             </div>
@@ -274,9 +250,9 @@
             <div class="title text-center">
                 <div style="background-color:rgba(0, 0, 0, 0.75); color:white; border-radius:15px">
                     <hr />
-                    <p>Equipo @(Model.Equipos.FindIndex(x => x == Model.Ronda_actual.Equipo2) + 1): @Model.Ronda_actual.Equipo2.Nombre_equipo</p>
+                    <p>Equipo @(Model.Equipos.FindIndex(x => x == Model.Equipo2) + 1): @Model.Equipo2.Nombre_equipo</p>
                     <p>Integrantes:</p>
-                    <p>@Model.Ronda_actual.Equipo2.j1<br />@Model.Ronda_actual.Equipo2.j2<br />@Model.Ronda_actual.Equipo2.j3</p>
+                    <p>@Model.Equipo2.j1<br />@Model.Equipo2.j2<br />@Model.Equipo2.j3</p>
                     <hr />
                 </div>
             </div>

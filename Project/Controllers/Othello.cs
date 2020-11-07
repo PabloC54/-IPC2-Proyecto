@@ -1093,6 +1093,8 @@ namespace IPC2_P1.Controllers
                 }
             }
 
+            partida.Puntos1 = count;
+            partida.Puntos2 = count2;
 
             string resultado = "", resultado2, mensaje = "";
 
@@ -1102,7 +1104,8 @@ namespace IPC2_P1.Controllers
                 mensaje = "¡El juego ha terminado! El ganador es: " + partida.Jugador1 + " con " + count + " fichas";
                 resultado = "victoria";
                 resultado2 = "derrota";
-                partida.Ganador = partida.Jugador1;
+
+                partida.Ganador = partida.Jugador1;                
             }
             else if (count < count2)
             {

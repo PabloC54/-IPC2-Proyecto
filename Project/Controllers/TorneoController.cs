@@ -4,6 +4,7 @@ using System.Data.SqlClient;
 using System.Collections.Generic;
 using System.Web;
 using System;
+using System.Linq;
 
 namespace IPC2_P1.Controllers
 {
@@ -181,9 +182,27 @@ namespace IPC2_P1.Controllers
         [HttpPost]
         public ActionResult CrearCampeonato(Campeonato campeonato)
         {
-            con.Open();
+            List<string> Equipos_temp = new List<string>();
+            
+            foreach(Equipo equipo in campeonato.Equipos)
+            {
+                if (Equipos_temp.Contains(equipo.Nombre_equipo))
+                {
+                    ViewBag.Message = "El equipo '" + equipo.Nombre_equipo + "' se encuentra repetido";
+                    ViewBag.MessageType = "error-message";
 
-            // VALIDAR QUE NO SE REPITA EQUIPO
+                    return View(campeonato);
+                }
+                else
+                {
+                    Equipos_temp.Add(equipo.Nombre_equipo);
+                }
+            }
+            
+                
+            
+
+            con.Open();
 
             foreach (Equipo equipo in campeonato.Equipos)
             {
@@ -213,28 +232,29 @@ namespace IPC2_P1.Controllers
 
             con.Close();
             campeonato.Rondas = new List<Ronda>();
-            Partida partida = new Partida() { Jugador1=campeonato.Equipos[0].j1, Jugador2=campeonato.Equipos[0].j1 };
+
+            Partida partida = new Partida() { Jugador1=campeonato.Equipos[0].j1, Jugador2=campeonato.Equipos[1].j1, index=0 };
             Ronda ronda = new Ronda
             {
-                Numero_ronda = 1,
+                Nombre_campeonato = campeonato.Nombre_campeonato,
+                index = 0,
                 Numero_equipos = campeonato.Numero_equipos,
                 Equipos = campeonato.Equipos,
                 Equipo1 = campeonato.Equipos[0],
                 Equipo2 = campeonato.Equipos[1],
-                Partidas = new List<Partida>() { partida },
-                Partida_siguiente = partida
-            };
+                Partidas = new List<Partida>() { },
+                Partida_actual = partida,
+                Numero_partidas=(campeonato.Numero_equipos / 2) * 3
+            };            
 
-            campeonato.Rondas.Add(ronda);
-
-            campeonato.Ronda_actual = campeonato.Rondas[0];
+            campeonato.Ronda_actual = ronda;
 
             Globals.campeonato = campeonato;
 
-            ViewBag.Message = "Ronda 1, se disputarán " + (campeonato.Numero_equipos / 2)*3 + " partidos";
+            ViewBag.Message = "Ronda 1, se disputarán " + ronda.Numero_partidas + " partidos";
             ViewBag.MessageType = "neutral-message";
 
-            return RedirectToAction("Sala","Torneo",campeonato);
+            return RedirectToAction("Sala","Torneo",ronda);
         }
 
         public ActionResult Sala(Campeonato campeonato, string message, string messagetype)
@@ -242,11 +262,11 @@ namespace IPC2_P1.Controllers
             ViewBag.Message = message;
             ViewBag.MessageType = messagetype;
 
-            return View(Globals.campeonato);
+            return View(Globals.campeonato.Ronda_actual);
         }
 
         [HttpPost]
-        public ActionResult Sala(Campeonato campeonato)
+        public ActionResult Sala(Ronda ronda)
         {
             bool temp = false;
             /*
@@ -257,15 +277,151 @@ namespace IPC2_P1.Controllers
                 ViewBag.Message = "Apertura personalizada en progreso, faltan 4 fichas por colocar";
 
             }*/
+            Tablero tablero_temp = new Tablero(8, 8, "negro", Globals.campeonato.Ronda_actual.Partida_actual.Jugador1, Globals.campeonato.Ronda_actual.Partida_actual.Jugador2);
+            ronda.Partida_actual.tablero = tablero_temp;
+            ronda.Partida_actual.tablero.Iniciar(temp);
 
-            campeonato.Ronda_actual.Partida_siguiente.tablero = new Tablero(8, 8, "negro", Globals.campeonato.Ronda_actual.Partida_siguiente.Jugador1, Globals.campeonato.Ronda_actual.Partida_siguiente.Jugador2);
-            campeonato.Ronda_actual.Partida_siguiente.tablero.Iniciar(temp);
+            Globals.campeonato.Ronda_actual = ronda;
+
+            return View("Juego", ronda.Partida_actual);
+        }
+
+        [HttpPost]
+        public ActionResult Pasar(Ronda ronda, string ganador)
+        {
+            Campeonato campeonato = Globals.campeonato;
+
+            if (ganador == "1")
+            {
+                ganador = ronda.Partida_actual.Jugador1;
+            }
+            else
+            {
+                ganador = ronda.Partida_actual.Jugador2;
+            }
+
+            Partida partida = new Partida()
+            {
+                Jugador1 = ronda.Partida_actual.Jugador1,
+                Jugador2 = ronda.Partida_actual.Jugador2,
+                Ganador = ganador,
+                index = ronda.index + 1,
+                Puntos1 = 40,
+                Puntos2 = 24
+            };
+
+            try
+            {
+                campeonato.Ronda_actual.Partidas.Add(partida);
+            }
+            catch
+            {
+                campeonato.Ronda_actual.Partidas = new List<Partida>();
+                campeonato.Ronda_actual.Partidas.Add(partida);
+            }
+
+            campeonato.Ronda_actual.Equipo1.puntos += partida.Puntos1;
+            campeonato.Ronda_actual.Equipo2.puntos += partida.Puntos2;
+
+            if (partida.index == campeonato.Ronda_actual.Numero_partidas - 1) //Es la ultima partida
+            {
+                if (campeonato.Ronda_actual.index == campeonato.Numero_rondas - 1) //Es la ultima ronda
+                {
+                    //terminar juego
+
+                }
+                else //No es la ultima ronda
+                {
+                    campeonato.Rondas[campeonato.Ronda_actual.index] = campeonato.Ronda_actual;
+
+                    List<Equipo> equipos_temp = new List<Equipo>();
+
+                    for (int i = 0; i < campeonato.Ronda_actual.Numero_equipos; i += 2)
+                    {
+                        Equipo equipo1 = campeonato.Ronda_actual.Equipos[i];
+                        Equipo equipo2 = campeonato.Ronda_actual.Equipos[i + 1];
+
+                        if (equipo1.puntos > equipo2.puntos)
+                        {
+                            equipos_temp.Add(equipo1);
+                        }
+                        else if (equipo1.puntos < equipo2.puntos)
+                        {
+                            equipos_temp.Add(equipo2);
+                        }
+                        else //empate, es posible que no vaya aquí
+                        {
+
+                        }
+
+                        //reseteando los puntos
+                        equipo1.puntos = 0;
+                        equipo2.puntos = 0;
+                    }
+
+                    Partida partida_temp = new Partida() { Jugador1 = equipos_temp[0].j1, Jugador2 = equipos_temp[1].j1, index = 0 };
+
+                    Ronda ronda_temp = new Ronda
+                    {
+                        Nombre_campeonato = campeonato.Nombre_campeonato,
+                        index = campeonato.Ronda_actual.index + 1,
+                        Numero_equipos = campeonato.Ronda_actual.Numero_equipos / 2,
+                        Equipos = equipos_temp,
+                        Equipo1 = equipos_temp[0],
+                        Equipo2 = equipos_temp[1],
+                        Partidas = new List<Partida>() { },
+                        Partida_actual = partida_temp,
+                        Numero_partidas = (campeonato.Ronda_actual.Numero_equipos / 4) * 3
+                    };
+
+                    campeonato.Ronda_actual = ronda_temp;
+                }
+            }
+            else //No es la ultima partida
+            {
+                if (campeonato.Ronda_actual.Partida_actual.Jugador1 == campeonato.Ronda_actual.Equipo1.j1 || campeonato.Ronda_actual.Partida_actual.Jugador2 == campeonato.Ronda_actual.Equipo1.j1) //No se cambia de equipos
+                {
+                    if (campeonato.Ronda_actual.Partida_actual.Jugador1 == campeonato.Ronda_actual.Equipo1.j1)
+                    {
+                        campeonato.Ronda_actual.Partida_actual.Jugador1 = campeonato.Ronda_actual.Equipo1.j2;
+                        campeonato.Ronda_actual.Partida_actual.Jugador2 = campeonato.Ronda_actual.Equipo2.j2;
+                    }
+                    else
+                    {
+                        campeonato.Ronda_actual.Partida_actual.Jugador1 = campeonato.Ronda_actual.Equipo1.j3;
+                        campeonato.Ronda_actual.Partida_actual.Jugador2 = campeonato.Ronda_actual.Equipo2.j3;
+                    }
+
+                    Partida partida_temp = new Partida() { Jugador1 = campeonato.Ronda_actual.Partida_actual.Jugador1, Jugador2 = campeonato.Ronda_actual.Partida_actual.Jugador2, index = partida.index + 1 };
+                }
+                else //Cambio de equipos
+                {
+                    int index = 0, acc = 0;
+                    foreach (Equipo equipo in campeonato.Ronda_actual.Equipos)
+                    {
+                        if (campeonato.Ronda_actual.Equipo1.Nombre_equipo == equipo.Nombre_equipo)
+                            index = acc;
+
+                        acc++;
+                    }
+                    //int index2 = campeonato.Ronda_actual.Equipos.FindIndex(x => x == campeonato.Ronda_actual.Equipo2);
+
+                    campeonato.Ronda_actual.Equipos[index] = campeonato.Ronda_actual.Equipo1;
+                    campeonato.Ronda_actual.Equipos[index + 1] = campeonato.Ronda_actual.Equipo2;
+
+                    campeonato.Ronda_actual.Equipo1 = campeonato.Ronda_actual.Equipos[index + 2];
+                    campeonato.Ronda_actual.Equipo2 = campeonato.Ronda_actual.Equipos[index + 3];
+
+                    Partida partida_temp = new Partida() { Jugador1 = campeonato.Ronda_actual.Equipo1.j1, Jugador2 = campeonato.Ronda_actual.Equipo2.j1, index = partida.index + 1 };
+                }
+
+            }
 
             Globals.campeonato = campeonato;
 
-            return View("Juego", campeonato.Ronda_actual.Partida_siguiente);            
+            return View("Sala", campeonato.Ronda_actual);
         }
-        
+
         [HttpPost]
         public ActionResult Juego(Partida partida)
         {
@@ -276,7 +432,6 @@ namespace IPC2_P1.Controllers
                 usuario_opuesto = partida.Jugador2;
             else
                 usuario_opuesto = partida.Jugador1;
-
 
             string color = tablero.color, color_opuesto = "";
 
@@ -330,10 +485,10 @@ namespace IPC2_P1.Controllers
 
                 if (celdas_validas.Count > 0)
                 {
-                    if (usuario == "Oponente")
-                        tablero.Actualizar(color_opuesto, Globals.usuario_activo, tablero.movimientos, tablero.movimientos_oponente + 1);
+                    if (usuario == partida.Jugador1)
+                        tablero.Actualizar(color_opuesto, partida.Jugador2, tablero.movimientos + 1, tablero.movimientos_oponente);
                     else
-                        tablero.Actualizar(color_opuesto, "Oponente", tablero.movimientos + 1, tablero.movimientos_oponente);
+                        tablero.Actualizar(color_opuesto, partida.Jugador1, tablero.movimientos, tablero.movimientos_oponente + 1);
 
                     return View(partida);
                 }
@@ -364,5 +519,123 @@ namespace IPC2_P1.Controllers
                 return View(partida);
             }
         }
+
+        [HttpPost]
+        public ActionResult JuegoTerminado(Partida partida)
+        {
+            Campeonato campeonato = Globals.campeonato;
+
+            try
+            {
+                campeonato.Ronda_actual.Partidas.Add(partida);
+            }
+            catch
+            {
+                campeonato.Ronda_actual.Partidas = new List<Partida>();
+                campeonato.Ronda_actual.Partidas.Add(partida);
+            }
+
+            campeonato.Ronda_actual.Equipo1.puntos += partida.Puntos1;
+            campeonato.Ronda_actual.Equipo2.puntos += partida.Puntos2;
+
+            if (partida.index == campeonato.Ronda_actual.Numero_partidas-1) //Es la ultima partida
+            {
+                if (campeonato.Ronda_actual.index == campeonato.Numero_rondas-1) //Es la ultima ronda
+                {
+                    //terminar juego
+
+                }
+                else //No es la ultima ronda
+                {
+                    campeonato.Rondas[campeonato.Ronda_actual.index] = campeonato.Ronda_actual;
+
+                    List<Equipo> equipos_temp = new List<Equipo>();
+
+                    for(int i = 0; i < campeonato.Ronda_actual.Numero_equipos; i += 2)
+                    {
+                        Equipo equipo1 = campeonato.Ronda_actual.Equipos[i];
+                        Equipo equipo2 = campeonato.Ronda_actual.Equipos[i+1];
+
+                        if (equipo1.puntos > equipo2.puntos)
+                        {
+                            equipos_temp.Add(equipo1);
+                        }
+                        else if (equipo1.puntos < equipo2.puntos)
+                        {
+                            equipos_temp.Add(equipo2);
+                        }
+                        else //empate, es posible que no vaya aquí
+                        {
+
+                        }
+
+                        //reseteando los puntos
+                        equipo1.puntos = 0;
+                        equipo2.puntos = 0;
+                    }
+
+                    Partida partida_temp = new Partida() { Jugador1 = equipos_temp[0].j1, Jugador2 = equipos_temp[1].j1, index = 0 };
+
+                    Ronda ronda_temp = new Ronda
+                    {
+                        Nombre_campeonato = campeonato.Nombre_campeonato,
+                        index = campeonato.Ronda_actual.index+1,
+                        Numero_equipos = campeonato.Ronda_actual.Numero_equipos/2,
+                        Equipos = equipos_temp,
+                        Equipo1 = equipos_temp[0],
+                        Equipo2 = equipos_temp[1],
+                        Partidas = new List<Partida>() { },
+                        Partida_actual = partida_temp,
+                        Numero_partidas = (campeonato.Ronda_actual.Numero_equipos / 4) * 3
+                    };
+
+                    campeonato.Ronda_actual = ronda_temp;                    
+                }
+            }
+            else //No es la ultima partida
+            {
+                if (campeonato.Ronda_actual.Partida_actual.Jugador1 == campeonato.Ronda_actual.Equipo1.j1 || campeonato.Ronda_actual.Partida_actual.Jugador2 == campeonato.Ronda_actual.Equipo1.j1) //No se cambia de equipos
+                {
+                    if (campeonato.Ronda_actual.Partida_actual.Jugador1 == campeonato.Ronda_actual.Equipo1.j1)
+                    {
+                        campeonato.Ronda_actual.Partida_actual.Jugador1 = campeonato.Ronda_actual.Equipo1.j2;
+                        campeonato.Ronda_actual.Partida_actual.Jugador2 = campeonato.Ronda_actual.Equipo2.j2;
+                    }
+                    else
+                    {
+                        campeonato.Ronda_actual.Partida_actual.Jugador1 = campeonato.Ronda_actual.Equipo1.j3;
+                        campeonato.Ronda_actual.Partida_actual.Jugador2 = campeonato.Ronda_actual.Equipo2.j3;
+                    }
+
+                    Partida partida_temp = new Partida() { Jugador1 = campeonato.Ronda_actual.Partida_actual.Jugador1, Jugador2 = campeonato.Ronda_actual.Partida_actual.Jugador2, index = partida.index + 1 };
+                }
+                else //Cambio de equipos
+                {
+                    int index = 0, acc = 0;
+                    foreach (Equipo equipo in campeonato.Ronda_actual.Equipos)
+                    {
+                        if (campeonato.Ronda_actual.Equipo1.Nombre_equipo == equipo.Nombre_equipo)
+                            index = acc;
+
+                        acc++;
+                    }
+                    //int index2 = campeonato.Ronda_actual.Equipos.FindIndex(x => x == campeonato.Ronda_actual.Equipo2);
+
+                    campeonato.Ronda_actual.Equipos[index] = campeonato.Ronda_actual.Equipo1;
+                    campeonato.Ronda_actual.Equipos[index + 1] = campeonato.Ronda_actual.Equipo2;
+                
+                    campeonato.Ronda_actual.Equipo1 = campeonato.Ronda_actual.Equipos[index + 2];
+                    campeonato.Ronda_actual.Equipo2 = campeonato.Ronda_actual.Equipos[index + 3];
+                    
+                    Partida partida_temp = new Partida() { Jugador1 = campeonato.Ronda_actual.Equipo1.j1, Jugador2 = campeonato.Ronda_actual.Equipo2.j1, index = partida.index + 1 };
+                }
+                
+            }
+
+            Globals.campeonato = campeonato;
+
+            return View("Sala", campeonato.Ronda_actual);
+        }
+
     }
 }

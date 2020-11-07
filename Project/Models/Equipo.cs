@@ -12,6 +12,8 @@ namespace IPC2_P1.Models
         public string j2 { get; set; }
 
         public string j3 { get; set; }
+
+        public int puntos { get; set; }
         
     }
 }

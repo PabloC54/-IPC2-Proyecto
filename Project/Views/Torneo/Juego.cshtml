@@ -166,14 +166,13 @@
 
                                     </div>
                                 }
-
-                                if (juego_terminado == "true")
-                                {
-                                    <input type="submit" value="Salir" formaction="" />
-                                }
-
+                                
                                 <input type="text" name="Jugador1" value="@Model.Jugador1" style="display:none" />
                                 <input type="text" name="Jugador2" value="@Model.Jugador2" style="display:none" />
+                                <input type="text" name="Ganador" value="@Model.Ganador" style="display:none" />
+                                <input type="number" name="Puntos1" value="@Model.Puntos1" style="display:none" />
+                                <input type="number" name="Puntos2" value="@Model.Puntos2" style="display:none" />
+                                <input type="text" name="index" value="@Model.index" style="display:none" />
 
                                 <input type="number" id="cronometro1" name="tablero.cronometro" value="@Model.tablero.cronometro" style="display:none" />
                                 <input type="number" id="cronometro2" name="tablero.cronometro_oponente" value="@Model.tablero.cronometro_oponente" style="display:none" />
@@ -186,6 +185,11 @@
                                 <input type="text" name="tablero.movimientos_oponente" value="@Model.tablero.movimientos_oponente" style="display:none" />
                                 <input type="text" name="tablero.modalidad" value="@Model.tablero.modalidad" style="display:none" />
                                 <input type="text" name="tablero.apertura_personalizada" value="@Model.tablero.apertura_personalizada" style="display:none" />
+                                
+                                if (juego_terminado == "true")
+                                {
+                                    <input type="submit" value="Salir" formaction="JuegoTerminado" style="margin: 150px auto; display: block;" />
+                                }
                             }
                         </div>
                     </div>
@@ -199,7 +203,7 @@
                 </div>
                     -->
 
-            }
+                                }
         </asp:UpdatePanel>
         <!--
         @using (Html.BeginForm("Cargar", "Game", FormMethod.Post, new { enctype = "multipart/form-data" }))
