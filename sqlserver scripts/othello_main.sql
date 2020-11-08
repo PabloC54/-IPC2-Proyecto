@@ -15,57 +15,65 @@ fecha_nacimiento date not null,
 pais varchar(30) not null,
 habilitado bit not null)
 
-create table Estadisticas(
-username varchar(20) not null,
-partidas_ganadas int not null,
-partidas_perdidas int not null,
-partidas_empatadas int not null,
-campeonatos int not null,
-campeonatos_ganados int not null,
-campeonatos_puntos int not null)
-
 create table Partida(
-idPartida varchar(10) primary key not null,
+idPartida int primary key not null identity(1,1),
 modalidad varchar(10) not null,
-movimientos int not null,
-usuario_anfitrion varchar(20) not null,
-numero_ronda int)
+resultado varchar(10) not null,
+username varchar(20) not null,
+idRonda VARCHAR(22))
 
-create table Campeonato(
-nombre varchar(10) primary key not null,
-cantidad_equipos int not null)
+create table Equipo(
+nombre_equipo varchar(10) primary key not null,
+username varchar(20) not null,
+username2 varchar(20) not null,
+username3 varchar(20) not null)
 
 create table Registro_Campeonato(
-usuario varchar(20) not null,
-nombre varchar(10) not null)
+nombre_equipo varchar(10) not null,
+nombre_campeonato varchar(20) not null,
+resultado varchar(10) not null,
+puntos int not null)
+
+create table Campeonato(
+nombre_campeonato varchar(20) primary key not null,
+cantidad_equipos int not null)
 
 create table Ronda(
-numero_ronda int primary key not null,
-jugadores_restantes int not null,
-nombre varchar(10) not null)
-
+idRonda VARCHAR(22) primary key not null,
+numero_ronda int not null,
+cantidad_equipos int not null,
+nombre_campeonato varchar(20) not null)
 
 
 --CREACIÓN DE LAS LLAVES FORANEAS
-alter table Estadisticas add foreign key (username) references Usuario(username)
+alter table Equipo add foreign key (username) references Usuario(username)
+alter table Equipo add foreign key (username2) references Usuario(username)
+alter table Equipo add foreign key (username3) references Usuario(username)
 
-alter table Partida add foreign key (usuario_anfitrion) references Usuario(username)
+alter table Partida add foreign key (username) references Usuario(username)
+alter table Partida add foreign key (idRonda) references Ronda(idRonda);
 
-alter table Partida add foreign key (numero_ronda) references Ronda(numero_ronda)
+alter table Registro_Campeonato add foreign key (nombre_equipo) references Equipo(nombre_equipo)
+alter table Registro_Campeonato add foreign key (nombre_campeonato) references Campeonato(nombre_campeonato)
 
-alter table Registro_Campeonato add foreign key (usuario) references Usuario(username)
-
-alter table Registro_Campeonato add foreign key (nombre) references Campeonato(nombre)
-
-alter table Ronda add foreign key (nombre) references Campeonato(nombre)
+alter table Ronda add foreign key (nombre_campeonato) references Campeonato(nombre_campeonato)
 
 
 --CONSULTAS
 select * from Usuario
-select * from Estadisticas
+select * from Partida
+select * from Equipo
+select * from Registro_Campeonato
+select * from Campeonato
+select * from Ronda
 
-delete from Estadisticas
-delete from Usuario
 
 
-update Reporte set partidas_ganadas=0, partidas_perdidas=0, partidas_empatadas=0, campeonatos=0, campeonatos_ganados=0, campeonatos_puntos=0
+
+delete from Partida
+delete from Registro_Campeonato
+delete from Campeonato
+delete from Ronda
+
+insert into Partida(modalidad, resultado, username) values ('normal', 'derrota','user')
+

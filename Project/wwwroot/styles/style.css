@@ -11520,8 +11520,8 @@ body.menu-active #Header .logo {
 }
 
 #XGIndex {
-    background-image: url(../images/game_bg.jpg);
-    height: 1300px;
+    background-image: url(../images/game-bg.jpg);
+    height: 1500px;
     width: 100%;
     color: white;
 }

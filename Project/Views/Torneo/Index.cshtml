@@ -62,7 +62,7 @@
               </div>
           }
 
-          @using (Html.BeginForm("Index", "Torneo", FormMethod.Post))
+          @using (Html.BeginForm("CargarCampeonato", "Torneo", FormMethod.Post, new { enctype = "multipart/form-data" }))
           {
               <div class="container">
                   <div class="title text-center">

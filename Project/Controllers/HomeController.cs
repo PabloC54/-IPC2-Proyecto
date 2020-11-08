@@ -28,6 +28,9 @@ namespace IPC2_P1.Controllers
         {
             ViewBag.Message = message;
             ViewBag.MessageType = messagetype;
+
+            Globals.campeonato = new Campeonato() { };
+
             return View();
         }
 
@@ -203,39 +206,30 @@ namespace IPC2_P1.Controllers
                     equipos.Add(dr.GetString(0));
                 }
 
-                List<string> campeonatos = new List<string>();
+                dr.Close();
+
+                int victorias_c = 0, puntos=0, cantidad=0;
+
                 foreach(string equipo in equipos)
                 {
-                    txt = "select idCampeonato from Registro_Campeonato where nombre_equipo='" + equipo + "'";
+                    txt = "select resultado, puntos from Registro_Campeonato where nombre_equipo='" + equipo + "'";
 
                     cmd = new SqlCommand(txt, con);
                     dr = cmd.ExecuteReader();
 
                     while (dr.Read())
                     {
-                        campeonatos.Add(dr.GetString(0));
+                        cantidad++;
+                        puntos += int.Parse(dr.GetSqlInt32(1).ToString());
+                        if (dr.GetString(0) == "victoria")
+                        {
+                            victorias += 1;
+                        }
+
                     }
-
+                    dr.Close();
                 }
-
-                int victorias_c = 0, derrotas_c = 0, empates_c = 0;
-
-                foreach (string campeonato in campeonatos)
-                {
-                    txt = "select resultado from Campeonato where idCampeonato='" + campeonato + "'";
-
-                    dr.Read();
-                    string resultado = dr.GetString(0);
-
-                    if (resultado == "victoria")
-                        victorias_c++;
-                    else if (resultado == "derrota")
-                        derrotas_c++;
-                    else if (resultado == "empate")
-                        empates_c++;
-
-                }
-
+                
                 dr.Close();
 
                 List<string> temp = new List<string>
@@ -248,9 +242,9 @@ namespace IPC2_P1.Controllers
                     victorias.ToString(),
                     derrotas.ToString(),
                     empates.ToString(),
+                    cantidad.ToString(),
                     victorias_c.ToString(),
-                    derrotas_c.ToString(),
-                    empates_c.ToString()
+                    puntos.ToString()
                 };
                 
                 return View(temp);                             

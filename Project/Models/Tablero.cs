@@ -127,35 +127,31 @@ namespace IPC2_P1.Models
 
         public void XActualizar(string usuario, int movimientos, int movimientos_oponente)
         {
-            int acc = 0;
 
             if (colores.Contains(color))
             {
-                foreach (string color_temp in colores)
+                try
                 {
-                    if (color_temp == color)
-                    {
-                        color = colores_oponente[acc];
-                    }
-                    acc++;
+                    color = colores_oponente[colores_oponente_index];
+                    colores_oponente_index += 1;
+                }
+                catch
+                {
+                    colores_oponente_index =0;
+                    color = colores_oponente[colores_oponente_index];
                 }
             }
             else
             {
-                foreach (string color_temp in colores_oponente)
+                try
                 {
-                    if (color_temp == color)
-                    {
-                        try
-                        {
-                            color = colores[acc + 1];
-                        }
-                        catch
-                        {
-                            color = colores[0];
-                        }
-                    }
-                    acc++;
+                    colores_index += 1;
+                    color = colores[colores_index];
+                }
+                catch
+                {
+                    colores_index = 0;
+                    color = colores[colores_index];
                 }
             }
             
@@ -166,6 +162,8 @@ namespace IPC2_P1.Models
 
 
         public List<Ficha> fichas { get; set; }
+
+        public string juego { get; set; }
 
         public int filas { get; set; }
 
@@ -178,6 +176,10 @@ namespace IPC2_P1.Models
         public List<string> colores { get; set; }
 
         public List<string> colores_oponente { get; set; }
+
+        public int colores_index { get; set; }
+
+        public int colores_oponente_index { get; set; }
 
         public int movimientos { get; set; }
 

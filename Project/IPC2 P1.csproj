@@ -168,11 +168,10 @@
     <Content Include="wwwroot\images\ficha_rojo.jpg" />
     <Content Include="wwwroot\images\ficha_verde.jpg" />
     <Content Include="wwwroot\images\ficha_violeta.jpg" />
-    <Content Include="wwwroot\images\game_bg.jpg" />
+    <Content Include="wwwroot\images\game-bg.jpg" />
     <Content Include="wwwroot\images\login-bg.jpg" />
     <Content Include="wwwroot\images\menu-bg.jpg" />
     <Content Include="wwwroot\images\registro-bg.jpg" />
-    <Content Include="wwwroot\images\table.png" />
     <Content Include="wwwroot\scripts\all-plugins.js" />
     <Content Include="wwwroot\scripts\jquery-3.2.1.min.js" />
     <Content Include="wwwroot\scripts\plugin-active.js" />
@@ -211,6 +210,7 @@
     <Content Include="Views\Torneo\Index.cshtml" />
     <Content Include="Views\Torneo\CrearCampeonato.cshtml" />
     <Content Include="Views\Torneo\Juego.cshtml" />
+    <Content Include="Views\Torneo\Salon.cshtml" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

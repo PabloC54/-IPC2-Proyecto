@@ -63,6 +63,22 @@
             {
                 <div class="subform">
                     <div class="row">
+                        <h4 class="col-12">Tipo de juego</h4>
+                    </div>
+                    <div class="row">
+                        <span class="col-6">
+                            <input type="radio" name="juego" id="Versus" value="Versus" checked />
+                            <label for="Versus">Versus</label>
+                        </span>
+                        <span class="col-6">
+                            <input type="radio" name="juego" id="Solo" value="Solo" />
+                            <label for="Solo">Solo</label>
+                        </span>
+                    </div>
+                </div>
+
+                <div class="subform">
+                    <div class="row">
                         <h4 class="col-12">Tipo de apertura</h4>
                     </div>
                     <div class="row">
@@ -116,7 +132,7 @@
                     </div>
                     <div class="row">
                         <span class="col-6">
-                            <select id="Colores" multiple size="5" >
+                            <select id="Colores" multiple size="5">
                                 <option class="rojo" onclick="quitarColor('rojo','Colores')" value="rojo">Rojo</option>
                                 <option class="amarillo" onclick="quitarColor('amarillo','Colores')" value="amarillo">Amarillo</option>
                                 <option class="azul" onclick="quitarColor('azul','Colores')" value="azul">Azul</option>
@@ -130,7 +146,7 @@
                             </select>
                         </span>
                         <span class="col-6">
-                            <select name="colores" id="I_Colores" multiple size="5" ></select>
+                            <select name="colores" id="I_Colores" multiple size="5"></select>
                         </span>
                     </div>
                 </div>
@@ -141,7 +157,7 @@
                     </div>
                     <div class="row">
                         <span class="col-6">
-                            <select id="Colores2" multiple size="5" >
+                            <select id="Colores2" multiple size="5">
                                 <option class="rojo" onclick="quitarColor('rojo','Colores2')" value="rojo">Rojo</option>
                                 <option class="amarillo" onclick="quitarColor('amarillo','Colores2')" value="amarillo">Amarillo</option>
                                 <option class="azul" onclick="quitarColor('azul','Colores2')" value="azul">Azul</option>
@@ -155,7 +171,7 @@
                             </select>
                         </span>
                         <span class="col-6">
-                            <select name="colores2" id="I_Colores2" multiple size="5" ></select>
+                            <select name="colores2" id="I_Colores2" multiple size="5"></select>
                         </span>
                     </div>
                 </div>
@@ -165,7 +181,7 @@
                         <input type="submit" value="Continuar" />
                     </div>
                 </div>
-                
+
             }
         </div>
 

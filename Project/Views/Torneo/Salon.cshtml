@@ -1,0 +1,53 @@
+﻿@model List<IPC2_P1.Models.Equipo>
+@{
+    ViewBag.Title = "Sala";
+    Layout = "~/Views/Shared/_Layout_logged_in.cshtml";    
+}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta http-equiv="“X-UA-Compatible”" content="'IE' ='edge'" />
+</head>
+
+<body>
+    <section id="Gain">
+
+        <div class="container">
+            <div class="title text-center">
+                <h2>RESULTADOS</h2>
+            </div>
+        </div>
+
+        <div class="container">
+            <div class="title text-center">
+                <div style="background-color:rgba(0, 0, 0, 0.75); color:white; border-radius:15px">
+                    <hr />
+                    <h2><i>Ganadores</i> (@Model[0].puntos puntos)</h2>
+                    <p>@Model[0].Nombre_equipo</p>
+                    <p>@Model[0].j1<br>@Model[0].j2<br>@Model[0].j3</p>
+                    <hr />
+                </div>
+            </div>
+        </div>
+
+        @for (int i = 1; i < Model.Count; i++)
+        {            
+            <div class="container">
+                <div class="title text-center">
+                    <div style="background-color:rgba(0, 0, 0, 0.75); color:white; border-radius:15px">
+                        <hr />
+                        <h3><i>@(i + 1)° lugar</i> (@Model[i].puntos puntos)</h3>
+                        <p>@Model[i].Nombre_equipo</p>
+                        <p>@Model[i].j1<br>@Model[i].j2<br>@Model[i].j3</p>
+                        <hr />
+                    </div>
+                </div>
+            </div>
+        }
+
+    </section>
+</body>
+</html>

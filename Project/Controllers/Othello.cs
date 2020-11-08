@@ -470,7 +470,6 @@ namespace IPC2_P1.Controllers
                                 if (colores_oponente.Contains(tablero.fichas[index +acc].color))
                                 {
                                     lista_temp.Add(index + acc);
-
                                 }
                                 else
                                 {
@@ -556,7 +555,6 @@ namespace IPC2_P1.Controllers
                                 if (colores_oponente.Contains(tablero.fichas[index + acc].color))
                                 {
                                     lista_temp.Add(index + acc);
-
                                 }
                                 else
                                 {
@@ -602,7 +600,6 @@ namespace IPC2_P1.Controllers
                                 if (colores_oponente.Contains(tablero.fichas[index + acc+acc2].color))
                                 {
                                     lista_temp.Add(index + acc + acc2);
-
                                 }
                                 else
                                 {
@@ -728,7 +725,7 @@ namespace IPC2_P1.Controllers
                         int acc = 2; //der
                         int acc2 = 2*x; //inf
                         List<int> lista_temp = new List<int>();
-                        lista_temp.Add(index + 9);
+                        lista_temp.Add(index + x+1);
 
                         bool salir = false;
                         while (salir == false)
@@ -877,7 +874,21 @@ namespace IPC2_P1.Controllers
             Reemplazar(tablero, celdas_validas[num], color);
 
             Reemplazar_lista(tablero, lista_temp, color);
-            
+        }
+
+        public void XMovimiento_cpu(Tablero tablero)
+        {
+            string color = tablero.color;
+
+            System.Random random = new System.Random();
+            List<int> celdas_validas = XCeldas_validas(tablero);
+
+            int num = random.Next(celdas_validas.Count);
+            List<int> lista_temp = XFlanquear(tablero, celdas_validas[num], color);
+
+            Reemplazar(tablero, celdas_validas[num], color);
+
+            Reemplazar_lista(tablero, lista_temp, color);
         }
 
         public void Movimiento_cpu_apertura(Tablero tablero, string color)
@@ -905,7 +916,7 @@ namespace IPC2_P1.Controllers
 
             Reemplazar(tablero, celdas_validas[num], color);            
         }
-        
+           
         public string Juego_terminado(Tablero tablero, string color_opuesto)
         {
             int count = 0, count2 = 0;
@@ -1093,76 +1104,29 @@ namespace IPC2_P1.Controllers
                 }
             }
 
-            partida.Puntos1 = count;
-            partida.Puntos2 = count2;
 
-            string resultado = "", resultado2, mensaje = "";
-
-            //if (tablero.modalidad == "Normal"){
+            string  mensaje = "";
+            
             if (count > count2)
             {
                 mensaje = "¡El juego ha terminado! El ganador es: " + partida.Jugador1 + " con " + count + " fichas";
-                resultado = "victoria";
-                resultado2 = "derrota";
-
-                partida.Ganador = partida.Jugador1;                
+                partida.Ganador = partida.Jugador1;
+                partida.Puntos1 = 3;
             }
             else if (count < count2)
             {
-                mensaje = "¡El juego ha terminado! El ganador es: " + partida.Jugador2 + " con " + count + " fichas";
-                resultado = "derrota";
-                resultado2 = "victoria";
+                mensaje = "¡El juego ha terminado! El ganador es: " + partida.Jugador2 + " con " + count2 + " fichas";
                 partida.Ganador = partida.Jugador1;
+                partida.Puntos2 = 3;
             }
             else
             {
                 mensaje = "¡¡El juego ha terminado! Hubo un empate con " + count + " fichas";
-                resultado = "empate";
-                resultado2 = "empate";
                 // pendiente
-            }
-            
-
-            //}
-            /*
-            else //modalidad inversa
-            {
-                if (count < count2) //usuario gano
-                {
-                    mensaje = "¡El juego ha terminado! El ganador es: " + Globals.usuario_activo + " con " + count + " fichas";
-                    resultado = "victoria";
-                }
-                else
-                {
-                    if (count > count2) //usuario perdio
-                    {
-                        mensaje = "¡El juego ha terminado! El ganador es Oponente con " + count2 + " fichas";
-                        resultado = "derrota";
-                    }
-                    else //usuario empato
-                    {
-                        mensaje = "¡¡El juego ha terminado! Hubo un empate con " + count + " fichas";
-                        resultado = "empate";
-                    }
-                }
-            }
-            */
-
-            string txt = "insert into Partida(modalidad, resultado, username) values ('" + tablero.modalidad + "','" + resultado + "','" + partida.Jugador1 + "')";
-            string txt2 = "insert into Partida(modalidad, resultado, username) values ('" + tablero.modalidad + "','" + resultado2 + "','" + partida.Jugador2 + "')";
-
-            con.Open();
-            SqlCommand cmd = new SqlCommand(txt, con);
-            SqlDataReader dr = cmd.ExecuteReader();
-            dr.Read();
-            dr.Close();
-
-            cmd = new SqlCommand(txt2, con);
-            dr = cmd.ExecuteReader();
-            dr.Read();
-
-            dr.Close();
-            con.Close();
+                partida.Ganador = "ninguno";
+                partida.Puntos1 = 1;
+                partida.Puntos2 = 1;
+            }           
 
             return mensaje;
         }

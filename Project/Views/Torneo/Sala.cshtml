@@ -23,10 +23,10 @@
     {
         top = new string[]
         {
-"125px",
-"280px",
-"125px",
-"280px"
+"127px",
+"283px",
+"127px",
+"283px"
         };
 
         left = new string[]
@@ -46,9 +46,9 @@
 "257px",
 "305px",
 "123px",
-"147px",
-"232px",
-"281px"
+"131px",
+"215px",
+"263px"
         };
 
         left = new string[]
@@ -58,7 +58,7 @@
 "-180px",
 "-364px",
 "-35px",
-"302px",
+"702px",
 "517px",
 "332px"
         };
@@ -134,7 +134,10 @@
             <div class="torneo" style="background: url('../wwwroot/images/campeonato_2.png')">
                 @for (int i = 0; i < Model.Numero_equipos; i++)
                 {
-                    <span class="equipo" style="top: @top[i]; left: @left[i]">@Model.Equipos[i].Nombre_equipo</span>
+                <span class="equipo" style="top: @top[i]; left: @left[i]">
+                    @Model.Equipos[i].Nombre_equipo<br />
+                    <span style="color:blue; font-weight:300; font-size:11px">@Model.Equipos[i].puntos puntos</span>
+                </span>
                 }
             </div>
         }
@@ -143,7 +146,10 @@
             <div class="torneo" style="background: url('../wwwroot/images/campeonato_4.png')">
                 @for (int i = 0; i < Model.Numero_equipos; i++)
                 {
-                    <span class="equipo" style="top: @top[i]; left: @left[i]">@Model.Equipos[i].Nombre_equipo</span>
+                    <span class="equipo" style="top: @top[i]; left: @left[i]">
+                        @Model.Equipos[i].Nombre_equipo<br />
+                        <span style="color:blue; font-weight:300; font-size:11px">@Model.Equipos[i].puntos puntos</span>
+                    </span>
                 }
             </div>
         }
@@ -152,7 +158,10 @@
             <div class="torneo" style="background: url('../wwwroot/images/campeonato_8.png')">
                 @for (int i = 0; i < Model.Numero_equipos; i++)
                 {
-                    <span class="equipo" style="top: @top[i]; left: @left[i]">@Model.Equipos[i].Nombre_equipo</span>
+                    <span class="equipo" style="top: @top[i]; left: @left[i]">
+                        @Model.Equipos[i].Nombre_equipo<br />
+                        <span style="color:blue; font-weight:300; font-size:11px">@Model.Equipos[i].puntos puntos</span>
+                    </span>
                 }
             </div>
         }
@@ -161,7 +170,10 @@
             <div class="torneo" style="background: url('../wwwroot/images/campeonato_16.png')">
                 @for (int i = 0; i < Model.Numero_equipos; i++)
                 {
-                    <span class="equipo" style="top: @top[i]; left: @left[i]">@Model.Equipos[i].Nombre_equipo</span>
+                    <span class="equipo" style="top: @top[i]; left: @left[i]">
+                        @Model.Equipos[i].Nombre_equipo<br />
+                        <span style="color:blue; font-weight:300; font-size:11px">@Model.Equipos[i].puntos puntos</span>
+                    </span>
                 }
             </div>
         }
@@ -227,7 +239,7 @@
                         <hr />
                         <input type="submit" value="Gana @Model.Partida_actual.Jugador1" formaction="Pasar" onclick="Pasar('1')"/>
                         <input type="submit" value="Gana @Model.Partida_actual.Jugador2" formaction="Pasar" onclick="Pasar('2')"/>
-                        <input type="text" value="" id="ganador" name="ganador" />
+                        <input type="text" value="" id="ganador" name="ganador" style="display:none" />
                         <hr />
                     </div>
                 </div>
@@ -238,7 +250,7 @@
             <div class="title text-center">
                 <div style="background-color:rgba(0, 0, 0, 0.75); color:white; border-radius:15px">
                     <hr />
-                    <p>Equipo @(Model.Equipos.FindIndex(x => x == Model.Equipo1) + 1): @Model.Equipo1.Nombre_equipo</p>
+                    <p>@Model.Equipo1.Nombre_equipo</p>
                     <p>Integrantes:</p>
                     <p>@Model.Equipo1.j1<br />@Model.Equipo1.j2<br />@Model.Equipo1.j3</p>
                     <hr />
@@ -250,7 +262,7 @@
             <div class="title text-center">
                 <div style="background-color:rgba(0, 0, 0, 0.75); color:white; border-radius:15px">
                     <hr />
-                    <p>Equipo @(Model.Equipos.FindIndex(x => x == Model.Equipo2) + 1): @Model.Equipo2.Nombre_equipo</p>
+                    <p>@Model.Equipo2.Nombre_equipo</p>
                     <p>Integrantes:</p>
                     <p>@Model.Equipo2.j1<br />@Model.Equipo2.j2<br />@Model.Equipo2.j3</p>
                     <hr />
